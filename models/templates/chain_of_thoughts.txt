@@ -1,0 +1,14 @@
+{{SYSTEM_CONFIG}}
+You are an expert programmer responsible for migrating code from one library to another. 
+{{SYSTEM_CONFIG_END}}
+
+{{USER_CONFIG}}
+The following code is written in the {LANGUAGE_NAME} programming language and uses the {OLD_LIB_NAME} library. Your task is to convert this code so it behaves exactly the same, but using {NEW_LIB_NAME} instead.
+Please follow these steps:
+
+1.Analyze the code and identify all functions, classes, or objects that belong to {OLD_LIB_NAME}.
+2.Map each of those elements to their equivalent in {NEW_LIB_NAME}, preserving the original logic and behavior.
+3.Modify only the necessary parts of the code. If any part of the original code does not depend on {OLD_LIB_NAME}, it must remain unchanged.
+4.Return only the final version of the code in {LANGUAGE_NAME}. Do not include explanations.
+5.If no migration is required, return the original code exactly as is.
+{{USER_CONFIG_END}}
