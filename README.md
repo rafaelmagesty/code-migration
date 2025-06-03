@@ -11,7 +11,7 @@ Studying the ability of public LLMs to migrate code between two equivalent libra
 ### 2. Install Dependencies
 `pip install -r requirements.txt`
 
-remember updating the requirements when installing a new lib:
+Remember to update the requirements when installing a new lib:
 
 `pip freeze > requirements.txt`
 
