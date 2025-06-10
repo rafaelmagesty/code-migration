@@ -15,6 +15,13 @@ Remember to update the requirements when installing a new lib:
 
 `pip freeze > requirements.txt`
 
+### 3. Generate Input Examples
+First, make sure the migrations dataset is available inside the input folder, then run:
+
+`python3 generate_examples.py path_to_df`
+
+If you want to use your own df, please insert it in input/programming_language to keep code consistency. Remember to add your new example dir inside the gitignore.
+
 ### 3. Usage
 Understand better in:
 
