@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import sys
 
+
 def generate_text_files_from_df(df_path):
     """
     Reads a CSV DataFrame from a specified path and generates text files
@@ -11,7 +12,9 @@ def generate_text_files_from_df(df_path):
         df_path (str): The full path to your CSV DataFrame (e.g., 'folder1/folder2/my_df.csv').
     """
     if not os.path.exists(df_path):
-        print(f"Error: DataFrame not found at '{df_path}'. Please check the path and try again.")
+        print(
+            f"Error: DataFrame not found at '{df_path}'. Please check the path and try again."
+        )
         return
 
     try:
@@ -25,24 +28,28 @@ def generate_text_files_from_df(df_path):
     base_output_dir = os.path.dirname(df_path)
 
     for index, row in df.iterrows():
-        before_content = row.get('before')
-        rmv_lib_value = row.get('rmv_lib')
-        repo_name = row.get('repo')
-        commit_hash = row.get('commit')
+        before_content = row.get("before")
+        rmv_lib_value = row.get("rmv_lib")
+        repo_name = row.get("repo")
+        commit_hash = row.get("commit")
 
-        if pd.isna(rmv_lib_value) or str(rmv_lib_value).strip() == '':
+        if pd.isna(rmv_lib_value) or str(rmv_lib_value).strip() == "":
             print(f"Skipping row {index} because 'rmv_lib' is empty.")
             continue
 
         if before_content is None or repo_name is None or commit_hash is None:
-            print(f"Skipping row {index} due to missing 'before', 'repo', or 'commit' data.")
+            print(
+                f"Skipping row {index} due to missing 'before', 'repo', or 'commit' data."
+            )
             continue
 
-        sanitized_repo = str(repo_name).replace(os.sep, '_').replace('/', '_')
-        sanitized_commit = str(commit_hash).replace(os.sep, '_').replace('/', '_')
-        sanitized_rmv_lib = str(rmv_lib_value).replace(os.sep, '_').replace('/', '_')
+        sanitized_repo = str(repo_name).replace(os.sep, "_").replace("/", "_")
+        sanitized_commit = str(commit_hash).replace(os.sep, "_").replace("/", "_")
+        sanitized_rmv_lib = str(rmv_lib_value).replace(os.sep, "_").replace("/", "_")
 
-        target_file_dir = os.path.join(base_output_dir, sanitized_rmv_lib, sanitized_repo)
+        target_file_dir = os.path.join(
+            base_output_dir, sanitized_rmv_lib, sanitized_repo
+        )
 
         try:
             os.makedirs(target_file_dir, exist_ok=True)
@@ -54,11 +61,12 @@ def generate_text_files_from_df(df_path):
         file_path = os.path.join(target_file_dir, filename)
 
         try:
-            with open(file_path, 'w', encoding='utf-8') as f:
+            with open(file_path, "w", encoding="utf-8") as f:
                 f.write(str(before_content))
             print(f"Generated: '{file_path}'")
         except IOError as e:
             print(f"Error writing file '{file_path}' for row {index}: {e}")
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:

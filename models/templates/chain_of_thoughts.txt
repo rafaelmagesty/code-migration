@@ -11,4 +11,6 @@ Please follow these steps:
 3.Modify only the necessary parts of the code. If any part of the original code does not depend on {OLD_LIB_NAME}, it must remain unchanged.
 4.Return only the final version of the code in {LANGUAGE_NAME}. Do not include explanations.
 5.If no migration is required, return the original code exactly as is.
+
+{CODE_BEFORE_MIGRATION}
 {{USER_CONFIG_END}}
