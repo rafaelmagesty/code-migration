@@ -17,7 +17,7 @@ bucket_name = 'amzn-s3-demo-bucket-boto2'
 try:
     boto2_bucket = s3_conn.get_bucket(bucket_name)
     
-    file_content = "Olá do Boto 2! Este é um arquivo de teste."
+    file_content = "Hello from boto 2!"
     file_name = "boto2_test_file.txt"
     with open(file_name, 'w') as f:
         f.write(file_content)
@@ -43,7 +43,7 @@ bucket_name = 'amzn-s3-demo-bucket-boto3'
 try:
     boto3_bucket = s3.Bucket(bucket_name)
 
-    file_content = "Olá do Boto 3! Este é outro arquivo de teste."
+    file_content = "Hello from boto 3!"
     file_name = "boto3_test_file.txt"
     with open(file_name, 'w') as f:
         f.write(file_content)
@@ -57,5 +57,5 @@ except Exception as e:
 {{ASSISTANT_CONFIG_END}}
 
 {{USER_CONFIG}}
-{{CODE_2_BEFORE_MIGRATION}}
+{CODE_BEFORE_MIGRATION}
 {{USER_CONFIG_END}}
