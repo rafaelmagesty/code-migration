@@ -51,7 +51,7 @@ def main():
     args = parser.parse_args()
 
     # 1) Carrega o CSV
-    df = pd.read_csv(args.input_csv, encoding="utf-8")
+    df = pd.read_csv(args.input_csv, encoding="utf-8", quoting=1, engine="python")
     if "removed_chunk" not in df.columns:
         raise SystemExit("⚠️ Coluna 'removed_chunk' não encontrada no CSV de entrada.")
     # commit_date é opcional: se faltar, usamos string vazia

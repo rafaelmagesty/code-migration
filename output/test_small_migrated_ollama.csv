@@ -1,18 +1,23 @@
 removed_chunk,migrated_code,commit_date
-fetchData().then(res => res.json()).then(data => console.log(data)).catch(err => console.error(err));,"
-Here is the migrated code using the async/await syntax:
-
+fetchData().then(res => res.json()).then(data => console.log(data)).catch(err => console.error(err));,"```
 async function fetchData() {
   try {
-    const res = await fetch('https://example.com/data');
-    const data = await res.json();
+    const response = await fetch('https://example.com/data');
+    const data = await response.json();
     console.log(data);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
   }
-}",2025-06-30
-Promise.resolve(42).then(x => doSomething(x));,"
-async function main() {
-  const result = await Promise.resolve(42);
-  doSomething(result);
-}",2025-06-29
+}
+```",2025-06-30
+Promise.resolve(42).then(x => doSomething(x));,"```
+async function doSomething(x) {
+  try {
+    // Your code here
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+Promise.resolve(42).then(await doSomething);
+```",2025-06-29
