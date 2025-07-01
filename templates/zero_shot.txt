@@ -1,0 +1,8 @@
+{SYSTEM_CONFIG}
+Your task is to act as a code migration tool. Convert the following JavaScript code snippet that uses Promises to the modern async/await syntax. Return only the migrated code, without any comments or explanations.
+{SYSTEM_CONFIG_END}
+
+{USER_CONFIG}
+Code:
+{removed_chunk}
+{USER_CONFIG_END}

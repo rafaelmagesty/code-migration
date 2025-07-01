@@ -1,9 +1,13 @@
-import re
+# models/base_client.py
 
+import os
+import re
 
 class BaseClient:
     def load_template(self, file_name):
-        path = f"models/templates/{file_name}.txt"
+        # Assume que você guardou seus .txt em code-migration/templates/
+        root = os.path.abspath(os.path.join(__file__, "..", ".."))
+        path = os.path.join(root, "templates", f"{file_name}.txt")
         with open(path, "r", encoding="utf-8") as f:
             return f.read()
 
@@ -24,8 +28,12 @@ class BaseClient:
     def generate_request_dict(self, role, content):
         return {"role": role, "content": content}
 
-    def generate_prompt(self, template, **kwargs):
-        try:
-            return template.format(**kwargs)
-        except KeyError as e:
-            raise ValueError(f"Missing template variable: {e}")
+    def generate_prompt(self, template: str, **kwargs) -> str:
+        """
+        Substitui apenas as chaves que estão em kwargs (ex: removed_chunk, commit_date),
+        deixando intactas todas as outras marcações {SYSTEM_CONFIG}, {USER_CONFIG}, etc.
+        """
+        formatted = template
+        for key, val in kwargs.items():
+            formatted = formatted.replace(f"{{{key}}}", str(val))
+        return formatted

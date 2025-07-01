@@ -20,6 +20,7 @@ numpy==2.3.0
 ollama==0.5.1
 openai==1.82.1
 pandas==2.3.0
+google-generativeai    
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 pytz==2025.2
