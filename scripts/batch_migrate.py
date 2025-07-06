@@ -81,19 +81,15 @@ def main():
                     messages = messages
                 )
                 out = resp.choices[0].message.content
-            if args.model == "gemini":
-                resp = client.client.chat.completions.create(
-                    model    = args.version,
-                    messages = messages
-                )
-                out = resp.choices[0].message.content
-            else:  # ollama
+            elif args.model == "ollama":
                 resp = client.client.chat(
                     model    = args.version,
                     messages = messages
                 )
                 out = resp["message"]["content"]
-
+            else:  # gemini
+                out = client.chat(model=args.version, messages=messages)
+            
         except Exception as e:
             out = f"ERROR: {e}"
         print(f"[{i+1}/{total}] → ok")

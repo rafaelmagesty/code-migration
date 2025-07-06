@@ -24,18 +24,7 @@ removed_chunk,migrated_code,commit_date
       }, done.fail);
 
     it(""should handle multiple ink lists"", function (done) {
-","
-module.exports = async () => {
-  const data = await AnnotationFactory.create();
-  
-  expect(data.annotationType).toEqual(AnnotationType.INK);
-  
-  expect(data.inkLists.length).toEqual(1);
-  
-  expect(data.inkLists[0]).toEqual([{ x: 1, y: 1 }, { x: 1, y: 2 }, { x: 2, y: 2 }, { x: 3, y: 3 }]);
-  
-  done();
-};",2021-04-17 16:23:40
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2021-04-17 16:23:40
 "      AnnotationFactory.create(
 
       ).then(({ data, viewable }) => {
@@ -51,17 +40,7 @@ module.exports = async () => {
       }, done.fail);
 
     it(""should handle missing parent properties"", function (done) {
-","
-Module.exports = async () => {
-    const annotationFactory = await AnnotationFactory.create();
-    const data = await annotationFactory.then(({ data, viewable }) => {
-        expect(data.annotationType).toEqual(AnnotationType.POPUP);
-        expect(data.modificationDate).toEqual(""D:20190423"");
-        expect(data.color).toEqual(new Uint8ClampedArray([0, 0, 255]));
-        return done();
-    });
-    return data;
-};",2021-04-17 16:23:40
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2021-04-17 16:23:40
 "	provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, _context: monaco.languages.CompletionContext, token: CancellationToken): Thenable<monaco.languages.CompletionList> {
 
 		const offset = this._positionToOffset(resource, position);
@@ -155,65 +134,7 @@ Module.exports = async () => {
 			};
 
 		});
-","```
-Here is the migrated code using the modern `async/await` syntax:
-```
-async function provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, context: monaco.languages.CompletionContext, token: CancellationToken): Promise<monaco.languages.CompletionList> {
-
-	const offset = await this._positionToOffset(resource, position);
-
-	return await this._worker(resource).then(worker => {
-
-		return worker.getCompletionsAtPosition(resource.toString(), offset);
-
-	}).then(info => {
-
-		if (!info) {
-
-			return;
-
-		}
-
-		const suggestions: MyCompletionItem[] = await Promise.all(info.entries.map(async entry => {
-
-			let range = await wordRange;
-
-			if (entry.replacementSpan) {
-
-				const p1 = model.getPositionAt(entry.replacementSpan.start);
-
-				const p2 = model.getPositionAt(entry.replacementSpan.start + entry.replacementSpan.length);
-
-				range = new Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
-
-			}
-
-			return {
-
-				uri: resource,
-
-				position: position,
-
-				range: range,
-
-				label: entry.name,
-
-				insertText: entry.name,
-
-				sortText: entry.sortText,
-
-				kind: SuggestAdapter.convertKind(entry.kind)
-
-			};
-
-		}));
-
-		return { suggestions };
-
-	}, token);
-}
-```
-Note that I've removed the `Thenable` types and the `resolveCompletionItem` function, as they are not needed in the modern syntax. Also, I've used the `await` keyword to wait for the Promises to resolve before continuing with the code.",2019-12-20 18:47:49
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2019-12-20 18:47:49
 "      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -227,16 +148,7 @@ Note that I've removed the `Thenable` types and the `resolveCompletionItem` func
       }, done.fail);
 
     it(""should correctly parse state model and state when defined"", function (done) {
-","
-      AnnotationFactory.createAsync().then(({ data }) => {
-
-        expect(data.stateModel).toBeNull();
-
-        expect(data.state).toBeNull();
-
-        done();
-
-      }, done.fail);",2021-04-17 16:23:40
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2021-04-17 16:23:40
 "render(process.argv[2] || '/')
 
   .then(html => console.log(html))
@@ -248,19 +160,7 @@ Note that I've removed the `Thenable` types and the `resolveCompletionItem` func
     process.exit(1)
 
   })
-","
-Here is the migrated code using async/await syntax:
-
-async function main() {
-  const html = await render(process.argv[2] || '/');
-  console.log(html);
-  await handleError((err) => {
-    console.error(err);
-    process.exit(1);
-  });
-}
-
-Note: The `await` keyword is used to pause the execution of the function until the promise is resolved or rejected. In this case, we're using `await` to wait for the `render` function to complete and return the HTML content.",2020-11-03 20:26:27
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2020-11-03 20:26:27
 "      ModelA.create({ name: 'model-A' }, function(error, toyA) {
 
         assert.ifError(error);
@@ -328,51 +228,7 @@ Note: The `await` keyword is used to pause the execution of the function until t
         });
 
       }
-","
-Here is the migrated code using async/await syntax:
-```
-const { ModelA, ModelB, Parent } = require('./models');
-
-async function main() {
-  try {
-    const toyA = await ModelA.create({ name: 'model-A' });
-    const toyB = await ModelB.create({ name: 'model-B' });
-
-    const doc = await Parent.create({
-      children: [
-        {
-          name: 'Child 1',
-          toy: { kind: 'Test1', value: toyA._id }
-        },
-        {
-          name: 'Child 2'
-        },
-        {
-          name: 'Child 3',
-          toy: { kind: 'Test2', value: toyB._id }
-        }
-      ]
-    });
-
-    await doc.populate('children.toy.value').then(function(doc) {
-      assert.equal(doc.children[0].toy.value.name, 'model-A');
-      assert.equal(doc.children[1].toy.value, null);
-      assert.equal(doc.children[2].toy.value.name, 'model-B');
-      done();
-    }).catch(done);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-main()
-  .then(function() {
-    console.log('done');
-  })
-  .catch(function(error) {
-    console.error(error);
-  });
-```",2023-02-08 19:49:02
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2023-02-08 19:49:02
 "        libraryLoader.requireLibrary(libraryLoader.SORTABLE).then(() => {
 
             new Sortable(this.$widgetsEnabled[0], {
@@ -392,28 +248,7 @@ main()
                 handle: '.handle',
 
                 animation: 150
-","Here is the migrated code using async/await syntax:
-```
-async function libraryLoader() {
-  const result = await libraryLoader.requireLibrary(""SORTABLE"");
-  if (result) {
-    const widgetsEnabled = this.$widgetsEnabled[0];
-    const widgetsDisabled = this.$widgetsDisabled[0];
-    
-    await new Sortable(widgetsEnabled, {
-      group: ""widgets"",
-      handle: "".handle"",
-      animation: 150
-    });
-    
-    await new Sortable(widgetsDisabled, {
-      group: ""widgets"",
-      handle: "".handle"",
-      animation: 150
-    });
-  }
-}
-```",2019-08-22 20:14:01
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2019-08-22 20:14:01
 "module.exports = (req, res) => {
 
   const start = process.hrtime()
@@ -439,28 +274,7 @@ async function libraryLoader() {
     res.end('Error: ' + err)
 
   })
-","
-Here is the migrated code using async/await syntax:
-
-module.exports = async (req, res) => {
-
-  const start = await process.hrtime()
-
-  try {
-    const html = await render(req.url);
-  } catch (err) {
-    console.error(err);
-    res.end('Error: ' + err);
-  }
-
-  const end = await process.hrtime(start);
-  const time = ((end[0] * 1e9) + end[1]) / 1e6;
-
-  // @ts-ignore
-  res.setHeader('X-Nuxt-Coldstart', global._coldstart + 'ms');
-  res.setHeader('X-Nuxt-Responsetime', time + 'ms');
-
-}.",2020-11-03 20:26:27
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2020-11-03 20:26:27
 "      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -490,34 +304,7 @@ module.exports = async (req, res) => {
       }, done.fail);
 
       function (done) {
-","
-Here is the migrated code using async/await syntax:
-
-```
-async function migration() {
-  try {
-    const data = await AnnotationFactory.create();
-    
-    expect(data.annotationType).toEqual(AnnotationType.LINK);
-    
-    expect(data.url).toBeUndefined();
-    
-    expect(data.unsafeUrl).toBeUndefined();
-    
-    expect(data.dest).toEqual([
-      { num: 17, gen: 0 },
-      { name: ""XYZ"" },
-      0,
-      841.89,
-      null
-    ]);
-    
-    done();
-  } catch (error) {
-    done.fail(error);
-  }
-}
-```",2021-04-17 16:23:40
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2021-04-17 16:23:40
 "  getPageDict(pageIndex) {
 
     const capability = createPromiseCapability();
@@ -669,81 +456,7 @@ async function migration() {
     next();
 
     return capability.promise;
-","
-Here is the migrated code using async/await syntax:
-```javascript
-const getPageDict = async (pageIndex) => {
-  const capability = createPromiseCapability();
-
-  function next() {
-    while (nodesToVisit.length) {
-      const currentNode = nodesToVisit.pop();
-
-      if (isRef(currentNode)) {
-        count = pageKidsCountCache.get(currentNode);
-
-        if (count > 0 && currentPageIndex + count < pageIndex) {
-          currentPageIndex += count;
-          continue;
-        }
-
-        try {
-          const obj = await xref.fetchAsync(currentNode);
-
-          if (isDict(obj, 'Page') || (isDict(obj) && !obj.has('Kids'))) {
-            if (pageIndex === currentPageIndex) {
-              pageKidsCountCache.put(currentNode, 1);
-            }
-            capability.resolve([obj, currentNode]);
-          } else {
-            nodesToVisit.push(obj);
-            next();
-          }
-        } catch (error) {
-          capability.reject(error);
-          return;
-        }
-      } else if (!isDict(currentNode)) {
-        capability.reject(new FormatError('Page dictionary kid reference points to wrong type of object.'));
-        return;
-      }
-
-      count = currentNode.get('Count');
-
-      if (Number.isInteger(count) && count >= 0) {
-        const objId = currentNode.objId;
-
-        if (objId && !pageKidsCountCache.has(objId)) {
-          pageKidsCountCache.put(objId, count);
-        }
-
-        if (currentPageIndex + count <= pageIndex) {
-          currentPageIndex += count;
-          continue;
-        }
-
-        const kids = currentNode.get('Kids');
-
-        if (!Array.isArray(kids)) {
-          capability.reject(new FormatError('Page dictionary kids object is not an array.'));
-          return;
-        }
-
-        for (let last = kids.length - 1; last >= 0; last--) {
-          nodesToVisit.push(kids[last]);
-        }
-      } else {
-        capability.reject(new Error(`Page index ${pageIndex} not found.`));
-        return;
-      }
-    }
-
-    capability.reject(new Error('No valid page dictionary found.'));
-  }
-
-  return getPageDict(pageIndex);
-};
-```",2019-11-04 15:02:08
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2019-11-04 15:02:08
 "  return hashPassword(newPlaintextPassword).then(hash => {
 
     const update = {
@@ -767,26 +480,7 @@ const getPageDict = async (pageIndex) => {
     Meteor.users.update({_id: user._id}, update);
 
   });
-","
-Here is the migrated code using the modern async/await syntax:
-
-async function hashPassword(newPlaintextPassword) {
-  const hash = await bcrypt.hash(newPlaintextPassword, 10);
-  return hash;
-}
-
-const update = {
-  $unset: {
-    'services.password.reset': 1
-  },
-  $set: {'services.password.bcrypt': await hashPassword(newPlaintextPassword)}
-};
-
-if (options.logout) {
-  update.$unset['services.resume.loginTokens'] = 1;
-}
-
-await Meteor.users.update({_id: user._id}, update);",2022-08-26 18:53:40
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2022-08-26 18:53:40
 " * @template {Options} Opts
 
  * @param {Opts} opts
@@ -870,48 +564,7 @@ function _resolveConfig(filePath, opts, sync) {
 const resolveConfig = (filePath, opts) => _resolveConfig(filePath, opts, false);
 
 resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
-","Here is the migrated code using async/await syntax:
-```
-function getExplorer(opts) {
-  return async () => {
-    // Normalize opts before passing to a memoized function
-    opts = { sync: false, cache: false, ...opts };
-    const result = await getExplorerMemoized(opts);
-    if (!result) {
-      return null;
-    }
-    // We are not using this option
-    delete result.insertFinalNewline;
-    return result;
-  };
-}
-
-function _resolveConfig(filePath, opts, sync) {
-  const [result, editorConfigured] = await Promise.all([
-    resolveOpts(filePath, opts),
-    loadEditorConfig(filePath, opts),
-  ]);
-  if (!result || !editorConfigured) {
-    return null;
-  }
-  const merged = { ...editorConfigured };
-  for (const optionName of [""plugins"", ""pluginSearchDirs""]) {
-    if (Array.isArray(merged[optionName])) {
-      merged[optionName] = merged[optionName].map((value) => {
-        if (typeof value === ""string"" && value.startsWith(""."")) {
-          return path.resolve(path.dirname(result.filepath), value);
-        }
-        return value;
-      });
-    }
-  }
-  delete merged.insertFinalNewline;
-  return merged;
-}
-
-const resolveConfig = (filePath, opts) => _resolveConfig(filePath, opts, false);
-resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
-```",2022-05-05 11:15:08
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2022-05-05 11:15:08
 "  it('eachAsync() with parallel > numDocs (gh-8422)', function() {
 
     return co(function*() {
@@ -961,43 +614,7 @@ resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
       assert.deepEqual(docs.map(d => d.order), [1, 2, 3]);
 
     });
-","
-Here is the migrated code using async/await syntax:
-```
-it('eachAsync() with parallel > numDocs (gh-8422)', async function() {
-
-  const movie = await Movie.deleteMany([]);
-
-  const movies = await Movie.create([
-    { name: 'Kickboxer' },
-    { name: 'Ip Man' },
-    { name: 'Enter the Dragon' }
-  ]);
-
-  let numDone = 0;
-
-  const test = async () => {
-    await new Promise(resolve => setTimeout(resolve, 100));
-    ++numDone;
-  };
-
-  const cursor = await Movie.find().cursor();
-  await cursor.eachAsync(test, { parallel: 4 });
-  assert.equal(numDone, 3);
-
-});
-
-it('eachAsync() with sort, parallel, and sync function (gh-8557)', async function() {
-
-  const users = await User.create([{ order: 1 }, { order: 2 }, { order: 3 }]);
-
-  const cursor = await User.aggregate([{ $sort: { order: 1 } }]).cursor();
-  const docs = [];
-  await cursor.eachAsync((doc) => docs.push(doc), { parallel: 3 });
-  assert.deepEqual(docs.map(d => d.order), [1, 2, 3]);
-
-});
-```",2021-08-29 21:23:24
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2021-08-29 21:23:24
 "  it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)', function() {
 
     return mongoose.createConnection(uri, opts).asPromise().then(() => assert.ok(false), err => {
@@ -1005,26 +622,13 @@ it('eachAsync() with sort, parallel, and sync function (gh-8557)', async functio
       assert.equal(err.name, 'MongooseServerSelectionError');
 
     });
-","
-Here is the migrated code using async/await syntax:
-
-it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)', async function() {
-
-  try {
-    const connection = await mongoose.createConnection(uri, opts);
-    assert.ok(false); // will throw an error
-  } catch (err) {
-    assert.equal(err.name, 'MongooseServerSelectionError');
-  }",2023-02-01 20:02:31
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2023-02-01 20:02:31
 "    }).then(done);
 
   it(""performs a normal search and finds the previous result"", function (done) {
 
     testSearch({
-","    })
-      .then((result) => done())
-      .catch((error) => done(error));
-});",2021-01-12 14:21:19
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2021-01-12 14:21:19
 "	public provideCodeActions(model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken): Promise<monaco.languages.CodeActionList> {
 
 		return this._worker(resource).then(worker => {
@@ -1068,27 +672,7 @@ it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)'
 				dispose: () => { }
 
 			};
-","
-Here is the migrated code using async/await syntax:
-```
-const provideCodeActions = async (model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken) => {
-  try {
-    const worker = await this._worker(resource);
-    
-    const start = this._positionToOffset(resource, { lineNumber: range.startLineNumber, column: range.startColumn });
-    
-    const end = this._positionToOffset(resource, { lineNumber: range.endLineNumber, column: range.endColumn });
-    
-    const formatOptions = await FormatHelper._convertOptions(model.getOptions());
-    
-    const errorCodes = context.markers.filter(m => m.code).map(m => m.code).map(Number);
-    
-    return await worker.getCodeFixesAtPosition(resource.toString(), start, end, errorCodes, formatOptions);
-  } catch (error) {
-    return { actions: [], dispose: () => { } };
-  }
-};
-```",2019-12-20 18:47:49
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2019-12-20 18:47:49
 "      AnnotationFactory.create(
 
       )
@@ -1194,65 +778,7 @@ const provideCodeActions = async (model: monaco.editor.ITextModel, range: Range,
         .catch(done.fail);
 
     it(""should render checkboxes for printing using normal appearance"", function (done) {
-","      Here is the migrated code using the modern async/await syntax:
-
-      AnnotationFactory.create()
-        .then(annotation => {
-          const annotationStorage = new Map();
-
-          return Promise.all([
-            annotation,
-            annotation.getOperatorList(
-              partialEvaluator,
-              task,
-              false,
-              annotationStorage
-            ),
-          ]);
-        })
-        .then(([annotation, opList]) => {
-          expect(opList.argsArray.length).toEqual(3);
-
-          expect(opList.fnArray).toEqual([
-            OPS.beginAnnotation,
-            OPS.setFillRGBColor,
-            OPS.endAnnotation,
-          ]);
-
-          expect(opList.argsArray[1]).toEqual(new Uint8ClampedArray([26, 51, 76]));
-
-          return annotation;
-        })
-        .then(annotation => {
-          const annotationStorage = new Map();
-
-          return annotation.getOperatorList(
-            partialEvaluator,
-            task,
-            false,
-            annotationStorage
-          );
-        })
-        .then((opList) => {
-          expect(opList.argsArray.length).toEqual(3);
-
-          expect(opList.fnArray).toEqual([
-            OPS.beginAnnotation,
-            OPS.setFillRGBColor,
-            OPS.endAnnotation,
-          ]);
-
-          expect(opList.argsArray[1]).toEqual(new Uint8ClampedArray([26, 51, 76]));
-
-          done();
-        })
-        .catch((error) => {
-          done.fail(error);
-        });
-
-    }
-
-Note that the `then` method is used to handle the promises returned by `AnnotationFactory.create()` and `annotation.getOperatorList()`. The `async/await` syntax is used to make the code look more synchronous and easier to read, while still allowing for asynchronous operations to take place.",2021-04-17 16:23:40
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2021-04-17 16:23:40
 "      AnnotationFactory.create(
 
       )
@@ -1296,20 +822,7 @@ Note that the `then` method is used to handle the promises returned by `Annotati
 
 
     it(""should save choice"", function (done) {
-","      Sure! Here is the migrated code using the modern async/await syntax:
-
-      AnnotationFactory.create()
-        .then(annotation => {
-          const annotationStorage = new Map();
-          annotationStorage.set(annotation.data.id, ""a value"");
-          return annotation._getAppearance(partialEvaluator, task, annotationStorage);
-        })
-        .then(appearance => {
-          expect(appearance).toEqual(""/Tx BMC q BT /Helv 5 Tf 1 0 0 1 0 0 Tm"" +
-            "" 2.00 2.00 Td (a value) Tj ET Q EMC"");
-          done();
-        })
-        .catch(done.fail);",2021-04-17 16:23:40
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2021-04-17 16:23:40
 "    it(""should handle unknown text alignment, maximum length and flags"", function (done) {
 
       AnnotationFactory.create(
@@ -1341,31 +854,7 @@ Note that the `then` method is used to handle the promises returned by `Annotati
 
 
     it(""should not set invalid text alignment, maximum length and flags"", function (done) {
-","```
-it(""should handle unknown text alignment, maximum length and flags"", async () => {
-
-      const data = await AnnotationFactory.create();
-
-      expect(data.annotationType).toEqual(AnnotationType.WIDGET);
-
-      expect(data.textAlignment).toBeUndefined();
-
-      expect(data.maxLen).toBeUndefined();
-
-      expect(data.readOnly).toBeFalsy();
-
-      expect(data.hidden).toBeFalsy();
-
-      expect(data.multiLine).toBeFalsy();
-
-      expect(data.comb).toBeFalsy();
-
-      expect(data.defaultFieldValue).toEqual(""foo"");
-
-      done();
-
-    });
-```",2021-04-17 16:23:40
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2021-04-17 16:23:40
 "      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -1379,13 +868,7 @@ it(""should handle unknown text alignment, maximum length and flags"", async () 
       }, done.fail);
 
     it(""should parse IRT/RT for a group type"", function (done) {
-","```
-AnnotationFactory.createAsync().then(({ data }) => {
-  expect(data.inReplyTo).toEqual(annotationRef.toString());
-  expect(data.replyType).toEqual(""R"");
-  done();
-}).catch(done.fail);
-```",2021-04-17 16:23:40
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2021-04-17 16:23:40
 "    it('updateOne()', function(done) {
 
       BlogPost.create({ title: 'interoperable update as promise' }, function(err) {
@@ -1543,86 +1026,7 @@ AnnotationFactory.createAsync().then(({ data }) => {
       });
 
 
-","Here is the migrated code using the modern async/await syntax:
-```
-async it('updateOne()', function(done) {
-  const created = await BlogPost.create({ title: 'interoperable update as promise' });
-
-  const query = await BlogPost.updateOne({ title: 'interoperable update as promise' }, { title: 'interoperable update as promise delta' });
-
-  assert.ifError(query.err);
-
-  assert.equal(query.res.matchedCount, 1);
-
-  assert.equal(query.res.modifiedCount, 1);
-
-  const count = await BlogPost.count({ title: 'interoperable update as promise delta' });
-
-  assert.ifError(count.err);
-
-  assert.equal(count.count, 1);
-
-  done();
-});
-
-async it('findOne()', function(done) {
-  const created = await BlogPost.create({ title: 'interoperable findOne as promise' });
-
-  const query = await BlogPost.findOne({ title: 'interoperable findOne as promise' });
-
-  assert.ifError(query.err);
-
-  assert.equal(query.res.id, created.id);
-
-  done();
-});
-
-async it('find()', function(done) {
-  const createdOne = await BlogPost.create({ title: 'interoperable find as promise' });
-  const createdTwo = await BlogPost.create({ title: 'interoperable find as promise2' });
-
-  const query = await BlogPost.find({ title: 'interoperable find as promise' }).sort('_id');
-
-  assert.ifError(query.err);
-
-  assert.equal(query.res.length, 2);
-
-  const IDs = {};
-
-  IDs[String(createdOne._id)] = 1;
-
-  IDs[String(createdTwo._id)] = 1;
-
-  assert.ok(IDs[String(createdOne._id)]);
-
-  assert.ok(IDs[String(createdTwo._id)]);
-
-  done();
-});
-
-async it.skip('count()', function(done) {
-  const created = await BlogPost.create({ title: 'interoperable count as promise' });
-
-  const query = await BlogPost.count({ title: 'interoperable count as promise2' });
-
-  assert.ifError(query.err);
-
-  assert.equal(query.count, 1);
-
-  done();
-});
-
-async it.skip('update()', function(done) {
-  const created = await BlogPost.create({ title: 'interoperable update as promise2' });
-
-  const query = await BlogPost.update({ title: 'interoperable update as promise delta 2' }, { title: 'interoperable update as promise delta 3' });
-
-  assert.ifError(query.err);
-
-  done();
-});
-```
-Note that I have removed the `done` function from the end of each `it` block, as it is not necessary in modern Jest syntax. Also, I have used the `async` and `await` keywords to make the code more concise and easier to read.",2023-02-07 17:39:03
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2023-02-07 17:39:03
 "  findMongoPids = function(dbDir_unused, port) {
 
     return new Promise((resolve, reject) => {
@@ -1952,62 +1356,7 @@ Note that I have removed the `done` function from the end of each `it` block, as
       );
 
     });
-","
-Here is the migrated code using async/await syntax:
-```javascript
-async function findMongoPids(dbDir, port) {
-  try {
-    // 'ps ax' should be standard across all MacOS and Linux.
-    // However, ps on OS X corrupts some non-ASCII characters in arguments,
-    // such as т (CYRILLIC SMALL LETTER TE), leading to this function
-    // failing to properly match pathnames with those characters.  #3999
-    //
-    // pgrep appears to do a better job (and has output that is roughly
-    // similar; it lacks a few fields that we don't care about).  Plus,
-    // it can do some of the grepping for us.
-    //
-    // However, 'pgrep' only started shipping with OS X 10.8 (and may be less
-    // common on Linux too), so we check to see if it exists and fall back to
-    // 'ps' if we can't find it.
-    //
-    // We avoid using pgrep on Linux, because some versions of Linux pgrep
-    // require you to pass -a/--list-full to include the arguments in the
-    // output, and other versions fail if you pass that option. We have not
-    // observed the Unicode corruption on Linux, so using ps ax there is fine.
-    const psScript = 'ps ax';
-    if (process.platform === 'darwin') {
-      psScript = `if type pgrep >/dev/null 2>&1; then \n  pgrep -lf mongod; test ""$?"" -eq 0 -o ""$?"" -eq 1; else \n  ps ax; fi`;
-    }
-    const { LANG, LC_ALL, LANGUAGE } = process.env;
-    child_process.exec(psScript, { maxBuffer: 1024 * 1024 * 10 }, async (error, stdout, stderr) => {
-      if (error) {
-        reject(new Error('Couldn't run ps ax: ' + JSON.stringify(error)));
-        return;
-      }
-      const ret = [];
-      stdout.split('\n')
-        .forEach(line => {
-          const m = line.match(/^\s*(\d+).+mongod .+--port (\d+) --dbpath (.+(?:\/|\\)db)/);
-          if (m && m.length === 4) {
-            const foundPid = parseInt(m[1], 10);
-            const foundPort = parseInt(m[2], 10);
-            const foundPath = m[3];
-            if (!port || port === foundPort && !dbDir || dbDir === foundPath) {
-              ret.push({
-                pid: foundPid,
-                port: foundPort,
-                dbDir: foundPath,
-              });
-            }
-          }
-        });
-      resolve(ret);
-    });
-  } catch (error) {
-    reject(new Error('Error running findMongoPids: ' + error));
-  }
-}
-```",2022-12-15 00:48:59
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2022-12-15 00:48:59
 "        server.put('options', opts).then(() => {
 
             toastService.showPersistent({
@@ -2023,17 +1372,7 @@ async function findMongoPids(dbDir, port) {
                 closeAfter: 2000
 
             })
-","
-Here is the migrated code using async/await syntax:
-
-server.put('options', opts).then(() => {
-    await toastService.showPersistent({
-        id: ""options-change-saved"",
-        title: ""Options status"",
-        message: ""Options change have been saved."",
-        icon: ""slider"",
-        closeAfter: 2000
-    });",2022-11-20 22:20:42
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2022-11-20 22:20:42
 "      return partialEvaluator
 
         .getOperatorList({
@@ -2207,64 +1546,13 @@ server.put('options', opts).then(() => {
       });
 
     });
-","
-Here is the migrated code using async/await syntax:
-```scss
-return partialEvaluator
-  .getOperatorList({
-    stream: contentStream,
-    task: task,
-    resources: this.resources,
-    operatorList: opList,
-  })
-  .then(() => opList)
-  .catch(error => {
-    warn(`getOperatorList - ignoring annotation data during ""${task.name}"" task: ${error}.`);
-    return { opList: null, separateForm: false, separateCanvas: false };
-  });
-
-const opListPromises = opList.map(annotation => {
-  return annotation
-    .getOperatorList(partialEvaluator, task, intent, annotationStorage)
-    .catch(error => {
-      warn(`getOperatorList - ignoring annotation data during ""${task.name}"" task: ${error}.`);
-      return { opList: null, separateForm: false, separateCanvas: false };
-    });
-});
-
-return Promise.all(opListPromises)
-  .then(opLists => {
-    let form = false, canvas = false;
-    for (const { opList, separateForm, separateCanvas } of opLists) {
-      pageOpList.addOpList(opList);
-      form ||= separateForm;
-      canvas ||= separateCanvas;
-    }
-    pageOpList.flush(
-      /* lastChunk = */ true,
-      /* separateAnnots = */ { form, canvas }
-    );
-    return { length: pageOpList.totalLength };
-  });
-```
-Explanation:
-
-* The `return` statement at the end of the code has been removed, as it is not needed in this modern syntax.
-* The `opListPromises` array is created by mapping each annotation's `getOperatorList()` method to a promise.
-* The `Promise.all()` method is used to wait for all of the promises in the array to resolve.
-* The code inside the `catch` block has been refactored to use the `then` method instead, which allows for more concise error handling.
-* The `pageOpList.flush()` method has been moved out of the `catch` block and into the `then` method, where it is called with the correct `separateAnnots` object.",2025-03-17 12:20:51
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2025-03-17 12:20:51
 "  parseAsync(argv, parseOptions) {
 
     this.parse(argv, parseOptions);
 
     return Promise.all(this._actionResults).then(() => this);
-","
-Here is the migrated code using async/await syntax:
-
-parseAsync(argv, parseOptions) {
-  await this.parse(argv, parseOptions);
-  return Promise.all(this._actionResults).then(self => self);",2021-05-06 06:02:31
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2021-05-06 06:02:31
 "const { warn, error } = require('./util/log')
 
 program
@@ -2326,42 +1614,7 @@ creator
   })
 
   .catch(error)
-","Here is the migrated code using async/await syntax:
-```
-const { warn, error } = require('./util/log')
-
-async program() {
-  try {
-    const projectName = await program.args[0];
-    
-    if (!projectName) {
-      warn(`Please provide an app name.`);
-      program.outputHelp();
-      process.exit(1);
-    }
-    
-    const createGenerator = async (id, requirePath = id) => ({
-      id,
-      apply: await require(requirePath)
-    });
-    
-    const builtInGenerators = await fs.readdirSync(path.resolve(__dirname, './generators')).filter(dir => dir.charAt(0) !== '.').map(id => createGenerator(id, `./generators/${id}`));
-    debug(builtInGenerators);
-    
-    const installedGenerators = await resolveInstalledGenerators().map(id => createGenerator(id));
-    
-    const targetDir = path.resolve(process.cwd(), projectName);
-    
-    const creator = new Creator(projectName, builtInGenerators.concat(installedGenerators));
-    
-    await creator.create(targetDir).then(() => {
-      // TO-DO: log instructions
-    }).catch(error);
-  } catch (error) {
-    error(error);
-  }
-}
-```",2017-12-28 18:06:17
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2017-12-28 18:06:17
 "  set(name, value) {
 
     return this._initializedPromise.then(() => {
@@ -2405,33 +1658,7 @@ async program() {
       return this._writeToStorage(this.prefs);
 
     });
-","
-Here is the migrated code using async/await syntax:
-
-async function set(name, value) {
-  try {
-    if (name === undefined || value === undefined) {
-      throw new Error(""Set preference: either name or value is undefined."");
-    }
-    let valueType = typeof value;
-    let defaultType = typeof this.defaults[name];
-    if (valueType !== defaultType) {
-      if (valueType === ""number"" && defaultType === ""string"") {
-        value = await convertNumberToString(value);
-      } else {
-        throw new Error(`Set preference: ""${value}"" is a ${valueType}, ` +
-                          `expected a ${defaultType}.`);
-      }
-      if (valueType === ""number"" && !Number.isInteger(value)) {
-        throw new Error(`Set preference: ""${value}"" must be an integer.`);
-      }
-    }
-    this.prefs[name] = value;
-    return await this._writeToStorage(this.prefs);
-  } catch (error) {
-    console.error(""Error setting preference:"", error);
-  }
-}",2018-07-30 14:48:16
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2018-07-30 14:48:16
 "      const result = XfaLayer.render(parameters);
 
       return Promise.resolve(result);
@@ -2487,40 +1714,7 @@ async function set(name, value) {
         console.error(error);
 
       });
-","
-Here is the migrated code using async/await syntax:
-```
-const result = await XfaLayer.render(parameters);
-
-return Promise.resolve(result);
-
-return this.pdfPage
-  .getXfa()
-  .then(xfaHtml => {
-    if (this._cancelled || !xfaHtml) {
-      return { textDivs: [] };
-    }
-    const parameters = {
-      viewport: await viewport.clone({ dontFlip: true }),
-      div: this.div,
-      xfaHtml,
-      annotationStorage: this.annotationStorage,
-      linkService: this.linkService,
-      intent,
-    };
-    if (this.div) {
-      return await XfaLayer.update(parameters);
-    }
-    // Create an xfa layer div and render the form
-    this.div = document.createElement(""div"");
-    this.pageDiv.append(this.div);
-    parameters.div = this.div;
-    return await XfaLayer.render(parameters);
-  })
-  .catch(error => {
-    console.error(error);
-  });
-```",2022-12-11 12:07:44
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2022-12-11 12:07:44
 "function loadNoteToEditor(noteId) {
 
     $.get(baseApiUrl + 'notes/' + noteId).then(note => {
@@ -2592,74 +1786,7 @@ function loadNote(noteId, callback) {
         callback(note);
 
     });
-","Here is the migrated code using async/await syntax:
-```
-async function loadNoteToEditor(noteId) {
-  try {
-    const note = await $.get(baseApiUrl + 'notes/' + noteId);
-
-    globalCurrentNote = note;
-
-    globalCurrentNoteLoadTime = Math.floor(new Date().getTime() / 1000);
-
-    if (newNoteCreated) {
-      newNoteCreated = false;
-
-      await $(""#note-title"").focus().select();
-    }
-
-    await handleEncryption(note.detail.encryption > 0, false, () => {
-      await $(""#note-detail-wrapper"").show();
-
-      // this may fal if the dialog has not been previously opened
-
-      try {
-        await $(""#encryption-password-dialog"").dialog('close');
-      } catch (e) {}
-
-      await $(""#encryption-password"").val('');
-
-      decryptNoteIfNecessary(note);
-
-      await $(""#note-title"").val(note.detail.note_title);
-
-      noteChangeDisabled = true;
-
-      // Clear contents and remove all stored history. This is to prevent undo from going across notes
-
-      await $('#note-detail').summernote('reset');
-
-      await $('#note-detail').summernote('code', note.detail.note_text);
-
-      document.location.hash = noteId;
-
-      await addRecentNote(noteId, note.detail.note_id);
-
-      noteChangeDisabled = false;
-
-      await setNoteBackgroundIfEncrypted(note);
-    });
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-async function loadNote(noteId, callback) {
-  try {
-    const note = await $.get(baseApiUrl + 'notes/' + noteId);
-
-    if (note.detail.encryption > 0 && !isEncryptionAvailable()) {
-      return;
-    }
-
-    decryptNoteIfNecessary(note);
-
-    callback(note);
-  } catch (e) {
-    console.error(e);
-  }
-}
-```",2017-11-04 00:01:32
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2017-11-04 00:01:32
 "  read() {
 
     return this._readCapability.promise.then(() => {
@@ -2707,26 +1834,4 @@ async function loadNote(noteId, callback) {
       return Promise.resolve({ value: buffer, done: false, });
 
     });
-","
-Here is the migrated code using the modern async/await syntax:
-
-read() {
-  return this._readCapability.async().then(() => {
-    if (this._done) {
-      return { value: undefined, done: true };
-    }
-    if (this._storedError) {
-      throw this._storedError;
-    }
-    let chunk = await this._readableStream.read();
-    if (chunk === null) {
-      this._readCapability = createPromiseCapability();
-      return await this.read();
-    }
-    this._loaded += chunk.length;
-    if (this.onProgress) {
-      this.onProgress({ loaded: this._loaded, total: this._contentLength });
-    }
-    let buffer = new Uint8Array(chunk).buffer;
-    return { value: buffer, done: false };
-  });",2018-07-30 11:58:09
+",ERROR: module 'google.cloud.aiplatform' has no attribute 'ChatModel',2018-07-30 11:58:09
