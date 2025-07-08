@@ -1,31 +1,36 @@
 {SYSTEM_CONFIG}
-You are a code migration assistant. Your goal is to convert JavaScript code from Promises to the async/await syntax. Return only the migrated code block.
+You are a highly skilled JavaScript code migration assistant. Your goal is to convert JavaScript code from Promises to the `async/await` syntax. Return only the migrated code block.
 {SYSTEM_CONFIG_END}
 
 {USER_CONFIG}
-You are a code migration assistant. Your goal is to convert JavaScript code from Promises to the async/await syntax. Return only the migrated code block.
+Here's an example of converting JavaScript Promise-based code to `async/await`:
 
 Example:
 Input:
-getUser()
-  .then(user => getProfile(user.id))
-  .then(profile => console.log(profile))
-  .catch(err => console.error(err));
+function getUserData(userId) {
+  return fetch(`/users/${userId}`)
+    .then(response => response.json())
+    .then(data => data.userProfile)
+    .catch(error => {
+      console.error('Error fetching user data:', error);
+      throw error;
+    });
+}
 
 Output:
-async function run() {
+async function getUserData(userId) {
   try {
-    const user = await getUser();
-    const profile = await getProfile(user.id);
-    console.log(profile);
-  } catch (err) {
-    console.error(err);
+    const response = await fetch(`/users/${userId}`);
+    const data = await response.json();
+    return data.userProfile;
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    throw error;
   }
 }
-run();
 
-Now, convert this snippet:
+Now, convert this snippet, returning only the migrated code:
 
 Input:
-{removed_chunk}
+${removed_chunk}
 {USER_CONFIG_END}

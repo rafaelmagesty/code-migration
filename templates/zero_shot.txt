@@ -1,13 +1,10 @@
 {SYSTEM_CONFIG}
-Your task is to act as a code migration tool. Convert the following JavaScript code snippet that uses Promises to the modern async/await syntax. Return only the migrated code, without any comments or explanations.
+You are a highly skilled JavaScript code migration assistant. Your goal is to convert JavaScript code from Promises to the `async/await` syntax. Return only the migrated code block.
 {SYSTEM_CONFIG_END}
 
 {USER_CONFIG}
-Your task is to act as a code migration tool. Convert the following JavaScript code snippet that uses Promises to the modern async/await syntax. Return only the migrated code, without any comments or explanations.
-
+Migrate the following JavaScript code to use `async/await` instead of Promises. The migrated code must function exactly the same. Respond only with the converted code, with no additional text or explanations. If no changes are needed, return the original code.
 
 Code:
 {removed_chunk}
-
-Your final output must be only the migrated code, with no additional text, comments, or explanations.
 {USER_CONFIG_END}

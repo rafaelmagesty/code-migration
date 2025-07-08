@@ -24,18 +24,35 @@ removed_chunk,migrated_code,commit_date
       }, done.fail);
 
     it(""should handle multiple ink lists"", function (done) {
-","
-module.exports = async () => {
-  const data = await AnnotationFactory.create();
-  
-  expect(data.annotationType).toEqual(AnnotationType.INK);
-  
-  expect(data.inkLists.length).toEqual(1);
-  
-  expect(data.inkLists[0]).toEqual([{ x: 1, y: 1 }, { x: 1, y: 2 }, { x: 2, y: 2 }, { x: 3, y: 3 }]);
-  
-  done();
-};",2021-04-17 16:23:40
+","```javascript
+async function testAnnotationFactory() {
+  try {
+    const annotationResponse = await AnnotationFactory.create();
+    const data = annotationResponse.data;
+    
+    expect(data.annotationType).toEqual(AnnotationType.INK);
+    expect(data.inkLists.length).toEqual(1);
+    expect(data.inkLists[0]).toEqual([
+      { x: 1, y: 1 },
+      { x: 1, y: 2 },
+      { x: 2, y: 2 },
+      { x: 3, y: 3 },
+    ]);
+  } catch (error) {
+    expect(error).toBeUndefined();
+  }
+}
+
+describe(""AnnotationFactory"", function () {
+  it(""should handle single ink list"", async function () {
+    await testAnnotationFactory().then(done);
+  });
+
+  it(""should handle multiple ink lists"", async function () {
+    await testAnnotationFactory().catch(done.fail);
+  });
+});
+```",2021-04-17 16:23:40
 "      AnnotationFactory.create(
 
       ).then(({ data, viewable }) => {
@@ -51,17 +68,30 @@ module.exports = async () => {
       }, done.fail);
 
     it(""should handle missing parent properties"", function (done) {
-","
-Module.exports = async () => {
-    const annotationFactory = await AnnotationFactory.create();
-    const data = await annotationFactory.then(({ data, viewable }) => {
-        expect(data.annotationType).toEqual(AnnotationType.POPUP);
-        expect(data.modificationDate).toEqual(""D:20190423"");
-        expect(data.color).toEqual(new Uint8ClampedArray([0, 0, 255]));
-        return done();
-    });
-    return data;
-};",2021-04-17 16:23:40
+","```javascript
+it(""should create annotation with correct values"", async function(done) {
+  try {
+    const { data, viewable } = await AnnotationFactory.create();
+    
+    expect(data.annotationType).toEqual(AnnotationType.POPUP);
+    expect(data.modificationDate).toEqual(""D:20190423"");
+    expect(data.color).toEqual(new Uint8ClampedArray([0, 0, 255]));
+    
+    done();
+  } catch (error) {
+    done.fail(error);
+  }
+});
+
+it(""should handle missing parent properties"", async function(done) {
+  try {
+    await AnnotationFactory.create().catch(() => {});
+    done();
+  } catch (error) {
+    done.fail(error);
+  }
+});
+```",2021-04-17 16:23:40
 "	provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, _context: monaco.languages.CompletionContext, token: CancellationToken): Thenable<monaco.languages.CompletionList> {
 
 		const offset = this._positionToOffset(resource, position);
@@ -155,65 +185,82 @@ Module.exports = async () => {
 			};
 
 		});
-","```
-Here is the migrated code using the modern `async/await` syntax:
-```
-async function provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, context: monaco.languages.CompletionContext, token: CancellationToken): Promise<monaco.languages.CompletionList> {
+","```javascript
+async provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, _context: monaco.languages.CompletionContext, token: CancellationToken): Promise<monaco.languages.CompletionList> {
 
-	const offset = await this._positionToOffset(resource, position);
+    const offset = this._positionToOffset(resource, position);
 
-	return await this._worker(resource).then(worker => {
+    try {
+        const worker = await this._worker(resource);
+        const info = await worker.getCompletionsAtPosition(resource.toString(), offset);
 
-		return worker.getCompletionsAtPosition(resource.toString(), offset);
+        if (!info) return;
 
-	}).then(info => {
+        let suggestions: MyCompletionItem[] = info.entries.map(entry => {
 
-		if (!info) {
+            let range = wordRange;
 
-			return;
+            if (entry.replacementSpan) {
 
-		}
+                const p1 = model.getPositionAt(entry.replacementSpan.start);
+                const p2 = model.getPositionAt(entry.replacementSpan.start + entry.replacementSpan.length);
+                range = new Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
 
-		const suggestions: MyCompletionItem[] = await Promise.all(info.entries.map(async entry => {
+            }
 
-			let range = await wordRange;
+            return {
 
-			if (entry.replacementSpan) {
+                uri: resource,
 
-				const p1 = model.getPositionAt(entry.replacementSpan.start);
+                position: position,
 
-				const p2 = model.getPositionAt(entry.replacementSpan.start + entry.replacementSpan.length);
+                range: range,
 
-				range = new Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
+                label: entry.name,
 
-			}
+                insertText: entry.name,
 
-			return {
+                sortText: entry.sortText,
 
-				uri: resource,
+                kind: SuggestAdapter.convertKind(entry.kind)
 
-				position: position,
+            };
 
-				range: range,
+        });
+        suggestions = suggestions.map(item => {
+            const worker = await this._worker(resource);
+            return await worker.getCompletionEntryDetails(resource.toString(), offset, item.label);
+        });
 
-				label: entry.name,
+    } catch (error) {
 
-				insertText: entry.name,
-
-				sortText: entry.sortText,
-
-				kind: SuggestAdapter.convertKind(entry.kind)
-
-			};
-
-		}));
-
-		return { suggestions };
-
-	}, token);
+    }
 }
-```
-Note that I've removed the `Thenable` types and the `resolveCompletionItem` function, as they are not needed in the modern syntax. Also, I've used the `await` keyword to wait for the Promises to resolve before continuing with the code.",2019-12-20 18:47:49
+
+async resolveCompletionItem(_model: monaco.editor.IReadOnlyModel, _position: Position, item: monaco.languages.CompletionItem, token: CancellationToken): Promise<monaco.languages.CompletionItem> {
+    let myItem = <MyCompletionItem>item;
+
+    try {
+        const worker = await this._worker(resource);
+        const details = await worker.getCompletionEntryDetails(resource.toString(), this._positionToOffset(resource, position), myItem.label);
+
+        if (!details) return myItem;
+
+        return <MyCompletionItem>{
+            uri: resource,
+            position: position,
+            label: details.name,
+            kind: SuggestAdapter.convertKind(details.kind),
+            detail: displayPartsToString(details.displayParts),
+            documentation: {
+                value: displayPartsToString(details.documentation)
+            }
+        };
+    } catch (error) {
+
+    }
+}
+```",2019-12-20 18:47:49
 "      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -227,16 +274,29 @@ Note that I've removed the `Thenable` types and the `resolveCompletionItem` func
       }, done.fail);
 
     it(""should correctly parse state model and state when defined"", function (done) {
-","
-      AnnotationFactory.createAsync().then(({ data }) => {
+","```javascript
+it(""AnnotationFactory.create() should return a Promise that resolves to an object containing the parsed annotations"", async () => {
+  const result = await AnnotationFactory.create().catch((error) => {
+    throw error;
+  });
 
-        expect(data.stateModel).toBeNull();
+  expect(result.data.stateModel).toBeNull();
+  expect(result.data.state).toBeNull();
 
-        expect(data.state).toBeNull();
+  done();
+});
 
-        done();
-
-      }, done.fail);",2021-04-17 16:23:40
+it(""should correctly parse state model and state when defined"", async function (done) {
+  try {
+    const result = await AnnotationFactory.create();
+    expect(result.data.stateModel).not.toBeNull();
+    expect(result.data.state).not.toBeNull();
+    done();
+  } catch (error) {
+    done.fail(error);
+  }
+});
+```",2021-04-17 16:23:40
 "render(process.argv[2] || '/')
 
   .then(html => console.log(html))
@@ -248,19 +308,19 @@ Note that I've removed the `Thenable` types and the `resolveCompletionItem` func
     process.exit(1)
 
   })
-","
-Here is the migrated code using async/await syntax:
-
-async function main() {
-  const html = await render(process.argv[2] || '/');
-  console.log(html);
-  await handleError((err) => {
+","```javascript
+async function renderPage() {
+  try {
+    const html = await render(process.argv[2] || '/');
+    console.log(html);
+  } catch (err) {
     console.error(err);
     process.exit(1);
-  });
+  }
 }
 
-Note: The `await` keyword is used to pause the execution of the function until the promise is resolved or rejected. In this case, we're using `await` to wait for the `render` function to complete and return the HTML content.",2020-11-03 20:26:27
+renderPage();
+```",2020-11-03 20:26:27
 "      ModelA.create({ name: 'model-A' }, function(error, toyA) {
 
         assert.ifError(error);
@@ -328,50 +388,40 @@ Note: The `await` keyword is used to pause the execution of the function until t
         });
 
       }
-","
-Here is the migrated code using async/await syntax:
-```
-const { ModelA, ModelB, Parent } = require('./models');
-
-async function main() {
+","```javascript
+async function createAndTest() {
   try {
     const toyA = await ModelA.create({ name: 'model-A' });
     const toyB = await ModelB.create({ name: 'model-B' });
 
     const doc = await Parent.create({
       children: [
-        {
-          name: 'Child 1',
-          toy: { kind: 'Test1', value: toyA._id }
-        },
-        {
-          name: 'Child 2'
-        },
-        {
-          name: 'Child 3',
-          toy: { kind: 'Test2', value: toyB._id }
-        }
+        { name: 'Child 1', toy: { kind: 'Test1', value: toyA._id } },
+        { name: 'Child 2' },
+        { name: 'Child 3', toy: { kind: 'Test2', value: toyB._id } }
       ]
     });
 
-    await doc.populate('children.toy.value').then(function(doc) {
-      assert.equal(doc.children[0].toy.value.name, 'model-A');
-      assert.equal(doc.children[1].toy.value, null);
-      assert.equal(doc.children[2].toy.value.name, 'model-B');
-      done();
-    }).catch(done);
+    await test(doc._id);
   } catch (error) {
-    console.error(error);
+    assert.ifError(error);
   }
 }
 
-main()
-  .then(function() {
-    console.log('done');
-  })
-  .catch(function(error) {
-    console.error(error);
-  });
+async function test(id) {
+  try {
+    const doc = await Parent.findById(id);
+
+    const populatedDoc = await doc.populate('children.toy.value');
+    assert.equal(populatedDoc.children[0].toy.value.name, 'model-A');
+    assert.equal(populatedDoc.children[1].toy.value, null);
+    assert.equal(populatedDoc.children[2].toy.value.name, 'model-B');
+
+    done();
+  } catch (error) {
+    done(error);
+  }
+}
 ```",2023-02-08 19:49:02
 "        libraryLoader.requireLibrary(libraryLoader.SORTABLE).then(() => {
 
@@ -392,26 +442,23 @@ main()
                 handle: '.handle',
 
                 animation: 150
-","Here is the migrated code using async/await syntax:
-```
-async function libraryLoader() {
-  const result = await libraryLoader.requireLibrary(""SORTABLE"");
-  if (result) {
-    const widgetsEnabled = this.$widgetsEnabled[0];
-    const widgetsDisabled = this.$widgetsDisabled[0];
-    
-    await new Sortable(widgetsEnabled, {
-      group: ""widgets"",
-      handle: "".handle"",
-      animation: 150
-    });
-    
-    await new Sortable(widgetsDisabled, {
-      group: ""widgets"",
-      handle: "".handle"",
-      animation: 150
-    });
-  }
+","```javascript
+async libraryLoader.requireLibrary(libraryLoader.SORTABLE) {
+    try {
+        new Sortable(this.$widgetsEnabled[0], {
+            group: 'widgets',
+            handle: '.handle',
+            animation: 150,
+        });
+
+        new Sortable(this.$widgetsDisabled[0], {
+            group: 'widgets',
+            handle: '.handle',
+            animation: 150
+        });
+    } catch (error) {
+        console.error(error);
+    }
 }
 ```",2019-08-22 20:14:01
 "module.exports = (req, res) => {
@@ -439,28 +486,24 @@ async function libraryLoader() {
     res.end('Error: ' + err)
 
   })
-","
-Here is the migrated code using async/await syntax:
-
+","```javascript
 module.exports = async (req, res) => {
-
-  const start = await process.hrtime()
+  const start = process.hrtime()
 
   try {
-    const html = await render(req.url);
+    const html = await render(req.url)
+    const end = process.hrtime(start)
+    const time = ((end[0] * 1e9) + end[1]) / 1e6
+
+    // @ts-ignore
+    res.setHeader('X-Nuxt-Coldstart', global._coldstart + 'ms')
+    res.setHeader('X-Nuxt-Responsetime', time + 'ms')
   } catch (err) {
-    console.error(err);
-    res.end('Error: ' + err);
+    console.error(err)
+    res.end('Error: ' + err)
   }
-
-  const end = await process.hrtime(start);
-  const time = ((end[0] * 1e9) + end[1]) / 1e6;
-
-  // @ts-ignore
-  res.setHeader('X-Nuxt-Coldstart', global._coldstart + 'ms');
-  res.setHeader('X-Nuxt-Responsetime', time + 'ms');
-
-}.",2020-11-03 20:26:27
+}
+```",2020-11-03 20:26:27
 "      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -490,13 +533,10 @@ module.exports = async (req, res) => {
       }, done.fail);
 
       function (done) {
-","
-Here is the migrated code using async/await syntax:
-
-```
-async function migration() {
+","```javascript
+async function test() {
   try {
-    const data = await AnnotationFactory.create();
+    const { data } = await AnnotationFactory.create();
     
     expect(data.annotationType).toEqual(AnnotationType.LINK);
     
@@ -505,11 +545,17 @@ async function migration() {
     expect(data.unsafeUrl).toBeUndefined();
     
     expect(data.dest).toEqual([
+      
       { num: 17, gen: 0 },
+      
       { name: ""XYZ"" },
+      
       0,
+      
       841.89,
-      null
+      
+      null,
+      
     ]);
     
     done();
@@ -517,6 +563,8 @@ async function migration() {
     done.fail(error);
   }
 }
+
+test();
 ```",2021-04-17 16:23:40
 "  getPageDict(pageIndex) {
 
@@ -669,80 +717,157 @@ async function migration() {
     next();
 
     return capability.promise;
-","
-Here is the migrated code using async/await syntax:
-```javascript
-const getPageDict = async (pageIndex) => {
+","```javascript
+getPageDict(pageIndex) {
+
   const capability = createPromiseCapability();
 
-  function next() {
+  async function next() {
+
     while (nodesToVisit.length) {
+
       const currentNode = nodesToVisit.pop();
 
       if (isRef(currentNode)) {
+
         count = pageKidsCountCache.get(currentNode);
 
+        // Skip nodes where the page can't be.
+
         if (count > 0 && currentPageIndex + count < pageIndex) {
+
           currentPageIndex += count;
+
           continue;
+
         }
 
-        try {
-          const obj = await xref.fetchAsync(currentNode);
+        const obj = await xref.fetchAsync(currentNode);
+        if (isDict(obj, 'Page') || (isDict(obj) && !obj.has('Kids'))) {
 
-          if (isDict(obj, 'Page') || (isDict(obj) && !obj.has('Kids'))) {
-            if (pageIndex === currentPageIndex) {
+          if (pageIndex === currentPageIndex) {
+
+            // Cache the Page reference, since it can *greatly* improve
+
+            // performance by reducing redundant lookups in long documents
+
+            // where all nodes are found at *one* level of the tree.
+
+            if (currentNode && !pageKidsCountCache.has(currentNode)) {
+
               pageKidsCountCache.put(currentNode, 1);
+
             }
+
             capability.resolve([obj, currentNode]);
+
           } else {
-            nodesToVisit.push(obj);
-            next();
+
+            currentPageIndex++;
+
+            await next();
+
           }
-        } catch (error) {
-          capability.reject(error);
           return;
-        }
-      } else if (!isDict(currentNode)) {
-        capability.reject(new FormatError('Page dictionary kid reference points to wrong type of object.'));
+
+        nodesToVisit.push(obj);
+
+        await next();
+
+      // Must be a child page dictionary.
+
+      if (!isDict(currentNode)) {
+
+        capability.reject(new FormatError(
+
+          'Page dictionary kid reference points to wrong type of object.'));
+
         return;
+
       }
 
       count = currentNode.get('Count');
 
       if (Number.isInteger(count) && count >= 0) {
+
+        // Cache the Kids count, since it can reduce redundant lookups in
+
+        // documents where all nodes are found at *one* level of the tree.
+
         const objId = currentNode.objId;
 
         if (objId && !pageKidsCountCache.has(objId)) {
+
           pageKidsCountCache.put(objId, count);
+
         }
 
+        // Skip nodes where the page can't be.
+
         if (currentPageIndex + count <= pageIndex) {
+
           currentPageIndex += count;
+
           continue;
-        }
 
         const kids = currentNode.get('Kids');
 
         if (!Array.isArray(kids)) {
-          capability.reject(new FormatError('Page dictionary kids object is not an array.'));
+
+          // Prevent errors in corrupt PDF documents that violate the
+
+          // specification by *inlining* Page dicts directly in the Kids
+
+          // array, rather than using indirect objects (fixes issue9540.pdf).
+
+          if (isName(currentNode.get('Type'), 'Page') ||
+
+              (!currentNode.has('Type') && currentNode.has('Contents'))) {
+
+            if (currentPageIndex === pageIndex) {
+
+              capability.resolve([currentNode, null]);
+
+              return;
+
+            }
+
+            currentPageIndex++;
+
+            continue;
+
+
+
+          capability.reject(new FormatError(
+
+            'Page dictionary kids object is not an array.'));
+
           return;
-        }
+
+        // Always check all `Kids` nodes, to avoid getting stuck in an empty
+
+        // node further down in the tree (see issue5644.pdf, issue8088.pdf),
+
+        // and to ensure that we actually find the correct `Page` dict.
 
         for (let last = kids.length - 1; last >= 0; last--) {
+
           nodesToVisit.push(kids[last]);
+
+        } catch (error) {
+          capability.reject(error);
         }
-      } else {
+
+    try {
+      await next();
+    } catch (error) {
+      if (error.message === `Page index ${pageIndex} not found.`) {
         capability.reject(new Error(`Page index ${pageIndex} not found.`));
-        return;
       }
     }
 
-    capability.reject(new Error('No valid page dictionary found.'));
-  }
+  return capability.promise;
 
-  return getPageDict(pageIndex);
-};
 ```",2019-11-04 15:02:08
 "  return hashPassword(newPlaintextPassword).then(hash => {
 
@@ -767,26 +892,33 @@ const getPageDict = async (pageIndex) => {
     Meteor.users.update({_id: user._id}, update);
 
   });
-","
-Here is the migrated code using the modern async/await syntax:
+","```javascript
+async function hashPasswordAndUpdateUser(newPlaintextPassword) {
+  const hash = await hashPassword(newPlaintextPassword);
+  
+  const update = {
+    $unset: {
+      'services.password.reset': 1
+    },
+    $set: {'services.password.bcrypt': hash}
+  };
 
-async function hashPassword(newPlaintextPassword) {
-  const hash = await bcrypt.hash(newPlaintextPassword, 10);
-  return hash;
+  if (options.logout) {
+    update.$unset['services.resume.loginTokens'] = 1;
+  }
+
+  try {
+    await Meteor.users.update({_id: user._id}, update);
+  } catch (error) {
+    // Handle error
+  }
 }
 
-const update = {
-  $unset: {
-    'services.password.reset': 1
-  },
-  $set: {'services.password.bcrypt': await hashPassword(newPlaintextPassword)}
-};
-
-if (options.logout) {
-  update.$unset['services.resume.loginTokens'] = 1;
-}
-
-await Meteor.users.update({_id: user._id}, update);",2022-08-26 18:53:40
+// Call the async function
+hashPasswordAndUpdateUser(newPlaintextPassword).catch((error) => {
+  // Handle promise rejection
+});
+```",2022-08-26 18:53:40
 " * @template {Options} Opts
 
  * @param {Opts} opts
@@ -870,47 +1002,83 @@ function _resolveConfig(filePath, opts, sync) {
 const resolveConfig = (filePath, opts) => _resolveConfig(filePath, opts, false);
 
 resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
-","Here is the migrated code using async/await syntax:
-```
-function getExplorer(opts) {
-  return async () => {
-    // Normalize opts before passing to a memoized function
-    opts = { sync: false, cache: false, ...opts };
-    const result = await getExplorerMemoized(opts);
-    if (!result) {
+","```javascript
+/**
+ * @template {Options} Opts
+ */
+
+/**
+ * @param {Opts} opts
+ * @return {Opts[""sync""] extends true ? SyncExplorer : Explorer}
+ */
+async function getExplorer(opts) {
+  // Normalize opts before passing to a memoized function
+  opts = { sync: false, cache: false, ...opts };
+
+  return await getExplorerMemoized(opts);
+}
+
+/**
+ * 
+ * @param {*} filePath
+ * @param {*} opts
+ * @param {*} sync
+ * @returns {[any, any]}
+ */
+async function _resolveConfig(filePath, opts, sync) {
+  sync = Boolean(sync);
+
+  const arr = [];
+
+  const unwrapAndMerge = async ([result, editorConfigured]) => {
+    const merged = {
+      ...editorConfigured,
+      ...mergeOverrides(result, filePath),
+    };
+
+    for (const optionName of [""plugins"", ""pluginSearchDirs""]) {
+      if (Array.isArray(merged[optionName])) {
+        merged[optionName] = merged[optionName].map((value) =>
+          typeof value === ""string"" && value.startsWith(""."") // relative path
+            ? path.resolve(path.dirname(result.filepath), value)
+            : value,
+        );
+      }
+    }
+
+    if (!result && !editorConfigured) {
       return null;
     }
-    // We are not using this option
-    delete result.insertFinalNewline;
-    return result;
+
+    delete merged.insertFinalNewline;
+
+    return merged;
   };
-}
 
-function _resolveConfig(filePath, opts, sync) {
-  const [result, editorConfigured] = await Promise.all([
-    resolveOpts(filePath, opts),
-    loadEditorConfig(filePath, opts),
-  ]);
-  if (!result || !editorConfigured) {
-    return null;
-  }
-  const merged = { ...editorConfigured };
-  for (const optionName of [""plugins"", ""pluginSearchDirs""]) {
-    if (Array.isArray(merged[optionName])) {
-      merged[optionName] = merged[optionName].map((value) => {
-        if (typeof value === ""string"" && value.startsWith(""."")) {
-          return path.resolve(path.dirname(result.filepath), value);
-        }
-        return value;
-      });
+  try {
+    if (loadOpts.sync) {
+      const result = await unwrapAndMerge(arr);
+      return result;
+    } else {
+      const results = await Promise.all(arr);
+      const result = await unwrapAndMerge(results);
+      return result;
     }
+  } catch (error) {
+    throw error;
   }
-  delete merged.insertFinalNewline;
-  return merged;
 }
 
-const resolveConfig = (filePath, opts) => _resolveConfig(filePath, opts, false);
-resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
+/**
+ * @param {*} filePath
+ * @param {*} opts
+ */
+async function resolveConfig(filePath, opts) {
+  _resolveConfig(filePath, opts, false);
+}
+
+resolveConfig.sync = async (filePath, opts) => _resolveConfig(filePath, opts, true);
+
 ```",2022-05-05 11:15:08
 "  it('eachAsync() with parallel > numDocs (gh-8422)', function() {
 
@@ -961,42 +1129,52 @@ resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
       assert.deepEqual(docs.map(d => d.order), [1, 2, 3]);
 
     });
-","
-Here is the migrated code using async/await syntax:
-```
+","```javascript
 it('eachAsync() with parallel > numDocs (gh-8422)', async function() {
 
-  const movie = await Movie.deleteMany([]);
+  await Movie.deleteMany({});
 
-  const movies = await Movie.create([
+  await Movie.create([
+
     { name: 'Kickboxer' },
+
     { name: 'Ip Man' },
+
     { name: 'Enter the Dragon' }
+
   ]);
 
   let numDone = 0;
 
-  const test = async () => {
-    await new Promise(resolve => setTimeout(resolve, 100));
+  const test = async function() {
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     ++numDone;
+
   };
 
-  const cursor = await Movie.find().cursor();
-  await cursor.eachAsync(test, { parallel: 4 });
+  for await (const _ of Movie.find().cursor().eachAsync(test, { parallel: 4 })) {}
+
   assert.equal(numDone, 3);
 
-});
+})
 
 it('eachAsync() with sort, parallel, and sync function (gh-8557)', async function() {
 
-  const users = await User.create([{ order: 1 }, { order: 2 }, { order: 3 }]);
+  await User.create([{ order: 1 }, { order: 2 }, { order: 3 }]);
 
-  const cursor = await User.aggregate([{ $sort: { order: 1 } }]).cursor();
+  const cursor = User.aggregate([{ $sort: { order: 1 } }]).
+
+    cursor();
+
   const docs = [];
-  await cursor.eachAsync((doc) => docs.push(doc), { parallel: 3 });
+
+  for await (const doc of cursor.eachAsync((doc) => docs.push(doc), { parallel: 3 })) {}
+
   assert.deepEqual(docs.map(d => d.order), [1, 2, 3]);
 
-});
+})
 ```",2021-08-29 21:23:24
 "  it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)', function() {
 
@@ -1005,26 +1183,38 @@ it('eachAsync() with sort, parallel, and sync function (gh-8557)', async functio
       assert.equal(err.name, 'MongooseServerSelectionError');
 
     });
-","
-Here is the migrated code using async/await syntax:
-
-it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)', async function() {
-
+","```javascript
+it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)', async () => {
   try {
-    const connection = await mongoose.createConnection(uri, opts);
-    assert.ok(false); // will throw an error
+    await mongoose.createConnection(uri, opts);
+    assert.ok(false);
   } catch (err) {
+    if (!(err instanceof Error)) throw err;
     assert.equal(err.name, 'MongooseServerSelectionError');
-  }",2023-02-01 20:02:31
+  }
+});
+```",2023-02-01 20:02:31
 "    }).then(done);
 
   it(""performs a normal search and finds the previous result"", function (done) {
 
     testSearch({
-","    })
-      .then((result) => done())
-      .catch((error) => done(error));
-});",2021-01-12 14:21:19
+","```javascript
+async function testSearch(searchData) {
+  const result = await someFunction(searchData);
+  done();
+}
+
+it(""performs a normal search and finds the previous result"", async () => {
+  try {
+    const searchData = {};
+    const result = await someFunction(searchData);
+    // ... rest of the code
+  } catch (error) {
+    expect(error).toBeNull(); // replace with actual error handling logic
+  }
+});
+```",2021-01-12 14:21:19
 "	public provideCodeActions(model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken): Promise<monaco.languages.CodeActionList> {
 
 		return this._worker(resource).then(worker => {
@@ -1068,26 +1258,26 @@ it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)'
 				dispose: () => { }
 
 			};
-","
-Here is the migrated code using async/await syntax:
-```
-const provideCodeActions = async (model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken) => {
-  try {
-    const worker = await this._worker(resource);
-    
+","```javascript
+public async provideCodeActions(model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken): Promise<monaco.languages.CodeActionList> {
+
+    let worker = await this._worker(resource);
+
     const start = this._positionToOffset(resource, { lineNumber: range.startLineNumber, column: range.startColumn });
-    
     const end = this._positionToOffset(resource, { lineNumber: range.endLineNumber, column: range.endColumn });
-    
-    const formatOptions = await FormatHelper._convertOptions(model.getOptions());
-    
+
+    const formatOptions = FormatHelper._convertOptions(model.getOptions());
     const errorCodes = context.markers.filter(m => m.code).map(m => m.code).map(Number);
-    
-    return await worker.getCodeFixesAtPosition(resource.toString(), start, end, errorCodes, formatOptions);
-  } catch (error) {
-    return { actions: [], dispose: () => { } };
-  }
-};
+
+    try {
+        const codeFixes = await worker.getCodeFixesAtPosition(resource.toString(), start, end, errorCodes, formatOptions);
+        const filteredCodeFixes = codeFixes.filter(fix => fix.changes.filter(change => change.isNewFile).length === 0);
+        const result = filteredCodeFixes.map(fix => this._tsCodeFixActionToMonacoCodeAction(model, context, fix));
+        return { actions: result, dispose: () => {} };
+    } catch (error) {
+        console.error(error); // handle error
+    }
+}
 ```",2019-12-20 18:47:49
 "      AnnotationFactory.create(
 
@@ -1194,65 +1384,65 @@ const provideCodeActions = async (model: monaco.editor.ITextModel, range: Range,
         .catch(done.fail);
 
     it(""should render checkboxes for printing using normal appearance"", function (done) {
-","      Here is the migrated code using the modern async/await syntax:
+","```javascript
+it(""should render checkboxes for printing using normal appearance"", async function (done) {
+  AnnotationFactory.create()
 
-      AnnotationFactory.create()
-        .then(annotation => {
-          const annotationStorage = new Map();
+    .then(async annotation => {
+      const annotationStorage = new Map();
+      annotationStorage.set(annotation.data.id, { value: true });
 
-          return Promise.all([
-            annotation,
-            annotation.getOperatorList(
-              partialEvaluator,
-              task,
-              false,
-              annotationStorage
-            ),
-          ]);
-        })
-        .then(([annotation, opList]) => {
-          expect(opList.argsArray.length).toEqual(3);
+      [annotation, opList] = await Promise.all([
+        annotation,
+        annotation.getOperatorList(
+          partialEvaluator,
+          task,
+          false,
+          annotationStorage
+        ),
+      ]);
 
-          expect(opList.fnArray).toEqual([
-            OPS.beginAnnotation,
-            OPS.setFillRGBColor,
-            OPS.endAnnotation,
-          ]);
+      expect(opList.argsArray.length).toEqual(3);
+      expect(opList.fnArray).toEqual([
+        OPS.beginAnnotation,
+        OPS.setFillRGBColor,
+        OPS.endAnnotation,
+      ]);
+      expect(opList.argsArray[1]).toEqual(
+        new Uint8ClampedArray([26, 51, 76])
+      );
+    })
 
-          expect(opList.argsArray[1]).toEqual(new Uint8ClampedArray([26, 51, 76]));
+    .then(async () => {
+      const annotationStorage = new Map();
+      annotationStorage.set(annotation.data.id, { value: true });
 
-          return annotation;
-        })
-        .then(annotation => {
-          const annotationStorage = new Map();
+      opList = await annotation.getOperatorList(
+        partialEvaluator,
+        task,
+        false,
+        annotationStorage
+      );
 
-          return annotation.getOperatorList(
-            partialEvaluator,
-            task,
-            false,
-            annotationStorage
-          );
-        })
-        .then((opList) => {
-          expect(opList.argsArray.length).toEqual(3);
+      expect(opList.argsArray.length).toEqual(3);
+      expect(opList.fnArray).toEqual([
+        OPS.beginAnnotation,
+        OPS.setFillRGBColor,
+        OPS.endAnnotation,
+      ]);
+      expect(opList.argsArray[1]).toEqual(
+        new Uint8ClampedArray([26, 51, 76])
+      );
+    })
 
-          expect(opList.fnArray).toEqual([
-            OPS.beginAnnotation,
-            OPS.setFillRGBColor,
-            OPS.endAnnotation,
-          ]);
-
-          expect(opList.argsArray[1]).toEqual(new Uint8ClampedArray([26, 51, 76]));
-
-          done();
-        })
-        .catch((error) => {
-          done.fail(error);
-        });
-
-    }
-
-Note that the `then` method is used to handle the promises returned by `AnnotationFactory.create()` and `annotation.getOperatorList()`. The `async/await` syntax is used to make the code look more synchronous and easier to read, while still allowing for asynchronous operations to take place.",2021-04-17 16:23:40
+    .then(() => {
+      done();
+    })
+    .catch(error => {
+      done.fail(error);
+    });
+});
+```",2021-04-17 16:23:40
 "      AnnotationFactory.create(
 
       )
@@ -1296,20 +1486,23 @@ Note that the `then` method is used to handle the promises returned by `Annotati
 
 
     it(""should save choice"", function (done) {
-","      Sure! Here is the migrated code using the modern async/await syntax:
+","```javascript
+async function testAnnotation() {
+  try {
+    const annotation = await AnnotationFactory.create();
+    const annotationStorage = new Map();
+    annotationStorage.set(annotation.data.id, { value: ""a value"" });
 
-      AnnotationFactory.create()
-        .then(annotation => {
-          const annotationStorage = new Map();
-          annotationStorage.set(annotation.data.id, ""a value"");
-          return annotation._getAppearance(partialEvaluator, task, annotationStorage);
-        })
-        .then(appearance => {
-          expect(appearance).toEqual(""/Tx BMC q BT /Helv 5 Tf 1 0 0 1 0 0 Tm"" +
-            "" 2.00 2.00 Td (a value) Tj ET Q EMC"");
-          done();
-        })
-        .catch(done.fail);",2021-04-17 16:23:40
+    const appearance = await annotation._getAppearance(partialEvaluator, task, annotationStorage);
+    expect(appearance).toEqual(""/Tx BMC q BT /Helv 5 Tf 1 0 0 1 0 0 Tm 2.00 2.00 Td (a value) Tj ET Q EMC"");
+    done();
+  } catch (error) {
+    done.fail(error);
+  }
+}
+
+testAnnotation();
+```",2021-04-17 16:23:40
 "    it(""should handle unknown text alignment, maximum length and flags"", function (done) {
 
       AnnotationFactory.create(
@@ -1341,30 +1534,27 @@ Note that the `then` method is used to handle the promises returned by `Annotati
 
 
     it(""should not set invalid text alignment, maximum length and flags"", function (done) {
-","```
+","```javascript
 it(""should handle unknown text alignment, maximum length and flags"", async () => {
+  const result = await AnnotationFactory.create();
+  expect(result.data.annotationType).toEqual(AnnotationType.WIDGET);
+  expect(result.data.textAlignment).toEqual(null);
+  expect(result.data.maxLen).toEqual(null);
+  expect(result.data.readOnly).toEqual(false);
+  expect(result.data.hidden).toEqual(false);
+  expect(result.data.multiLine).toEqual(false);
+  expect(result.data.comb).toEqual(false);
+  expect(result.data.defaultFieldValue).toEqual(""foo"");
+});
 
-      const data = await AnnotationFactory.create();
-
-      expect(data.annotationType).toEqual(AnnotationType.WIDGET);
-
-      expect(data.textAlignment).toBeUndefined();
-
-      expect(data.maxLen).toBeUndefined();
-
-      expect(data.readOnly).toBeFalsy();
-
-      expect(data.hidden).toBeFalsy();
-
-      expect(data.multiLine).toBeFalsy();
-
-      expect(data.comb).toBeFalsy();
-
-      expect(data.defaultFieldValue).toEqual(""foo"");
-
-      done();
-
-    });
+it(""should not set invalid text alignment, maximum length and flags"", async () => {
+  try {
+    const result = await AnnotationFactory.create();
+    // Add your assertions here
+  } catch (error) {
+    fail(error);
+  }
+});
 ```",2021-04-17 16:23:40
 "      AnnotationFactory.create(
 
@@ -1379,12 +1569,14 @@ it(""should handle unknown text alignment, maximum length and flags"", async () 
       }, done.fail);
 
     it(""should parse IRT/RT for a group type"", function (done) {
-","```
-AnnotationFactory.createAsync().then(({ data }) => {
+","```javascript
+it(""should parse IRT/RT for a group type"", async function(done) {
+  const { data } = await AnnotationFactory.create().catch(error => done.fail(error));
+  
   expect(data.inReplyTo).toEqual(annotationRef.toString());
   expect(data.replyType).toEqual(""R"");
   done();
-}).catch(done.fail);
+});
 ```",2021-04-17 16:23:40
 "    it('updateOne()', function(done) {
 
@@ -1543,86 +1735,120 @@ AnnotationFactory.createAsync().then(({ data }) => {
       });
 
 
-","Here is the migrated code using the modern async/await syntax:
-```
-async it('updateOne()', function(done) {
-  const created = await BlogPost.create({ title: 'interoperable update as promise' });
+","```javascript
+describe('updateOne()', async () => {
+  it('should update a document', async () => {
+    const created = await BlogPost.create({ title: 'interoperable update as promise' });
+    assert.ifError(created.err);
 
-  const query = await BlogPost.updateOne({ title: 'interoperable update as promise' }, { title: 'interoperable update as promise delta' });
+    const query = BlogPost.updateOne({ title: 'interoperable update as promise' }, { title: 'interoperable update as promise delta' });
+    const result = await query.exec();
+    assert.ifError(result.err);
 
-  assert.ifError(query.err);
+    assert.equal(result.matchedCount, 1);
+    assert.equal(result.modifiedCount, 1);
 
-  assert.equal(query.res.matchedCount, 1);
-
-  assert.equal(query.res.modifiedCount, 1);
-
-  const count = await BlogPost.count({ title: 'interoperable update as promise delta' });
-
-  assert.ifError(count.err);
-
-  assert.equal(count.count, 1);
-
-  done();
+    const count = await BlogPost.count({ title: 'interoperable update as promise delta' });
+    assert.ifError(count.err);
+    assert.equal(count, 1);
+  });
 });
 
-async it('findOne()', function(done) {
-  const created = await BlogPost.create({ title: 'interoperable findOne as promise' });
+describe('findOne()', async () => {
+  it('should find a document', async () => {
+    const created = await BlogPost.create({ title: 'interoperable findOne as promise' });
+    assert.ifError(created.err);
 
-  const query = await BlogPost.findOne({ title: 'interoperable findOne as promise' });
-
-  assert.ifError(query.err);
-
-  assert.equal(query.res.id, created.id);
-
-  done();
+    const query = BlogPost.findOne({ title: 'interoperable findOne as promise' });
+    const found = await query.exec();
+    assert.ifError(found.err);
+    assert.equal(found.id, created.id);
+  });
 });
 
-async it('find()', function(done) {
-  const createdOne = await BlogPost.create({ title: 'interoperable find as promise' });
-  const createdTwo = await BlogPost.create({ title: 'interoperable find as promise2' });
+describe('find()', async () => {
+  it('should find multiple documents', async () => {
+    const [createdOne, createdTwo] = await BlogPost.create({
+      title: 'interoperable find as promise',
+      _id: new mongoose.Types.ObjectId(),
+    }, {
+      title: 'interoperable find as promise',
+      _id: new mongoose.Types.ObjectId(),
+    });
+    assert.ifError(createdOne.err);
+    assert.ifError(createdTwo.err);
 
-  const query = await BlogPost.find({ title: 'interoperable find as promise' }).sort('_id');
+    const query = BlogPost.find({ title: 'interoperable find as promise' }).sort('_id');
+    const found = await query.exec();
+    assert.ifError(found.err);
+    assert.equal(found.length, 2);
 
-  assert.ifError(query.err);
+    const ids = {};
+    ids[String(found[0]._id)] = 1;
+    ids[String(found[1]._id)] = 1;
 
-  assert.equal(query.res.length, 2);
-
-  const IDs = {};
-
-  IDs[String(createdOne._id)] = 1;
-
-  IDs[String(createdTwo._id)] = 1;
-
-  assert.ok(IDs[String(createdOne._id)]);
-
-  assert.ok(IDs[String(createdTwo._id)]);
-
-  done();
+    assert.ok(String(createdOne._id) in ids);
+    assert.ok(String(createdTwo._id) in ids);
+  });
 });
 
-async it.skip('count()', function(done) {
-  const created = await BlogPost.create({ title: 'interoperable count as promise' });
+describe('op can be changed', async () => {
+  it('should update the operation type', async () => {
+    const title = 'interoperable update as promise';
+    const created = await BlogPost.create({ title });
+    assert.ifError(created.err);
 
-  const query = await BlogPost.count({ title: 'interoperable count as promise2' });
-
-  assert.ifError(query.err);
-
-  assert.equal(query.count, 1);
-
-  done();
+    const query = BlogPost.count({ title });
+    let result;
+    try {
+      result = await query.exec();
+      if (result) {
+        const updatedQuery = BlogPost.findOne({ title: 'interoperable findOne as promise' });
+        const updatedResult = await updatedQuery.exec();
+        assert.ifError(updatedResult.err);
+        assert.equal(updatedResult.id, created.id);
+      }
+    } catch (err) {
+      done(err);
+    }
+  });
 });
 
-async it.skip('update()', function(done) {
-  const created = await BlogPost.create({ title: 'interoperable update as promise2' });
+describe('count()', async () => {
+  it('should count documents', async () => {
+    const created = await BlogPost.create({ title: 'interoperable count as promise 2' });
+    assert.ifError(created.err);
 
-  const query = await BlogPost.update({ title: 'interoperable update as promise delta 2' }, { title: 'interoperable update as promise delta 3' });
-
-  assert.ifError(query.err);
-
-  done();
+    const query = BlogPost.count({ title: 'interoperable count as promise 2' });
+    let count;
+    try {
+      count = await query.exec();
+      assert.equal(count, 1);
+    } catch (err) {
+      done(err);
+    }
+  });
 });
-```
-Note that I have removed the `done` function from the end of each `it` block, as it is not necessary in modern Jest syntax. Also, I have used the `async` and `await` keywords to make the code more concise and easier to read.",2023-02-07 17:39:03
+
+describe('update()', async () => {
+  it('should update documents', async () => {
+    const created = await BlogPost.create({ title: 'interoperable update as promise 2' });
+    assert.ifError(created.err);
+
+    const query = BlogPost.update({ title: 'interoperable update as promise 2' }, { title: 'interoperable update as promise delta 2' });
+    let result;
+    try {
+      await query.exec();
+      const countQuery = BlogPost.count({ title: 'interoperable update as promise delta 2' });
+      const countResult = await countQuery.exec();
+      assert.ifError(countResult.err);
+      assert.equal(countResult, 1);
+    } catch (err) {
+      done(err);
+    }
+  });
+});
+```",2023-02-07 17:39:03
 "  findMongoPids = function(dbDir_unused, port) {
 
     return new Promise((resolve, reject) => {
@@ -1952,47 +2178,149 @@ Note that I have removed the `done` function from the end of each `it` block, as
       );
 
     });
-","
-Here is the migrated code using async/await syntax:
-```javascript
-async function findMongoPids(dbDir, port) {
+","```javascript
+findMongoPids = async function(dbDir_unused, port) {
+
+  try {
+    const psScript = process.platform === 'darwin' ?
+      `
+        if type pgrep >/dev/null 2>&1; then 
+          pgrep -lf mongod; test ""$?"" -eq 0 -o ""$?"" -eq 1;
+        else ps ax; fi
+      ` :
+      'ps ax';
+
+    const {
+      LANG = 'en_US.UTF-8',
+      LC_ALL = LANG,
+      LANGUAGE = LANG,
+      ...env
+    } = process.env;
+
+    Object.assign(env, { LANG, LC_ALL, LANGUAGE });
+
+    const output = await child_process.execSync(psScript, {
+      env: { ...env },
+      maxBuffer: 1024 * 1024 * 10,
+    }).toString();
+
+    const ret = [];
+
+    output.split('\n')
+      .forEach(line => {
+        const m = line.match(/^\s*(\d+).+mongod .+--port (\d+) --dbpath (.+(?:\/|\\)db)/);
+
+        if (m && m.length === 4) {
+          const foundPid = parseInt(m[1], 10);
+          const foundPort = parseInt(m[2], 10);
+          const foundPath = m[3];
+
+          if ((port === undefined || port === foundPort) &&
+            (dbDir === undefined || dbDir === foundPath)) {
+
+            ret.push({
+              pid: foundPid,
+              port: foundPort,
+              dbDir: foundPath,
+            });
+          }
+        }
+      });
+
+    return ret;
+  } catch (error) {
+    throw new Error(""Couldn't run ps ax: "" + error);
+  }
+};
+
+findMongoPids = async function(dbDir, port) {
+
   try {
     // 'ps ax' should be standard across all MacOS and Linux.
+
     // However, ps on OS X corrupts some non-ASCII characters in arguments,
+
     // such as т (CYRILLIC SMALL LETTER TE), leading to this function
+
     // failing to properly match pathnames with those characters.  #3999
+
     //
+
     // pgrep appears to do a better job (and has output that is roughly
+
     // similar; it lacks a few fields that we don't care about).  Plus,
+
     // it can do some of the grepping for us.
+
     //
+
     // However, 'pgrep' only started shipping with OS X 10.8 (and may be less
+
     // common on Linux too), so we check to see if it exists and fall back to
+
     // 'ps' if we can't find it.
+
     //
+
     // We avoid using pgrep on Linux, because some versions of Linux pgrep
+
     // require you to pass -a/--list-full to include the arguments in the
+
     // output, and other versions fail if you pass that option. We have not
+
     // observed the Unicode corruption on Linux, so using ps ax there is fine.
-    const psScript = 'ps ax';
+
+    var psScript = 'ps ax';
+
     if (process.platform === 'darwin') {
-      psScript = `if type pgrep >/dev/null 2>&1; then \n  pgrep -lf mongod; test ""$?"" -eq 0 -o ""$?"" -eq 1; else \n  ps ax; fi`;
+
+      psScript =
+
+        'if type pgrep >/dev/null 2>&1; then ' +
+
+        // -lf means to display and match against full argument lists.
+
+        // pgrep exits 1 if no processes match the argument; we're OK
+
+        // considering this as a success, but we don't want other errors
+
+        // to be ignored.  Note that this is sh not bash, so we can't use
+
+        // [[.
+
+        'pgrep -lf mongod; test ""$?"" -eq 0 -o ""$?"" -eq 1;' +
+
+        'else ps ax; fi';
+
     }
-    const { LANG, LC_ALL, LANGUAGE } = process.env;
-    child_process.exec(psScript, { maxBuffer: 1024 * 1024 * 10 }, async (error, stdout, stderr) => {
-      if (error) {
-        reject(new Error('Couldn't run ps ax: ' + JSON.stringify(error)));
-        return;
-      }
+
+    try {
+      const output = await child_process.execSync(psScript, {
+        maxBuffer: 1024 * 1024 * 10,
+      }).toString();
+
       const ret = [];
-      stdout.split('\n')
+
+      output.split('\n')
         .forEach(line => {
+
+          // Matches mongos we start. Note that this matches
+
+          // 'fake-mongod' (our mongod stub for automated tests) as well
+
+          // as 'mongod'.
+
           const m = line.match(/^\s*(\d+).+mongod .+--port (\d+) --dbpath (.+(?:\/|\\)db)/);
+
           if (m && m.length === 4) {
+
             const foundPid = parseInt(m[1], 10);
             const foundPort = parseInt(m[2], 10);
             const foundPath = m[3];
-            if (!port || port === foundPort && !dbDir || dbDir === foundPath) {
+
+            if ((port === undefined || port === foundPort) &&
+              (dbDir === undefined || dbDir === foundPath)) {
+
               ret.push({
                 pid: foundPid,
                 port: foundPort,
@@ -2000,13 +2328,17 @@ async function findMongoPids(dbDir, port) {
               });
             }
           }
+
         });
-      resolve(ret);
-    });
+
+      return ret;
+    } catch (error) {
+      throw new Error(""Couldn't run ps ax: "" + error);
+    }
   } catch (error) {
-    reject(new Error('Error running findMongoPids: ' + error));
+    throw new Error(""Couldn't run ps ax: "" + error);
   }
-}
+};
 ```",2022-12-15 00:48:59
 "        server.put('options', opts).then(() => {
 
@@ -2023,17 +2355,22 @@ async function findMongoPids(dbDir, port) {
                 closeAfter: 2000
 
             })
-","
-Here is the migrated code using async/await syntax:
-
-server.put('options', opts).then(() => {
-    await toastService.showPersistent({
-        id: ""options-change-saved"",
-        title: ""Options status"",
-        message: ""Options change have been saved."",
-        icon: ""slider"",
-        closeAfter: 2000
-    });",2022-11-20 22:20:42
+","```javascript
+async function someAsyncFunction() {
+    try {
+        await server.put('options', opts);
+        toastService.showPersistent({
+            id: ""options-change-saved"",
+            title: ""Options status"",
+            message: ""Options change have been saved."",
+            icon: ""slider"",
+            closeAfter: 2000
+        });
+    } catch (error) {
+        // Handle error here, e.g., console.error(error);
+    }
+}
+```",2022-11-20 22:20:42
 "      return partialEvaluator
 
         .getOperatorList({
@@ -2207,64 +2544,116 @@ server.put('options', opts).then(() => {
       });
 
     });
-","
-Here is the migrated code using async/await syntax:
-```scss
-return partialEvaluator
-  .getOperatorList({
+","```javascript
+return async function () {
+  const opList = await partialEvaluator.getOperatorList({
     stream: contentStream,
-    task: task,
+    task,
     resources: this.resources,
     operatorList: opList,
-  })
-  .then(() => opList)
-  .catch(error => {
-    warn(`getOperatorList - ignoring annotation data during ""${task.name}"" task: ${error}.`);
-    return { opList: null, separateForm: false, separateCanvas: false };
   });
 
-const opListPromises = opList.map(annotation => {
-  return annotation
-    .getOperatorList(partialEvaluator, task, intent, annotationStorage)
-    .catch(error => {
-      warn(`getOperatorList - ignoring annotation data during ""${task.name}"" task: ${error}.`);
-      return { opList: null, separateForm: false, separateCanvas: false };
+  return Promise.all([])
+    .then(async ([pageOpList, annotations, newAnnotations]) => {
+      if (newAnnotations) {
+        annotations = annotations.filter(
+          a => !(a.ref && deletedAnnotations.has(a.ref))
+        );
+
+        for (let i = 0, ii = newAnnotations.length; i < ii; i++) {
+          const newAnnotation = newAnnotations[i];
+
+          if (newAnnotation.refToReplace) {
+            const j = annotations.findIndex(
+              a => a.ref && isRefsEqual(a.ref, newAnnotation.refToReplace)
+            );
+
+            if (j >= 0) {
+              annotations.splice(j, 1, newAnnotation);
+              newAnnotations.splice(i--, 1);
+              ii--;
+            }
+          }
+
+          annotations = annotations.concat(newAnnotations);
+
+          const length = annotations.length === 0 || (intent & RenderingIntentFlag.ANNOTATIONS_DISABLE)
+            ? pageOpList.totalLength
+            : await pageOpList.flush(true, { form: false, canvas: false });
+
+          return { length };
+        }
+      }
+
+      const renderForms = !!(intent & RenderingIntentFlag.ANNOTATIONS_FORMS),
+        isEditing = !!(intent & RenderingIntentFlag.IS_EDITING),
+        intentAny = !!(intent & RenderingIntentFlag.ANY),
+        intentDisplay = !!(intent & RenderingIntentFlag.DISPLAY),
+        intentPrint = !!(intent & RenderingIntentFlag.PRINT);
+
+      const opListPromises = [];
+
+      for (const annotation of annotations) {
+        if (
+          intentAny ||
+          (intentDisplay &&
+            annotation.mustBeViewed(annotationStorage, renderForms) &&
+            annotation.mustBeViewedWhenEditing(isEditing, modifiedIds)) ||
+          (intentPrint && annotation.mustBePrinted(annotationStorage))
+        ) {
+          opListPromises.push(
+            await annotation
+              .getOperatorList(partialEvaluator, task, intent, annotationStorage)
+              .catch((reason) => {
+                warn(
+                  ""getOperatorList - ignoring annotation data during `"" +
+                    `${task.name}"" task: ""${reason}"".`
+                );
+                return {
+                  opList: null,
+                  separateForm: false,
+                  separateCanvas: false,
+                };
+              })
+          );
+        }
+      }
+
+      const opLists = await Promise.all(opListPromises);
+
+      let form = false,
+        canvas = false;
+
+      for (const { opList, separateForm, separateCanvas } of opLists) {
+        pageOpList.addOpList(opList);
+        form ||= separateForm;
+        canvas ||= separateCanvas;
+      }
+
+      const length = await pageOpList.flush(true, { form, canvas });
+
+      return { length };
     });
-});
-
-return Promise.all(opListPromises)
-  .then(opLists => {
-    let form = false, canvas = false;
-    for (const { opList, separateForm, separateCanvas } of opLists) {
-      pageOpList.addOpList(opList);
-      form ||= separateForm;
-      canvas ||= separateCanvas;
-    }
-    pageOpList.flush(
-      /* lastChunk = */ true,
-      /* separateAnnots = */ { form, canvas }
-    );
-    return { length: pageOpList.totalLength };
-  });
-```
-Explanation:
-
-* The `return` statement at the end of the code has been removed, as it is not needed in this modern syntax.
-* The `opListPromises` array is created by mapping each annotation's `getOperatorList()` method to a promise.
-* The `Promise.all()` method is used to wait for all of the promises in the array to resolve.
-* The code inside the `catch` block has been refactored to use the `then` method instead, which allows for more concise error handling.
-* The `pageOpList.flush()` method has been moved out of the `catch` block and into the `then` method, where it is called with the correct `separateAnnots` object.",2025-03-17 12:20:51
+}
+```",2025-03-17 12:20:51
 "  parseAsync(argv, parseOptions) {
 
     this.parse(argv, parseOptions);
 
     return Promise.all(this._actionResults).then(() => this);
-","
-Here is the migrated code using async/await syntax:
-
-parseAsync(argv, parseOptions) {
+","```javascript
+async parseAsync(argv, parseOptions) {
   await this.parse(argv, parseOptions);
-  return Promise.all(this._actionResults).then(self => self);",2021-05-06 06:02:31
+  
+  try {
+    await Promise.all(this._actionResults);
+  } catch (error) {
+    // Handle error here
+  }
+  
+  return this;
+}
+```",2021-05-06 06:02:31
 "const { warn, error } = require('./util/log')
 
 program
@@ -2326,41 +2715,57 @@ creator
   })
 
   .catch(error)
-","Here is the migrated code using async/await syntax:
-```
+","```javascript
 const { warn, error } = require('./util/log')
 
-async program() {
+async function main() {
+  program
+
+    .usage('<app-name>')
+
+    .parse(process.argv)
+
+  const projectName = program.args[0]
+
+  if (!projectName) {
+
+    warn(`\n  Please provide an app name.`)
+
+    program.outputHelp()
+
+    process.exit(1)
+  }
+
+  const createGenerator = (id, requirePath = id) => ({
+    id,
+    apply: require(requirePath)
+  })
+
   try {
-    const projectName = await program.args[0];
-    
-    if (!projectName) {
-      warn(`Please provide an app name.`);
-      program.outputHelp();
-      process.exit(1);
-    }
-    
-    const createGenerator = async (id, requirePath = id) => ({
-      id,
-      apply: await require(requirePath)
-    });
-    
-    const builtInGenerators = await fs.readdirSync(path.resolve(__dirname, './generators')).filter(dir => dir.charAt(0) !== '.').map(id => createGenerator(id, `./generators/${id}`));
-    debug(builtInGenerators);
-    
-    const installedGenerators = await resolveInstalledGenerators().map(id => createGenerator(id));
-    
-    const targetDir = path.resolve(process.cwd(), projectName);
-    
-    const creator = new Creator(projectName, builtInGenerators.concat(installedGenerators));
-    
-    await creator.create(targetDir).then(() => {
-      // TO-DO: log instructions
-    }).catch(error);
-  } catch (error) {
-    error(error);
+    const builtInGenerators = await Promise.all(
+      fs
+        .readdirSync(path.resolve(__dirname, './generators'))
+        .filter(dir => dir.charAt(0) !== '.')
+        .map(id => createGenerator(id, `./generators/${id}`))
+    )
+
+    debug(builtInGenerators)
+
+    const installedGenerators = await Promise.all(resolveInstalledGenerators().map(id => createGenerator(id)))
+
+    const targetDir = path.resolve(process.cwd(), projectName)
+    const creator = new Creator(projectName, builtInGenerators.concat(installedGenerators))
+
+    await creator.create(targetDir)
+
+    // TODO: log instructions
+  } catch (err) {
+    error(err)
   }
 }
+
+main()
+
 ```",2017-12-28 18:06:17
 "  set(name, value) {
 
@@ -2405,33 +2810,42 @@ async program() {
       return this._writeToStorage(this.prefs);
 
     });
-","
-Here is the migrated code using async/await syntax:
+","```javascript
+async set(name, value) {
 
-async function set(name, value) {
   try {
-    if (name === undefined || value === undefined) {
-      throw new Error(""Set preference: either name or value is undefined."");
+    await this._initializedPromise;
+    
+    if (this.defaults[name] === undefined) {
+      throw new Error(`Set preference: ""${name}"" is undefined.`);
+    } else if (value === undefined) {
+      throw new Error('Set preference: no value is specified.');
     }
+
     let valueType = typeof value;
     let defaultType = typeof this.defaults[name];
+
     if (valueType !== defaultType) {
-      if (valueType === ""number"" && defaultType === ""string"") {
-        value = await convertNumberToString(value);
+      if (valueType === 'number' && defaultType === 'string') {
+        value = value.toString();
       } else {
         throw new Error(`Set preference: ""${value}"" is a ${valueType}, ` +
-                          `expected a ${defaultType}.`);
+                        `expected a ${defaultType}.`);
       }
-      if (valueType === ""number"" && !Number.isInteger(value)) {
+
+      if (valueType === 'number' && !Number.isInteger(value)) {
         throw new Error(`Set preference: ""${value}"" must be an integer.`);
       }
-    }
+
     this.prefs[name] = value;
+    
     return await this._writeToStorage(this.prefs);
+
   } catch (error) {
-    console.error(""Error setting preference:"", error);
+    // Handle error as needed
   }
-}",2018-07-30 14:48:16
+}
+```",2018-07-30 14:48:16
 "      const result = XfaLayer.render(parameters);
 
       return Promise.resolve(result);
@@ -2487,12 +2901,11 @@ async function set(name, value) {
         console.error(error);
 
       });
-","
-Here is the migrated code using async/await syntax:
-```
-const result = await XfaLayer.render(parameters);
-
-return Promise.resolve(result);
+","```javascript
+async function render() {
+  const result = await XfaLayer.render(parameters);
+  return Promise.resolve(result);
+}
 
 return this.pdfPage
   .getXfa()
@@ -2500,17 +2913,20 @@ return this.pdfPage
     if (this._cancelled || !xfaHtml) {
       return { textDivs: [] };
     }
+
     const parameters = {
-      viewport: await viewport.clone({ dontFlip: true }),
+      viewport: viewport.clone({ dontFlip: true }),
       div: this.div,
       xfaHtml,
       annotationStorage: this.annotationStorage,
       linkService: this.linkService,
       intent,
     };
+
     if (this.div) {
-      return await XfaLayer.update(parameters);
+      return XfaLayer.update(parameters);
     }
+
     // Create an xfa layer div and render the form
     this.div = document.createElement(""div"");
     this.pageDiv.append(this.div);
@@ -2592,71 +3008,63 @@ function loadNote(noteId, callback) {
         callback(note);
 
     });
-","Here is the migrated code using async/await syntax:
-```
+","```javascript
 async function loadNoteToEditor(noteId) {
   try {
-    const note = await $.get(baseApiUrl + 'notes/' + noteId);
-
-    globalCurrentNote = note;
-
+    const response = await $.get(baseApiUrl + 'notes/' + noteId);
+    const globalCurrentNote = response;
     globalCurrentNoteLoadTime = Math.floor(new Date().getTime() / 1000);
 
     if (newNoteCreated) {
       newNoteCreated = false;
 
-      await $(""#note-title"").focus().select();
+      $(""#note-title"").focus().select();
+
     }
 
-    await handleEncryption(note.detail.encryption > 0, false, () => {
-      await $(""#note-detail-wrapper"").show();
+    await handleEncryption(response.detail.encryption > 0, false);
 
-      // this may fal if the dialog has not been previously opened
+    $(""#encryption-password-dialog"").dialog('close');
 
-      try {
-        await $(""#encryption-password-dialog"").dialog('close');
-      } catch (e) {}
+    $(""#encryption-password"").val('');
 
-      await $(""#encryption-password"").val('');
+    decryptNoteIfNecessary(response);
 
-      decryptNoteIfNecessary(note);
+    $(""#note-title"").val(response.detail.note_title);
 
-      await $(""#note-title"").val(note.detail.note_title);
+    noteChangeDisabled = true;
 
-      noteChangeDisabled = true;
+    // Clear contents and remove all stored history. This is to prevent undo from going across notes
 
-      // Clear contents and remove all stored history. This is to prevent undo from going across notes
+    $('#note-detail').summernote('reset');
 
-      await $('#note-detail').summernote('reset');
+    $('#note-detail').summernote('code', response.detail.note_text);
 
-      await $('#note-detail').summernote('code', note.detail.note_text);
+    document.location.hash = noteId;
 
-      document.location.hash = noteId;
+    addRecentNote(noteId, response.detail.note_id);
 
-      await addRecentNote(noteId, note.detail.note_id);
+    noteChangeDisabled = false;
 
-      noteChangeDisabled = false;
-
-      await setNoteBackgroundIfEncrypted(note);
-    });
-  } catch (e) {
-    console.error(e);
+    setNoteBackgroundIfEncrypted(response);
+  } catch (error) {
+    // Handle error
   }
 }
 
 async function loadNote(noteId, callback) {
   try {
-    const note = await $.get(baseApiUrl + 'notes/' + noteId);
-
-    if (note.detail.encryption > 0 && !isEncryptionAvailable()) {
+    const response = await $.get(baseApiUrl + 'notes/' + noteId);
+    
+    if (response.detail.encryption > 0 && !isEncryptionAvailable()) {
       return;
     }
 
-    decryptNoteIfNecessary(note);
+    decryptNoteIfNecessary(response);
 
-    callback(note);
-  } catch (e) {
-    console.error(e);
+    callback(response);
+  } catch (error) {
+    // Handle error
   }
 }
 ```",2017-11-04 00:01:32
@@ -2707,26 +3115,35 @@ async function loadNote(noteId, callback) {
       return Promise.resolve({ value: buffer, done: false, });
 
     });
-","
-Here is the migrated code using the modern async/await syntax:
+","```javascript
+async read() {
 
-read() {
-  return this._readCapability.async().then(() => {
-    if (this._done) {
-      return { value: undefined, done: true };
-    }
-    if (this._storedError) {
-      throw this._storedError;
-    }
-    let chunk = await this._readableStream.read();
-    if (chunk === null) {
-      this._readCapability = createPromiseCapability();
-      return await this.read();
-    }
-    this._loaded += chunk.length;
-    if (this.onProgress) {
-      this.onProgress({ loaded: this._loaded, total: this._contentLength });
-    }
-    let buffer = new Uint8Array(chunk).buffer;
-    return { value: buffer, done: false };
-  });",2018-07-30 11:58:09
+  if (this._done) {
+    return { value: undefined, done: true };
+  }
+
+  if (this._storedError) {
+    throw this._storedError;
+  }
+
+  let chunk = await this._readableStream.read();
+
+  if (chunk === null) {
+    this._readCapability = createPromiseCapability();
+    return this.read();
+  }
+
+  this._loaded += chunk.length;
+
+  if (this.onProgress) {
+    this.onProgress({
+      loaded: this._loaded,
+      total: this._contentLength,
+    });
+  }
+
+  // Ensure that `read()` method returns ArrayBuffer.
+  let buffer = new Uint8Array(chunk).buffer;
+  return { value: buffer, done: false };
+}
+```",2018-07-30 11:58:09

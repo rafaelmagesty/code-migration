@@ -25,37 +25,24 @@ removed_chunk,migrated_code,commit_date
 
     it(""should handle multiple ink lists"", function (done) {
 ","```javascript
-async function test() {
-  const result = await AnnotationFactory.create();
-  expect(result.data.annotationType).toEqual(AnnotationType.INK);
-  expect(result.data.inkLists.length).toEqual(1);
-  expect(result.data.inkLists[0]).toEqual([
-    { x: 1, y: 1 },
-    { x: 1, y: 2 },
-    { x: 2, y: 2 },
-    { x: 3, y: 3 },
-  ]);
+async function shouldHandleMultipleInkLists(done) {
+  await AnnotationFactory.create()
+    .then(({ data }) => {
+      expect(data.annotationType).toEqual(AnnotationType.INK);
+      expect(data.inkLists.length).toEqual(1);
+      expect(data.inkLists[0]).toEqual([
+        { x: 1, y: 1 },
+        { x: 1, y: 2 },
+        { x: 2, y: 2 },
+        { x: 3, y: 3 },
+      ]);
+      done();
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+      throw error;
+    });
 }
-
-it(""should handle single ink list"", async () => {
-  await test();
-});
-
-it(""should handle multiple ink lists"", async function (done) {
-  try {
-    const result = await AnnotationFactory.create();
-    expect(result.data.annotationType).toEqual(AnnotationType.INK);
-    expect(result.data.inkLists.length).toEqual(1);
-    expect(result.data.inkLists[0]).toEqual([
-      { x: 1, y: 1 },
-      { x: 1, y: 2 },
-      { x: 2, y: 2 },
-      { x: 3, y: 3 },
-    ]);
-  } catch (error) {
-    done.fail(error);
-  }
-});
 ```",2021-04-17 16:23:40
 "      AnnotationFactory.create(
 
@@ -72,31 +59,29 @@ it(""should handle multiple ink lists"", async function (done) {
       }, done.fail);
 
     it(""should handle missing parent properties"", function (done) {
-","```javascript
-async function test1(done) {
-  const { data, viewable } = await AnnotationFactory.create();
-  
-  expect(data.annotationType).toEqual(AnnotationType.POPUP);
-  expect(data.modificationDate).toEqual(""D:20190423"");
-  expect(data.color).toEqual(new Uint8ClampedArray([0, 0, 255]));
-
-  done();
-}
-
-async function test2(done) {
+","async function test1() {
   try {
-    await AnnotationFactory.create();
-    done.fail('Expected error not thrown');
-  } catch (error) {
+    const { data, viewable } = await AnnotationFactory.create();
+    expect(data.annotationType).toEqual(AnnotationType.POPUP);
+    expect(data.modificationDate).toEqual(""D:20190423"");
+    expect(data.color).toEqual(new Uint8ClampedArray([0, 0, 255]));
     done();
+  } catch (error) {
+    console.error(error);
   }
 }
 
-it(""should handle missing parent properties"", async () => {
-  await test1(await);
-  await test2(await);
-});
-```",2021-04-17 16:23:40
+it(""should handle missing parent properties"", async function (done) {
+  try {
+    const { data, viewable } = await AnnotationFactory.create();
+    expect(data.annotationType).toEqual(AnnotationType.POPUP);
+    expect(data.modificationDate).toEqual(""D:20190423"");
+    expect(data.color).toEqual(new Uint8ClampedArray([0, 0, 255]));
+    done();
+  } catch (error) {
+    console.error(error);
+  }
+});",2021-04-17 16:23:40
 "	provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, _context: monaco.languages.CompletionContext, token: CancellationToken): Thenable<monaco.languages.CompletionList> {
 
 		const offset = this._positionToOffset(resource, position);
@@ -191,100 +176,67 @@ it(""should handle missing parent properties"", async () => {
 
 		});
 ","```javascript
-provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, _context: monaco.languages.CompletionContext, token: CancellationToken): Promise<monaco.languages.CompletionList> {
+async provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, _context: monaco.languages.CompletionContext, token: CancellationToken): Promise<monaco.languages.CompletionList> {
+  const offset = this._positionToOffset(resource, position);
+  
+  let worker;
+  try {
+    worker = await this._worker(resource);
+    const info = await worker.getCompletionsAtPosition(resource.toString(), offset);
+    
+    if (!info) return;
 
-    const offset = this._positionToOffset(resource, position);
-
-    const workerPromise = this._worker(resource);
-    const completionsPromise = workerPromise.then(worker => {
-        return worker.getCompletionsAtPosition(resource.toString(), offset);
+    const suggestions: MyCompletionItem[] = info.entries.map(entry => {
+      let range = wordRange;
+      if (entry.replacementSpan) {
+        const p1 = model.getPositionAt(entry.replacementSpan.start);
+        const p2 = model.getPositionAt(entry.replacementSpan.start + entry.replacementSpan.length);
+        range = new Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
+      }
+      
+      return {
+        uri: resource,
+        position,
+        range,
+        label: entry.name,
+        insertText: entry.name,
+        sortText: entry.sortText,
+        kind: SuggestAdapter.convertKind(entry.kind)
+      };
     });
-
-    const infoPromise = completionsPromise.then(info => {
-        if (!info) {
-            return;
-        }
-
-        let suggestions: MyCompletionItem[] = info.entries.map(entry => {
-            let range = wordRange;
-
-            if (entry.replacementSpan) {
-                const p1 = model.getPositionAt(entry.replacementSpan.start);
-                const p2 = model.getPositionAt(entry.replacementSpan.start + entry.replacementSpan.length);
-
-                range = new Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
-            }
-
-            return {
-
-                uri: resource,
-
-                position: position,
-
-                range: range,
-
-                label: entry.name,
-
-                insertText: entry.name,
-
-                sortText: entry.sortText,
-
-                kind: SuggestAdapter.convertKind(entry.kind)
-
-            };
-        });
-
-        return { suggestions };
-    });
-
-    const result = await infoPromise;
-
-    if (result) {
-        return {
-            suggestions: result.suggestions
-        };
-    } else {
-        return null;
-    }
-
+    
+    const completionList = new CompletionList(suggestions, true);
+    return completionList;
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    throw error;
+  }
 }
 
-resolveCompletionItem(_model: monaco.editor.IReadOnlyModel, _position: Position, item: monaco.languages.CompletionItem, token: CancellationToken): Promise<monaco.languages.CompletionItem> {
+async resolveCompletionItem(_model: monaco.editor.IReadOnlyModel, _position: Position, item: monaco.languages.CompletionItem, token: CancellationToken): Promise<monaco.languages.CompletionItem> {
+  let myItem = <MyCompletionItem>item;
 
-    let myItem = <MyCompletionItem>item;
+  let worker;
+  try {
+    worker = await this._worker(resource);
+    const details = await worker.getCompletionEntryDetails(resource.toString(), this._positionToOffset(resource, position), myItem.label);
 
-    const workerPromise = this._worker(resource);
-    const detailsPromise = workerPromise.then(worker => {
-        return worker.getCompletionEntryDetails(resource.toString(),
-            this._positionToOffset(resource, position),
-            myItem.label
-        );
-    });
+    if (!details) return myItem;
 
-    const result = await detailsPromise;
-
-    if (result) {
-        return <MyCompletionItem>{
-            uri: resource,
-
-            position: position,
-
-            label: result.name,
-
-            kind: SuggestAdapter.convertKind(result.kind),
-
-            detail: displayPartsToString(result.displayParts),
-
-            documentation: {
-
-                value: displayPartsToString(result.documentation)
-
-            }
-
-        };
-    } else {
-        return myItem;
-    }
+    return <MyCompletionItem>{
+      uri: resource,
+      position,
+      label: details.name,
+      kind: SuggestAdapter.convertKind(details.kind),
+      detail: displayPartsToString(details.displayParts),
+      documentation: {
+        value: displayPartsToString(details.documentation)
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    throw error;
+  }
 }
 ```",2019-12-20 18:47:49
 "      AnnotationFactory.create(
@@ -300,26 +252,29 @@ resolveCompletionItem(_model: monaco.editor.IReadOnlyModel, _position: Position,
       }, done.fail);
 
     it(""should correctly parse state model and state when defined"", function (done) {
-","```javascript
-async function test() {
-  const response = await AnnotationFactory.create();
-  expect(response.data.stateModel).toBeNull();
-  expect(response.data.state).toBeNull();
-  done();
+","Here is the migrated code:
+
+```
+async function testAnnotation() {
+  try {
+    const { data } = await AnnotationFactory.create();
+    expect(data.stateModel).toBeNull();
+    expect(data.state).toBeNull();
+    done();
+  } catch (error) {
+    done.fail(error);
+  }
 }
 
-it(""should correctly parse state model and state when defined"", async () => {
-  await test();
-});
-
-it(""should correctly parse state model and state when defined"", function (done) {
-  AnnotationFactory.create()
-    .then(({ data }) => {
-      expect(data.stateModel).toBeNull();
-      expect(data.state).toBeNull();
-      done();
-    })
-    .catch(done.fail);
+it(""should correctly parse state model and state when defined"", async function (done) {
+  try {
+    const { data } = await AnnotationFactory.create();
+    expect(data.stateModel).not.toBeNull();
+    expect(data.state).not.toBeNull();
+    done();
+  } catch (error) {
+    done.fail(error);
+  }
 });
 ```",2021-04-17 16:23:40
 "render(process.argv[2] || '/')
@@ -333,18 +288,15 @@ it(""should correctly parse state model and state when defined"", function (done
     process.exit(1)
 
   })
-","```javascript
-async function main() {
+","async function render(page) {
   try {
-    const html = await render(process.argv[2] || '/')
-    console.log(html)
-  } catch (err) {
-    console.error(err)
-    process.exit(1)
+    const html = await render(page);
+    console.log(html);
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
   }
-}
-main()
-```",2020-11-03 20:26:27
+}",2020-11-03 20:26:27
 "      ModelA.create({ name: 'model-A' }, function(error, toyA) {
 
         assert.ifError(error);
@@ -414,55 +366,18 @@ main()
       }
 ","```javascript
 async function test(id) {
-  const doc = await Parent.findById(id);
-  assert.ifError(doc.error);
-  
-  const populatedDoc = await doc.populate('children.toy.value');
-  assert.ifError(populatedDoc.error);
-  
-  assert.equal(populatedDoc.children[0].toy.value.name, 'model-A');
-  assert.equal(populatedDoc.children[1].toy.value, null);
-  assert.equal(populatedDoc.children[2].toy.value.name, 'model-B');
-  done();
-}
-
-ModelA.create({ name: 'model-A' }).then(toyA => {
-  if (!toyA) return;
-  
-  ModelB.create({ name: 'model-B' }).then(toyB => {
-    if (!toyB) return;
+  try {
+    const doc = await Parent.findById(id);
+    assert.ifError(doc.error);
     
-    Parent.create({
-      children: [
-        { name: 'Child 1', toy: { kind: 'Test1', value: toyA._id } },
-        { name: 'Child 2' },
-        { name: 'Child 3', toy: { kind: 'Test2', value: toyB._id } }
-      ]
-    }).then(doc => {
-      if (!doc) return;
-      
-      test(doc._id);
-    }).catch(done);
-  }).catch(done);
-}, done);
-
-async function main() {
-  await ModelA.create({ name: 'model-A' });
-  
-  const toyA = await ModelB.create({ name: 'model-B' });
-  
-  const doc = await Parent.create({
-    children: [
-      { name: 'Child 1', toy: { kind: 'Test1', value: toyA._id } },
-      { name: 'Child 2' },
-      { name: 'Child 3', toy: { kind: 'Test2', value: toyB._id } }
-    ]
-  });
-  
-  await test(doc._id);
+    const populatedDoc = await doc.populate('children.toy.value');
+    assert.equal(populatedDoc.children[0].toy.value.name, 'model-A');
+    assert.equal(populatedDoc.children[1].toy.value, null);
+    assert.equal(populatedDoc.children[2].toy.value.name, 'model-B');
+  } catch (error) {
+    done(error);
+  }
 }
-
-main().then(done, done);
 ```",2023-02-08 19:49:02
 "        libraryLoader.requireLibrary(libraryLoader.SORTABLE).then(() => {
 
@@ -483,23 +398,25 @@ main().then(done, done);
                 handle: '.handle',
 
                 animation: 150
-","```javascript
-async () => {
-    await libraryLoader.requireLibrary(libraryLoader.SORTABLE);
-    
-    new Sortable(this.$widgetsEnabled[0], {
-        group: 'widgets',
-        handle: '.handle',
-        animation: 150
-    });
-
-    new Sortable(this.$widgetsDisabled[0], {
-        group: 'widgets',
-        handle: '.handle',
-        animation: 150
-    });
-}
-```",2019-08-22 20:14:01
+","async function getSortableWidgets() {
+    try {
+        await libraryLoader.requireLibrary(libraryLoader.SORTABLE).then(() => {
+            new Sortable(this.$widgetsEnabled[0], {
+                group: 'widgets',
+                handle: '.handle',
+                animation: 150
+            });
+            new Sortable(this.$widgetsDisabled[0], {
+                group: 'widgets',
+                handle: '.handle',
+                animation: 150
+            });
+        });
+    } catch (error) {
+        console.error('Error initializing sortable widgets:', error);
+        throw error;
+    }
+}",2019-08-22 20:14:01
 "module.exports = (req, res) => {
 
   const start = process.hrtime()
@@ -529,21 +446,20 @@ async () => {
 module.exports = async (req, res) => {
   const start = process.hrtime()
   
-  const html = await render(req.url)
-  
-  const end = process.hrtime(start)
-  
-  const time = ((end[0] * 1e9) + end[1]) / 1e6
-  
-  // @ts-ignore
-  
-  res.setHeader('X-Nuxt-Coldstart', global._coldstart + 'ms')
-  
-  res.setHeader('X-Nuxt-Responsetime', time + 'ms')
-
-  if (html === null || html === undefined) {
-    console.error(new Error('HTML is null or undefined'))
-    res.end('Error: HTML is null or undefined')
+  try {
+    const html = await render(req.url);
+    
+    const end = process.hrtime(start)
+    
+    const time = ((end[0] * 1e9) + end[1]) / 1e6
+    
+    // @ts-ignore
+    res.setHeader('X-Nuxt-Coldstart', global._coldstart + 'ms')
+    
+    res.setHeader('X-Nuxt-Responsetime', time + 'ms')
+  } catch (err) {
+    console.error(err)
+    res.end('Error: ' + err)
   }
 }
 ```",2020-11-03 20:26:27
@@ -576,19 +492,25 @@ module.exports = async (req, res) => {
       }, done.fail);
 
       function (done) {
-","```javascript
-async AnnotationFactory.create() {
-  const result = await AnnotationFactory.create();
-  expect(result.data.annotationType).toEqual(AnnotationType.LINK);
-  expect(result.data.url).toBeUndefined();
-  expect(result.data.unsafeUrl).toBeUndefined();
-  expect(result.data.dest).toEqual([
-    { num: 17, gen: 0 },
-    { name: ""XYZ"" },
-    0,
-    841.89,
-    null
-  ]);
+","Here is the migrated code snippet using `async/await` syntax:
+
+```javascript
+async function createAnnotation() {
+  try {
+    const { data } = await AnnotationFactory.create();
+    expect(data.annotationType).toEqual(AnnotationType.LINK);
+    expect(data.url).toBeUndefined();
+    expect(data.unsafeUrl).toBeUndefined();
+    expect(data.dest).toEqual([
+      { num: 17, gen: 0 },
+      { name: ""XYZ"" },
+      0,
+      841.89,
+      null
+    ]);
+  } catch (error) {
+    done.fail(error);
+  }
 }
 ```",2021-04-17 16:23:40
 "  getPageDict(pageIndex) {
@@ -743,52 +665,39 @@ async AnnotationFactory.create() {
 
     return capability.promise;
 ","```javascript
-getPageDict(pageIndex) {
-  
+async function getPageDict(pageIndex) {
   const capability = createPromiseCapability();
-  
+
   async function next() {
-    
     while (nodesToVisit.length) {
-      
       const currentNode = nodesToVisit.pop();
-      
+
       if (isRef(currentNode)) {
-        
         count = pageKidsCountCache.get(currentNode);
-        
+
         // Skip nodes where the page can't be.
-        
+
         if (count > 0 && currentPageIndex + count < pageIndex) {
-          
           currentPageIndex += count;
           continue;
         }
-        
+
         try {
           const obj = await xref.fetchAsync(currentNode);
-          
           if (isDict(obj, 'Page') || (isDict(obj) && !obj.has('Kids'))) {
-            
             if (pageIndex === currentPageIndex) {
-              
               // Cache the Page reference, since it can *greatly* improve
               // performance by reducing redundant lookups in long documents
               // where all nodes are found at *one* level of the tree.
-              
               if (currentNode && !pageKidsCountCache.has(currentNode)) {
-                
                 pageKidsCountCache.put(currentNode, 1);
               }
-              
               capability.resolve([obj, currentNode]);
             } else {
-              
               currentPageIndex++;
               await next();
             }
           } else {
-            
             nodesToVisit.push(obj);
             await next();
           }
@@ -796,81 +705,64 @@ getPageDict(pageIndex) {
           capability.reject(error);
           return;
         }
-        
-        return;
-      } 
-      
+
       // Must be a child page dictionary.
-      
+
       if (!isDict(currentNode)) {
-        
-        capability.reject(new FormatError(
-          'Page dictionary kid reference points to wrong type of object.'));
+        const error = new FormatError('Page dictionary kid reference points to wrong type of object.');
+        capability.reject(error);
         return;
+
       }
-      
+
       count = currentNode.get('Count');
-      
+
       if (Number.isInteger(count) && count >= 0) {
-        
         // Cache the Kids count, since it can reduce redundant lookups in
         // documents where all nodes are found at *one* level of the tree.
-        
         const objId = currentNode.objId;
-        
         if (objId && !pageKidsCountCache.has(objId)) {
-          
           pageKidsCountCache.put(objId, count);
         }
-        
         // Skip nodes where the page can't be.
-        
+
         if (currentPageIndex + count <= pageIndex) {
-          
           currentPageIndex += count;
           continue;
-        }
-      
-      const kids = currentNode.get('Kids');
-      
-      if (!Array.isArray(kids)) {
-        
-        // Prevent errors in corrupt PDF documents that violate the
-        // specification by *inlining* Page dicts directly in the Kids
-        // array, rather than using indirect objects (fixes issue9540.pdf).
-        
-        if (isName(currentNode.get('Type'), 'Page') ||
-            (!currentNode.has('Type') && currentNode.has('Contents'))) {
-          
-          if (currentPageIndex === pageIndex) {
-            
-            capability.resolve([currentNode, null]);
-            return;
-          }
-          
-          currentPageIndex++;
-          continue;
-        }
-        
-        capability.reject(new FormatError(
-          'Page dictionary kids object is not an array.'));
+
+        const kids = currentNode.get('Kids');
+
+        if (!Array.isArray(kids)) {
+
+          // Prevent errors in corrupt PDF documents that violate the
+          // specification by *inlining* Page dicts directly in the Kids
+          // array, rather than using indirect objects (fixes issue9540.pdf).
+          if (isName(currentNode.get('Type'), 'Page') ||
+
+              (!currentNode.has('Type') && currentNode.has('Contents'))) {
+            if (currentPageIndex === pageIndex) {
+              capability.resolve([currentNode, null]);
+              return;
+
+            }
+            currentPageIndex++;
+            continue;
+
+        const error = new FormatError('Page dictionary kids object is not an array.');
+        capability.reject(error);
         return;
-      } 
-      
+
       // Always check all `Kids` nodes, to avoid getting stuck in an empty
       // node further down in the tree (see issue5644.pdf, issue8088.pdf),
       // and to ensure that we actually find the correct `Page` dict.
-      
       for (let last = kids.length - 1; last >= 0; last--) {
-        
         nodesToVisit.push(kids[last]);
       }
-    }
-    
+
     capability.reject(new Error(`Page index ${pageIndex} not found.`));
-  
-  await next();
-  
+    await next();
+  }
+
   return capability.promise;
 }
 ```",2019-11-04 15:02:08
@@ -898,18 +790,35 @@ getPageDict(pageIndex) {
 
   });
 ","```javascript
-async function() {
+async function hashPassword(newPlaintextPassword) {
+  try {
+    const response = await fetch(`/users/${userId}`);
+    const data = await response.json();
+    return data.userProfile;
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    throw error;
+  }
+
+  // Migrated code block
   const hash = await hashPassword(newPlaintextPassword);
-  
+
   const update = {
+
     $unset: {
+
       'services.password.reset': 1
+
     },
+
     $set: {'services.password.bcrypt': hash}
+
   };
 
   if (options.logout) {
+
     update.$unset['services.resume.loginTokens'] = 1;
+
   }
 
   await Meteor.users.update({_id: user._id}, update);
@@ -998,19 +907,25 @@ function _resolveConfig(filePath, opts, sync) {
 const resolveConfig = (filePath, opts) => _resolveConfig(filePath, opts, false);
 
 resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
-","```javascript
-async function getExplorerMemoized(opts) {
-  // Normalize opts before passing to a memoized function
-  const normalizedOpts = { sync: false, cache: false, ...opts };
+","Here's the migrated code block:
 
-  return await getExplorerMemoized(normalizedOpts);
+```javascript
+async function getExplorer(opts) {
+  try {
+    // Normalize opts before passing to a memoized function
+    opts = { sync: false, cache: false, ...opts };
+    return await getExplorerMemoized(opts);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function _resolveConfig(filePath, opts, sync) {
-  /** @type {[any, any]} */
-  const arr = [];
+const resolveConfig = async (filePath, opts) => {
+  try {
+    const [result, editorConfigured] = await Promise.all([
+      loadOpts.sync ? unwrapAndMerge([]) : _resolveConfig(filePath, opts, false),
+    ]);
 
-  const unwrapAndMerge = async ([result, editorConfigured]) => {
     const merged = {
       ...editorConfigured,
       ...mergeOverrides(result, filePath),
@@ -1021,7 +936,7 @@ function _resolveConfig(filePath, opts, sync) {
         merged[optionName] = merged[optionName].map((value) =>
           typeof value === ""string"" && value.startsWith(""."") // relative path
             ? path.resolve(path.dirname(result.filepath), value)
-            : value
+            : value,
         );
       }
     }
@@ -1031,20 +946,14 @@ function _resolveConfig(filePath, opts, sync) {
     }
 
     delete merged.insertFinalNewline;
-    return merged;
-  };
 
-  if (loadOpts.sync) {
-    return unwrapAndMerge(arr);
-  } else {
-    const result = await Promise.all(arr).then(unwrapAndMerge);
-    return result;
+    return await unwrapAndMerge([result, editorConfigured]);
+  } catch (error) {
+    throw error;
   }
-}
+};
 
-const resolveConfig = async (filePath, opts) => _resolveConfig(filePath, opts, false);
-
-resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
+resolveConfig.sync = async (filePath, opts) => _resolveConfig(filePath, opts, true);
 ```",2022-05-05 11:15:08
 "  it('eachAsync() with parallel > numDocs (gh-8422)', function() {
 
@@ -1098,42 +1007,47 @@ resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
 ","```javascript
 it('eachAsync() with parallel > numDocs (gh-8422)', async function() {
 
+  try {
     await Movie.deleteMany({});
 
-    const movies = [
-        { name: 'Kickboxer' },
-        { name: 'Ip Man' },
-        { name: 'Enter the Dragon' }
-    ];
-
-    yield Movie.create(movies);
+    await Movie.create([
+      { name: 'Kickboxer' },
+      { name: 'Ip Man' },
+      { name: 'Enter the Dragon' }
+    ]);
 
     let numDone = 0;
 
-    const test = async function() {
+    const test = async () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
       ++numDone;
     };
 
-    const results = await Movie.find().cursor().eachAsync(test, { parallel: 4 });
-
+    for await (const doc of Movie.find().cursor().eachAsync(test, { parallel: 4 })) {}
     assert.equal(numDone, 3);
 
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
 });
 
 it('eachAsync() with sort, parallel, and sync function (gh-8557)', async function() {
 
+  try {
     await User.create([{ order: 1 }, { order: 2 }, { order: 3 }]);
 
     const cursor = User.aggregate([{ $sort: { order: 1 } }]).cursor();
 
     const docs = [];
 
-    for await (const doc of cursor) {
-      docs.push(doc);
-    }
-
+    for await (const doc of cursor.eachAsync((doc) => docs.push(doc), { parallel: 3 })) {}
     assert.deepEqual(docs.map(d => d.order), [1, 2, 3]);
+
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
 });
 ```",2021-08-29 21:23:24
 "  it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)', function() {
@@ -1143,29 +1057,33 @@ it('eachAsync() with sort, parallel, and sync function (gh-8557)', async functio
       assert.equal(err.name, 'MongooseServerSelectionError');
 
     });
-","```javascript
-it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)', async function() {
+","async function testServerSelectionTimeout() {
   try {
-    const conn = await mongoose.createConnection(uri, opts);
-    assert.ok(false);
+    await mongoose.createConnection(uri, opts);
+    assert.ok(false); // This will always fail the assertion
   } catch (err) {
     assert.equal(err.name, 'MongooseServerSelectionError');
   }
-});
-```",2023-02-01 20:02:31
+}",2023-02-01 20:02:31
 "    }).then(done);
 
   it(""performs a normal search and finds the previous result"", function (done) {
 
     testSearch({
-","async function() {
-  await testSearch({});
-});
+","Here is the converted code block in `async/await` syntax:
 
-it(""performs a normal search and finds the previous result"", async function(done) {
-  const result = await testSearch({});
-  done();
-});",2021-01-12 14:21:19
+
+```javascript
+it(""performs a normal search and finds the previous result"", async function () {
+  try {
+    await testSearch({
+      // ...
+    });
+  } catch (error) {
+    done(error);
+  }
+});
+```",2021-01-12 14:21:19
 "	public provideCodeActions(model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken): Promise<monaco.languages.CodeActionList> {
 
 		return this._worker(resource).then(worker => {
@@ -1210,29 +1128,35 @@ it(""performs a normal search and finds the previous result"", async function(do
 
 			};
 ","```javascript
-public async provideCodeActions(model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken): Promise<monaco.languages.CodeActionList> {
+async provideCodeActions(model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken): Promise<monaco.languages.CodeActionList> {
 
-    const worker = await this._worker(resource);
+    try {
+        const worker = await this._worker(resource);
 
-    const start = this._positionToOffset(resource, { lineNumber: range.startLineNumber, column: range.startColumn });
-    const end = this._positionToOffset(resource, { lineNumber: range.endLineNumber, column: range.endColumn });
+        const start = this._positionToOffset(resource, { lineNumber: range.startLineNumber, column: range.startColumn });
 
-    const formatOptions = FormatHelper._convertOptions(model.getOptions());
-    const errorCodes = context.markers.filter(m => m.code).map(m => m.code).map(Number);
+        const end = this._positionToOffset(resource, { lineNumber: range.endLineNumber, column: range.endColumn });
 
-    const codeFixes = await worker.getCodeFixesAtPosition(resource.toString(), start, end, errorCodes, formatOptions);
+        const formatOptions = FormatHelper._convertOptions(model.getOptions());
 
-    const filteredCodeFixes = codeFixes.filter(fix => {
-        // Removes any 'make a new file'-type code fix
-        return fix.changes.filter(change => change.isNewFile).length === 0;
-    });
+        const errorCodes = context.markers.filter(m => m.code).map(m => m.code).map(Number);
 
-    const actions = filteredCodeFixes.map(fix => this._tsCodeFixActionToMonacoCodeAction(model, context, fix));
+        const codeFixes = await worker.getCodeFixesAtPosition(resource.toString(), start, end, errorCodes, formatOptions);
 
-    return {
-        actions,
-        dispose: () => { }
-    };
+        return {
+
+            actions: codeFixes.filter(fix => {
+                // Removes any 'make a new file'-type code fix
+                return fix.changes.filter(change => change.isNewFile).length === 0;
+            }).map(fix => this._tsCodeFixActionToMonacoCodeAction(model, context, fix)),
+
+            dispose: () => { }
+
+        };
+    } catch (error) {
+        console.error('Error fetching code actions:', error);
+        throw error;
+    }
 }
 ```",2019-12-20 18:47:49
 "      AnnotationFactory.create(
@@ -1340,57 +1264,51 @@ public async provideCodeActions(model: monaco.editor.ITextModel, range: Range, c
         .catch(done.fail);
 
     it(""should render checkboxes for printing using normal appearance"", function (done) {
-","```javascript
-async function test() {
-  const annotation = await AnnotationFactory.create();
-  const annotationStorage = new Map();
-  annotationStorage.set(annotation.data.id, { value: true });
+","```
+async function createAnnotationFactoryTest(done) {
+  try {
+    const annotation = await AnnotationFactory.create();
+    const annotationStorage = new Map();
+    annotationStorage.set(annotation.data.id, { value: true });
+    
+    const [annotation, opList] = await Promise.all([
+      annotation,
+      annotation.getOperatorList(
+        partialEvaluator,
+        task,
+        false,
+        annotationStorage
+      ),
+    ]);
 
-  [annotation, opList] = await Promise.all([
-    annotation,
-    annotation.getOperatorList(
+    expect(opList.argsArray.length).toEqual(3);
+    expect(opList.fnArray).toEqual([
+      OPS.beginAnnotation,
+      OPS.setFillRGBColor,
+      OPS.endAnnotation,
+    ]);
+    expect(opList.argsArray[1]).toEqual(new Uint8ClampedArray([26, 51, 76]));
+
+    const opList2 = await annotation.getOperatorList(
       partialEvaluator,
       task,
       false,
       annotationStorage
-    ),
-  ]);
+    );
 
-  expect(opList.argsArray.length).toEqual(3);
-  expect(opList.fnArray).toEqual([
-    OPS.beginAnnotation,
-    OPS.setFillRGBColor,
-    OPS.endAnnotation,
-  ]);
-  expect(opList.argsArray[1]).toEqual(new Uint8ClampedArray([26, 51, 76]));
+    expect(opList2.argsArray.length).toEqual(3);
+    expect(opList2.fnArray).toEqual([
+      OPS.beginAnnotation,
+      OPS.setFillRGBColor,
+      OPS.endAnnotation,
+    ]);
+    expect(opList2.argsArray[1]).toEqual(new Uint8ClampedArray([26, 51, 76]));
 
-  const annotation2 = await annotation;
-  const annotationStorage2 = new Map();
-  annotationStorage2.set(annotation.data.id, { value: true });
-
-  const opList2 = await annotation.getOperatorList(
-    partialEvaluator,
-    task,
-    false,
-    annotationStorage2
-  );
-
-  expect(opList2.argsArray.length).toEqual(3);
-  expect(opList2.fnArray).toEqual([
-    OPS.beginAnnotation,
-    OPS.setFillRGBColor,
-    OPS.endAnnotation,
-  ]);
-  expect(opList2.argsArray[1]).toEqual(new Uint8ClampedArray([26, 51, 76]));
-
-  done();
+    done();
+  } catch (error) {
+    done.fail(error);
+  }
 }
-
-test().catch(done.fail);
-
-it(""should render checkboxes for printing using normal appearance"", function (done) {
-  // ...
-});
 ```",2021-04-17 16:23:40
 "      AnnotationFactory.create(
 
@@ -1435,32 +1353,22 @@ it(""should render checkboxes for printing using normal appearance"", function (
 
 
     it(""should save choice"", function (done) {
-","```
-      AnnotationFactory.create(
+","```javascript
+async function createAnnotation() {
+  try {
+    const annotation = await AnnotationFactory.create();
+    const annotationStorage = new Map();
+    annotationStorage.set(annotation.data.id, { value: ""a value"" });
+    const appearance = await annotation._getAppearance(partialEvaluator, task, annotationStorage);
+    expect(appearance).toEqual(""/Tx BMC q BT /Helv 5 Tf 1 0 0 1 0 0 Tm 2.00 2.00 Td (a value) Tj ET Q EMC"");
+    done();
+  } catch (error) {
+    console.error('Error creating annotation:', error);
+    done.fail(error);
+  }
+}
 
-      )
-
-        .then(annotation => {
-          const annotationStorage = new Map();
-          annotationStorage.set(annotation.data.id, { value: ""a value"" });
-          return annotation._getAppearance(
-            partialEvaluator,
-            task,
-            annotationStorage
-          );
-        })
-        .then(appearance => {
-          expect(appearance).toEqual(
-            ""/Tx BMC q BT /Helv 5 Tf 1 0 0 1 0 0 Tm"" +
-              "" 2.00 2.00 Td (a value) Tj ET Q EMC""
-          );
-        })
-        .catch(error => done.fail(error));
-        .finally(done);
-
-    });
-
-    it(""should save choice"", async function () {
+it(""should save choice"", createAnnotation);
 ```",2021-04-17 16:23:40
 "    it(""should handle unknown text alignment, maximum length and flags"", function (done) {
 
@@ -1495,27 +1403,33 @@ it(""should render checkboxes for printing using normal appearance"", function (
     it(""should not set invalid text alignment, maximum length and flags"", function (done) {
 ","```javascript
 it(""should handle unknown text alignment, maximum length and flags"", async function () {
-  const data = await AnnotationFactory.create(
-  );
-
-  expect(data.annotationType).toEqual(AnnotationType.WIDGET);
-
-  expect(data.textAlignment).toEqual(null);
-
-  expect(data.maxLen).toEqual(null);
-
-  expect(data.readOnly).toEqual(false);
-
-  expect(data.hidden).toEqual(false);
-
-  expect(data.multiLine).toEqual(false);
-
-  expect(data.comb).toEqual(false);
-
-  expect(data.defaultFieldValue).toEqual(""foo"");
+  try {
+    const result = await AnnotationFactory.create();
+    expect(result.data.annotationType).toEqual(AnnotationType.WIDGET);
+    expect(result.data.textAlignment).toBeNull();
+    expect(result.data.maxLen).toBeNull();
+    expect(result.data.readOnly).toBeFalsy();
+    expect(result.data.hidden).toBeFalsy();
+    expect(result.data.multiLine).toBeFalsy();
+    expect(result.data.comb).toBeFalsy();
+    expect(result.data.defaultFieldValue).toEqual(""foo"");
+  } catch (error) {
+    done.fail(error);
+  } finally {
+    done();
+  }
 });
 
 it(""should not set invalid text alignment, maximum length and flags"", async function () {
+  try {
+    const result = await AnnotationFactory.create();
+    // assert expected properties here
+  } catch (error) {
+    done.fail(error);
+  } finally {
+    done();
+  }
+});
 ```",2021-04-17 16:23:40
 "      AnnotationFactory.create(
 
@@ -1531,18 +1445,26 @@ it(""should not set invalid text alignment, maximum length and flags"", async fu
 
     it(""should parse IRT/RT for a group type"", function (done) {
 ","```javascript
-async function test(done) {
-  const { data } = await AnnotationFactory.create();
-  expect(data.inReplyTo).toEqual(annotationRef.toString());
-  expect(data.replyType).toEqual(""R"");
-  done();
+async function createAnnotation() {
+  try {
+    const result = await AnnotationFactory.create();
+    const data = result.data;
+    expect(data.inReplyTo).toEqual(annotationRef.toString());
+    expect(data.replyType).toEqual(""R"");
+    done();
+  } catch (error) {
+    console.error('Error creating annotation:', error);
+    done.fail(error);
+  }
 }
 
 it(""should parse IRT/RT for a group type"", async function (done) {
   try {
-    await test(done);
+    await createAnnotation();
   } catch (error) {
-    done.fail(error);
+    fail(error);
+  } finally {
+    done();
   }
 });
 ```",2021-04-17 16:23:40
@@ -1703,85 +1625,119 @@ it(""should parse IRT/RT for a group type"", async function (done) {
       });
 
 
-","```javascript
-it('updateOne()', async () => {
-  const created = await BlogPost.create({ title: 'interoperable update as promise' });
-  assert.ifError(created.err);
+","Here's the migrated code block:
 
-  const query = await BlogPost.updateOne({ title: 'interoperable update as promise' }, { title: 'interoperable update as promise delta' });
-  assert.ifError(query.err);
+```javascript
+async it('updateOne()', async () => {
+  try {
+    const created = await BlogPost.create({ title: 'interoperable update as promise' });
+    assert.ifError(created.err);
 
-  const res = await query;
-  assert.equal(res.matchedCount, 1);
-  assert.equal(res.modifiedCount, 1);
+    const query = await BlogPost.updateOne({ title: 'interoperable update as promise' }, { title: 'interoperable update as promise delta' });
+    assert.ifError(query.err);
 
-  const count = await BlogPost.count({ title: 'interoperable update as promise delta' });
-  assert.ifError(count.err);
-  assert.equal(count, 1);
+    const res = await query;
+    assert.equal(res.matchedCount, 1);
+    assert.equal(res.modifiedCount, 1);
+
+    const count = await BlogPost.count({ title: 'interoperable update as promise delta' });
+    assert.ifError(count.err);
+    assert.equal(count, 1);
+  } catch (error) {
+    console.error('Error updating one:', error);
+    throw error;
+  }
 });
 
-it('findOne()', async () => {
-  const created = await BlogPost.create({ title: 'interoperable findOne as promise' });
-  assert.ifError(created.err);
+async it('findOne()', async () => {
+  try {
+    const created = await BlogPost.create({ title: 'interoperable findOne as promise' });
+    assert.ifError(created.err);
 
-  const query = await BlogPost.findOne({ title: 'interoperable findOne as promise' });
-  assert.ifError(query.err);
+    const query = await BlogPost.findOne({ title: 'interoperable findOne as promise' });
+    assert.ifError(query.err);
 
-  const found = await query;
-  assert.equal(found.id, created.id);
+    const found = await query;
+    assert.equal(found.id, created.id);
+  } catch (error) {
+    console.error('Error finding one:', error);
+    throw error;
+  }
 });
 
-it('find()', async () => {
-  const createdOneAndTwo = await BlogPost.create([{ title: 'interoperable find as promise' }, { title: 'interoperable find as promise' }]);
-  assert.ifError(createdOneAndTwo.err);
+async it('find()', async () => {
+  try {
+    const createdOne = await BlogPost.create({ title: 'interoperable find as promise' });
+    const createdTwo = await BlogPost.create({ title: 'interoperable find as promise' });
 
-  const query = await BlogPost.find({ title: 'interoperable find as promise' }).sort('_id');
-  assert.ifError(query.err);
+    assert.ifError(createdOne.err);
+    assert.ifError(createdTwo.err);
 
-  const found = await query;
-  assert.equal(found.length, 2);
+    const query = await BlogPost.find({ title: 'interoperable find as promise' }).sort('_id');
+    assert.ifError(query.err);
 
-  const ids = {};
-  ids[String(found[0]._id)] = 1;
-  ids[String(found[1]._id)] = 1;
+    const found = await query;
+    assert.equal(found.length, 2);
 
-  assert.ok(String(createdOneAndTwo[0]._id) in ids);
-  assert.ok(String(createdOneAndTwo[1]._id) in ids);
+    const ids = {};
+    ids[String(found[0]._id)] = 1;
+    ids[String(found[1]._id)] = 1;
+
+    assert.ok(String(createdOne._id) in ids);
+    assert.ok(String(createdTwo._id) in ids);
+  } catch (error) {
+    console.error('Error finding:', error);
+    throw error;
+  }
 });
 
-it('op can be changed', async () => {
-  const created = await BlogPost.create({ title: 'interoperable update as promise' });
-  assert.ifError(created.err);
+async it('op can be changed', async () => {
+  try {
+    const created = await BlogPost.create({ title: title });
+    assert.ifError(created.err);
 
-  const query = await BlogPost.count({ title: 'interoperable update as promise' });
-  assert.ifError(query.err);
+    const query = await BlogPost.count({ title: title });
+    assert.ifError(query.err);
 
-  const found = await query.findOne();
-  assert.equal(found.id, created.id);
+    const found = await query.exec('findOne');
+    assert.equal(found.id, created.id);
+  } catch (error) {
+    console.error('Error finding one by count:', error);
+    throw error;
+  }
 });
 
-it.skip('count()', async () => {
-  const created = await BlogPost.create({ title: 'interoperable count as promise 2' });
-  assert.ifError(created.err);
+async it.skip('count()', async () => {
+  try {
+    const created = await BlogPost.create({ title: 'interoperable count as promise 2' });
+    assert.ifError(created.err);
 
-  const query = await BlogPost.count({ title: 'interoperable count as promise 2' });
-  assert.ifError(query.err);
+    const query = await BlogPost.count({ title: 'interoperable count as promise 2' });
+    assert.ifError(query.err);
 
-  const count = await query;
-  assert.equal(count, 1);
+    const count = await query;
+    assert.equal(count, 1);
+  } catch (error) {
+    console.error('Error counting:', error);
+    done();
+  }
 });
 
-it.skip('update()', async () => {
-  const created = await BlogPost.create({ title: 'interoperable update as promise 2' });
-  assert.ifError(created.err);
+async it.skip('update()', async () => {
+  try {
+    const created = await BlogPost.create({ title: 'interoperable update as promise 2' });
+    assert.ifError(created.err);
 
-  const query = await BlogPost.update({ title: 'interoperable update as promise 2' }, { title: 'interoperable update as promise delta 2' });
-  assert.ifError(query.err);
+    const query = await BlogPost.update({ title: 'interoperable update as promise 2' }, { title: 'interoperable update as promise delta 2' });
+    assert.ifError(query.err);
 
-  await query;
-  const count = await BlogPost.count({ title: 'interoperable update as promise delta 2' });
-  assert.ifError(count.err);
-  assert.equal(count, 1);
+    const count = await BlogPost.count({ title: 'interoperable update as promise delta 2' });
+    assert.ifError(count.err);
+    assert.equal(count, 1);
+  } catch (error) {
+    console.error('Error updating:', error);
+    done();
+  }
 });
 ```",2023-02-07 17:39:03
 "  findMongoPids = function(dbDir_unused, port) {
@@ -2114,71 +2070,50 @@ it.skip('update()', async () => {
 
     });
 ","```javascript
-findMongoPids = async function(dbDir_unused, port) {
+async function findMongoPids(dbDir, port) {
   try {
+    // 'ps ax' should be standard across all MacOS and Linux.
+    const psScript = process.platform === 'darwin'
+      ? 'if type pgrep >/dev/null 2>&1; then '
+        + 'pgrep -lf mongod; test ""$?"" -eq 0 -o ""$?"" -eq 1;'
+        + 'else ps ax; fi'
+      : 'ps ax';
 
-    const stdout = await new Promise((resolve, reject) => {
-      child_process.exec('tasklist /fi ""IMAGENAME eq mongod.exe""', function(error, stdout, stderr) {
-        if (error) {
-          resolve(error);
-        } else {
-          resolve(stdout);
-        }
-      });
-    }).catch((error) => error);
-
-    const error = await new Promise((resolve, reject) => {
-      child_process.exec('netstat -ano', { maxBuffer: 1024 * 1024 * 10 }, function(error, stdout, stderr) {
-        if (error) {
-          resolve(error);
-        } else {
-          resolve(null);
-        }
-      });
-    }).catch((error) => error);
-
-    let mongo_pids = [];
-
-    const lines = stdout.split('\n');
-    lines.forEach(function(line) {
-      var m = line.match(/^mongod.exe\s+(\d+) /);
-      if (m) {
-        mongo_pids[m[1]] = true;
-      }
+    const env = { ...process.env };
+    Object.assign(env, {
+      LANG: 'en_US.UTF-8',
+      LC_ALL: 'en_US.UTF-8',
+      LANGUAGE: 'en_US.UTF-8',
     });
 
-    const pids = [];
-    let found_port;
+    const output = await child_process.execSync(psScript, {
+      env,
+      maxBuffer: 1024 * 1024 * 10,
+    }).toString();
 
-    for (const line of stdout.split('\n')) {
-      var m = line.match(/^\s*TCP\s+\S+:(\d+)\s+\S+\s+LISTENING\s+(\d+)/);
-      if (m) {
-        found_port = parseInt(m[1], 10);
-        const found_pid = parseInt(m[2], 10);
+    const ret = [];
 
-        if (mongo_pids[found_pid] && (!port || port === found_port)) {
-          delete mongo_pids[found_pid];
-          pids.push({
-            pid: found_pid,
-            port: found_port,
-            app_dir: null
-          });
+    output.split('\n')
+      .forEach((line) => {
+        const m = line.match(/^\s*(\d+).+mongod .+--port (\d+) --dbpath (.+(?:\/|\\)db)/);
+        if (m && m.length === 4) {
+          const foundPid = parseInt(m[1], 10);
+          const foundPort = parseInt(m[2], 10);
+          const foundPath = m[3];
+
+          if ((!port || port === foundPort) && (!dbDir || dbDir === foundPath)) {
+            ret.push({
+              pid: foundPid,
+              port: foundPort,
+              dbDir: foundPath,
+            });
+          }
         }
-      }
-    }
+      });
 
-    return pids;
-
+    return ret;
   } catch (error) {
-
-    if (error.code === 'ENOENT') {
-      const additionalInfo = JSON.stringify(error);
-      if (process.platform === 'win32' && error.message.includes('C:\\Windows\\System32\\""')) {
-        return new Error(`Couldn't run tasklist.exe: ${additionalInfo}`);
-      }
-    }
-
-    throw error;
+    throw new Error(""Couldn't run ps ax: "" + error);
   }
 }
 ```",2022-12-15 00:48:59
@@ -2197,30 +2132,16 @@ findMongoPids = async function(dbDir_unused, port) {
                 closeAfter: 2000
 
             })
-","```javascript
-server.put('options', opts).then(() => {
-  toastService.showPersistent({
-    id: ""options-change-saved"",
-    title: ""Options status"",
-    message: ""Options change have been saved."",
-    icon: ""slider"",
-    closeAfter: 2000
-  })
-})
-```
-
-```javascript
-async () => {
-  await server.put('options', opts)
-  toastService.showPersistent({
-    id: ""options-change-saved"",
-    title: ""Options status"",
-    message: ""Options change have been saved."",
-    icon: ""slider"",
-    closeAfter: 2000
-  })
-}
-```",2022-11-20 22:20:42
+","async function getUserData(userId) {
+  try {
+    const response = await fetch(`/users/${userId}`);
+    const data = await response.json();
+    return data.userProfile;
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    throw error;
+  }
+}",2022-11-20 22:20:42
 "      return partialEvaluator
 
         .getOperatorList({
@@ -2394,191 +2315,143 @@ async () => {
       });
 
     });
-","```javascript
-return partialEvaluator
-
-  .getOperatorList({
-
-    stream: contentStream,
-
-    task,
-
-    resources: this.resources,
-
-    operatorList: opList,
-
-  })
-
-  .then(() => opList);
-
-return Promise.all([])
-
-  .then(async ([pageOpList, annotations, newAnnotations]) => {
-
-    if (newAnnotations) {
-
-      // Some annotations can already exist (if it has the refToReplace
-
-      // property). In this case, we replace the old annotation by the new
-
-      // one.
-
-      annotations = annotations.filter(
-
-        a => !(a.ref && deletedAnnotations.has(a.ref))
-
+","Here is the migrated code:
+```
+async function getOperatorList() {
+  const result = await partialEvaluator
+    .getOperatorList({
+      stream: contentStream,
+      task,
+      resources: this.resources,
+      operatorList: opList,
+    })
+    .catch((reason) => {
+      warn(
+        ""getOperatorList - ignoring annotation data during `"" +
+          `${task.name}"" task: ""${reason}"".`
       );
-
-      for (let i = 0, ii = newAnnotations.length; i < ii; i++) {
-
-        const newAnnotation = newAnnotations[i];
-
-        if (newAnnotation.refToReplace) {
-
-          const j = annotations.findIndex(
-
-            a => a.ref && isRefsEqual(a.ref, newAnnotation.refToReplace)
-
-          );
-
-          if (j >= 0) {
-
-            annotations.splice(j, 1, newAnnotation);
-
-            newAnnotations.splice(i--, 1);
-
-            ii--;
-
-          }
-
-      annotations = annotations.concat(newAnnotations);
-
-      annotations.length === 0 ||
-
-        intent & RenderingIntentFlag.ANNOTATIONS_DISABLE
-
-      pageOpList.flush(/* lastChunk = */ true);
-
-      return { length: pageOpList.totalLength };
-
-    }
-
-    const renderForms = !!(intent & RenderingIntentFlag.ANNOTATIONS_FORMS),
-
-      isEditing = !!(intent & RenderingIntentFlag.IS_EDITING),
-
-      intentAny = !!(intent & RenderingIntentFlag.ANY),
-
-      intentDisplay = !!(intent & RenderingIntentFlag.DISPLAY),
-
-      intentPrint = !!(intent & RenderingIntentFlag.PRINT);
-
-// Collect the operator list promises for the annotations. Each promise
-
-// is resolved with the complete operator list for a single annotation.
-
-const opListPromises = [];
-
-for (const annotation of annotations) {
-
-  if (
-
-    intentAny ||
-
-    (intentDisplay &&
-
-      annotation.mustBeViewed(annotationStorage, renderForms) &&
-
-      annotation.mustBeViewedWhenEditing(isEditing, modifiedIds)) ||
-
-    (intentPrint && annotation.mustBePrinted(annotationStorage))
-
-  ) {
-
-    opListPromises.push(
-
-      annotation
-
-        .getOperatorList(
-
-          partialEvaluator,
-
-          task,
-
-          intent,
-
-          annotationStorage
-
-        )
-
-        .catch(function (reason) {
-
-          warn(
-
-            ""getOperatorList - ignoring annotation data during "" +
-
-              `""${task.name}"" task: ""${reason}"".`
-
-          );
-
-          return {
-
-            opList: null,
-
-            separateForm: false,
-
-            separateCanvas: false,
-
-          };
-
-        })
-
-    );
-
-  }
-
-return Promise.all(opListPromises).then(async (opLists) => {
-
-      let form = false,
-
-        canvas = false;
-
-      for (const { opList, separateForm, separateCanvas } of opLists) {
-
-        pageOpList.addOpList(opList);
-
-        form ||= separateForm;
-
-        canvas ||= separateCanvas;
-
-      }
-
-      pageOpList.flush(
-
-        /* lastChunk = */ true,
-
-        /* separateAnnots = */ { form, canvas }
-
-      );
-
-      return { length: pageOpList.totalLength };
-
+      return {
+        opList: null,
+        separateForm: false,
+        separateCanvas: false,
+      };
     });
 
-  });
-})
+  return result;
+}
+
+async function main() {
+  const [pageOpList, annotations, newAnnotations] = await Promise.all([]);
+
+  if (newAnnotations) {
+    // Some annotations can already exist (if it has the refToReplace property).
+    // In this case, we replace the old annotation by the new one.
+    annotations = annotations.filter(
+      (a) => !(a.ref && deletedAnnotations.has(a.ref))
+    );
+
+    for (let i = 0, ii = newAnnotations.length; i < ii; i++) {
+      const newAnnotation = newAnnotations[i];
+
+      if (newAnnotation.refToReplace) {
+        const j = annotations.findIndex(
+          (a) => a.ref && isRefsEqual(a.ref, newAnnotation.refToReplace)
+        );
+
+        if (j >= 0) {
+          annotations.splice(j, 1, newAnnotation);
+          newAnnotations.splice(i--, 1);
+          ii--;
+        }
+      }
+    }
+
+    annotations = annotations.concat(newAnnotations);
+
+    const renderForms = !!(intent & RenderingIntentFlag.ANNOTATIONS_FORMS),
+      isEditing = !!(intent & RenderingIntentFlag.IS_EDITING),
+      intentAny = !!(intent & RenderingIntentFlag.ANY),
+      intentDisplay = !!(intent & RenderingIntentFlag.DISPLAY),
+      intentPrint = !!(intent & RenderingIntentFlag.PRINT);
+
+    // Collect the operator list promises for the annotations. Each promise
+    // is resolved with the complete operator list for a single annotation.
+    const opListPromises = [];
+
+    for (const annotation of annotations) {
+      if (
+        intentAny ||
+        (intentDisplay &&
+          annotation.mustBeViewed(annotationStorage, renderForms) &&
+          annotation.mustBeViewedWhenEditing(isEditing, modifiedIds)) ||
+        (intentPrint && annotation.mustBePrinted(annotationStorage))
+      ) {
+        opListPromises.push(
+          await annotation
+            .getOperatorList(partialEvaluator, task, intent, annotationStorage)
+            .catch((reason) => {
+              warn(
+                ""getOperatorList - ignoring annotation data during `"" +
+                  `${task.name}"" task: ""${reason}"".`
+              );
+              return {
+                opList: null,
+                separateForm: false,
+                separateCanvas: false,
+              };
+            })
+        );
+      }
+    }
+
+    const opLists = await Promise.all(opListPromises);
+
+    let form = false,
+      canvas = false;
+
+    for (const { opList, separateForm, separateCanvas } of opLists) {
+      pageOpList.addOpList(opList);
+      form ||= separateForm;
+      canvas ||= separateCanvas;
+    }
+
+    pageOpList.flush(
+      /* lastChunk = */ true,
+      /* separateAnnots = */ { form, canvas }
+    );
+
+    return { length: pageOpList.totalLength };
+  } else {
+    const renderForms = !!(intent & RenderingIntentFlag.ANNOTATIONS_FORMS),
+      isEditing = !!(intent & RenderingIntentFlag.IS_EDITING),
+      intentAny = !!(intent & RenderingIntentFlag.ANY),
+      intentDisplay = !!(intent & RenderingIntentFlag.DISPLAY),
+      intentPrint = !!(intent & RenderingIntentFlag.PRINT);
+
+    annotations.length === 0 ||
+      intent & RenderingIntentFlag.ANNOTATIONS_DISABLE &&
+      pageOpList.flush(/* lastChunk = */ true);
+    return { length: pageOpList.totalLength };
+  }
+}
 ```
-Note that the main changes were to convert `Promise.all()` calls to use the `async/await` syntax and modify the code inside the callbacks to be asynchronous as well.",2025-03-17 12:20:51
+Note that I extracted the original code into two functions: `getOperatorList` and `main`. The `getOperatorList` function is responsible for fetching the operator list, while the `main` function handles the rest of the logic. This separation makes the code easier to read and maintain.",2025-03-17 12:20:51
 "  parseAsync(argv, parseOptions) {
 
     this.parse(argv, parseOptions);
 
     return Promise.all(this._actionResults).then(() => this);
-","async parseAsync(argv, parseOptions) {
+","```
+async parseAsync(argv, parseOptions) {
   await this.parse(argv, parseOptions);
-  await Promise.all(this._actionResults);
+  try {
+    await Promise.all(this._actionResults);
+  } catch (error) {
+    throw error;
+  }
   return this;
-}",2021-05-06 06:02:31
+}
+```",2021-05-06 06:02:31
 "const { warn, error } = require('./util/log')
 
 program
@@ -2640,60 +2513,49 @@ creator
   })
 
   .catch(error)
-","```javascript
-const { warn, error } = require('./util/log')
+","Here is the migrated code:
 
-program
+```javascript
+async function main() {
+  try {
+    const { warn, error } = require('./util/log');
 
-  .usage('<app-name>')
+    program.usage('<app-name>');
+    program.parse(process.argv);
 
-  .parse(process.argv)
+    const projectName = program.args[0];
 
+    if (!projectName) {
+      warn(`\n  Please provide an app name.`);
+      program.outputHelp();
+      process.exit(1);
+    }
 
+    const builtInGenerators = fs
+      .readdirSync(path.resolve(__dirname, './generators'))
+      .filter(dir => dir.charAt(0) !== '.')
+      .map(id => ({
+        id,
+        apply: require(`./generators/${id}`)
+      }));
 
-const projectName = program.args[0]
+    debug(builtInGenerators);
 
-if (!projectName) {
+    const installedGenerators = await resolveInstalledGenerators();
+    const generators = builtInGenerators.concat(installedGenerators.map(id => ({ id, apply: id })));
 
-  warn(`\n  Please provide an app name.`)
+    const targetDir = path.resolve(process.cwd(), projectName);
+    const creator = new Creator(projectName, generators);
 
-  program.outputHelp()
-
-  process.exit(1)
-
+    await creator.create(targetDir).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }
 
-const createGenerator = (id, requirePath = id) => ({
-
-  id,
-
-  apply: require(requirePath)
-
-})
-
-const builtInGenerators = fs
-
-  .readdirSync(path.resolve(__dirname, './generators'))
-
-  .filter(dir => dir.charAt(0) !== '.')
-
-  .map(id => createGenerator(id, `./generators/${id}`))
-
-debug(builtInGenerators)
-
-const installedGenerators = await resolveInstalledGenerators()
-
-const generators = builtInGenerators.concat(installedGenerators.map(id => createGenerator(id)))
-
-const targetDir = path.resolve(process.cwd(), projectName)
-
-const creator = new Creator(projectName, generators)
-
-try {
-  const result = await creator.create(targetDir)
-} catch (err) {
-  error(err)
-}
+main();
 ```",2017-12-28 18:06:17
 "  set(name, value) {
 
@@ -2740,32 +2602,37 @@ try {
     });
 ","```javascript
 async set(name, value) {
-  if (!this._initializedPromise) await this.init();
-  
-  if (this.defaults[name] === undefined) {
-    throw new Error(`Set preference: ""${name}"" is undefined.`);
-  } else if (value === undefined) {
-    throw new Error('Set preference: no value is specified.');
-  }
-
-  let valueType = typeof value;
-  let defaultType = typeof this.defaults[name];
-
-  if (valueType !== defaultType) {
-    if (valueType === 'number' && defaultType === 'string') {
-      value = value.toString();
-    } else {
-      throw new Error(`Set preference: ""${value}"" is a ${valueType}, ` +
-                      `expected a ${defaultType}.`);
+  try {
+    await this._initializedPromise;
+    
+    if (this.defaults[name] === undefined) {
+      throw new Error(`Set preference: ""${name}"" is undefined.`);
+    } else if (value === undefined) {
+      throw new Error('Set preference: no value is specified.');
     }
 
-    if (valueType === 'number' && !Number.isInteger(value)) {
-      throw new Error(`Set preference: ""${value}"" must be an integer.`);
-    }
-  }
+    let valueType = typeof value;
+    let defaultType = typeof this.defaults[name];
 
-  this.prefs[name] = value;
-  await this._writeToStorage(this.prefs);
+    if (valueType !== defaultType) {
+      if (valueType === 'number' && defaultType === 'string') {
+        value = value.toString();
+      } else {
+        throw new Error(`Set preference: ""${value}"" is a ${valueType}, ` +
+                        `expected a ${defaultType}.`);
+      }
+      
+      if (valueType === 'number' && !Number.isInteger(value)) {
+        throw new Error(`Set preference: ""${value}"" must be an integer.`);
+      }
+    }
+
+    this.prefs[name] = value;
+    await this._writeToStorage(this.prefs);
+  } catch (error) {
+    console.error('Error setting preference:', error);
+    throw error;
+  }
 }
 ```",2018-07-30 14:48:16
 "      const result = XfaLayer.render(parameters);
@@ -2823,15 +2690,17 @@ async set(name, value) {
         console.error(error);
 
       });
-","```javascript
-const result = await XfaLayer.render(parameters);
-return result;
+","async function getResult() {
+  const result = await XfaLayer.render(parameters);
+  return Promise.resolve(result);
+}
 
-return this.pdfPage
-  .getXfa()
-  .then(xfaHtml => {
-    if (this._cancelled || !xfaHtml) return { textDivs: [] };
-
+async function getXfaHtml() {
+  try {
+    const xfaHtml = await this.pdfPage.getXfa();
+    if (this._cancelled || !xfaHtml) {
+      return { textDivs: [] };
+    }
     const parameters = {
       viewport: viewport.clone({ dontFlip: true }),
       div: this.div,
@@ -2840,20 +2709,18 @@ return this.pdfPage
       linkService: this.linkService,
       intent
     };
-    
-    if (this.div) 
+    if (this.div) {
       return XfaLayer.update(parameters);
-    
+    }
     // Create an xfa layer div and render the form
     this.div = document.createElement(""div"");
     this.pageDiv.append(this.div);
     parameters.div = this.div;
     return XfaLayer.render(parameters);
-  })
-  .catch(error => {
+  } catch (error) {
     console.error(error);
-  });
-```",2022-12-11 12:07:44
+  }
+}",2022-12-11 12:07:44
 "function loadNoteToEditor(noteId) {
 
     $.get(baseApiUrl + 'notes/' + noteId).then(note => {
@@ -2925,77 +2792,80 @@ function loadNote(noteId, callback) {
         callback(note);
 
     });
-","```javascript
+","Here's the migrated code block:
+
+```javascript
 async function loadNoteToEditor(noteId) {
-    try {
-        const note = await $.get(baseApiUrl + 'notes/' + noteId);
-        
-        globalCurrentNote = note;
-        
-        globalCurrentNoteLoadTime = Math.floor(new Date().getTime() / 1000);
+  try {
+    const note = await $.get(baseApiUrl + 'notes/' + noteId);
+    
+    globalCurrentNote = note;
+    
+    globalCurrentNoteLoadTime = Math.floor(new Date().getTime() / 1000);
 
-        if (newNoteCreated) {
+    if (newNoteCreated) {
 
-            newNoteCreated = false;
+      newNoteCreated = false;
 
-            $(""#note-title"").focus().select();
+      $(""#note-title"").focus().select();
 
-        }
-
-        handleEncryption(note.detail.encryption > 0, false, async () => {
-            
-            $(""#note-detail-wrapper"").show();
-            
-            // this may fal if the dialog has not been previously opened
-            
-            try {
-                $(""#encryption-password-dialog"").dialog('close');
-            }
-            
-            catch(e) {}
-            
-            $(""#encryption-password"").val('');
-            
-            await decryptNoteIfNecessary(note);
-            
-            $(""#note-title"").val(note.detail.note_title);
-
-            noteChangeDisabled = true;
-
-            // Clear contents and remove all stored history. This is to prevent undo from going across notes
-
-            $('#note-detail').summernote('reset');
-
-            $('#note-detail').summernote('code', note.detail.note_text);
-
-            document.location.hash = noteId;
-
-            addRecentNote(noteId, note.detail.note_id);
-
-            noteChangeDisabled = false;
-
-            setNoteBackgroundIfEncrypted(note);
-        });
     }
+
+    await handleEncryption(note.detail.encryption > 0, false, async () => {
+      
+      $(""#note-detail-wrapper"").show();
+
+      try {
+        $(""#encryption-password-dialog"").dialog('close');
+      } catch(e) {}
+
+      $(""#encryption-password"").val('');
+
+      await decryptNoteIfNecessary(note);
+
+      $(""#note-title"").val(note.detail.note_title);
+
+      noteChangeDisabled = true;
+
+      // Clear contents and remove all stored history. This is to prevent undo from going across notes
+
+      $('#note-detail').summernote('reset');
+
+      $('#note-detail').summernote('code', note.detail.note_text);
+
+      document.location.hash = noteId;
+
+      addRecentNote(noteId, note.detail.note_id);
+
+      noteChangeDisabled = false;
+
+      setNoteBackgroundIfEncrypted(note);
+    });
+  } catch (error) {
+    console.error('Error loading note:', error);
+    throw error;
+  }
 }
 
 async function loadNote(noteId, callback) {
-    try {
-        const note = await $.get(baseApiUrl + 'notes/' + noteId);
-        
-        if (note.detail.encryption > 0 && !isEncryptionAvailable()) {
+  try {
+    const note = await $.get(baseApiUrl + 'notes/' + noteId);
 
-            return;
+    if (note.detail.encryption > 0 && !isEncryptionAvailable()) {
 
-        }
-
-        await decryptNoteIfNecessary(note);
-
-        callback(note);
-
+      return;
     }
+
+    await decryptNoteIfNecessary(note);
+    callback(note);
+  } catch (error) {
+    console.error('Error loading note:', error);
+    throw error;
+  }
 }
-```",2017-11-04 00:01:32
+```
+
+Note that I've added `async` keyword to the function declarations and used `await` before `.then()` blocks. Also, error handling has been moved inside try-catch block as it's a good practice with async/await syntax.",2017-11-04 00:01:32
 "  read() {
 
     return this._readCapability.promise.then(() => {
@@ -3044,49 +2914,38 @@ async function loadNote(noteId, callback) {
 
     });
 ","```javascript
-  async read() {
+async read() {
+  try {
+    await this._readCapability.promise;
 
     if (this._done) {
-
       return { value: undefined, done: true };
-
     }
 
     if (this._storedError) {
-
       throw this._storedError;
-
     }
 
-    let chunk = await this._readableStream.read();
-
+    let chunk = this._readableStream.read();
     if (chunk === null) {
-
       this._readCapability = createPromiseCapability();
-
-      return this.read();
-
+      return await this.read();
     }
 
     this._loaded += chunk.length;
 
     if (this.onProgress) {
-
       this.onProgress({
-
         loaded: this._loaded,
-
         total: this._contentLength,
-
       });
-
     }
 
-    // Ensure that `read()` method returns ArrayBuffer.
-
-    let buffer = new Uint8Array(chunk).buffer;
-
+    const buffer = new Uint8Array(chunk).buffer;
     return { value: buffer, done: false };
-
+  } catch (error) {
+    // Error handling can be customized based on the specific requirements.
+    // For example, you could log the error or throw it again to propagate it up the call stack.
   }
+}
 ```",2018-07-30 11:58:09
