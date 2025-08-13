@@ -1,4 +1,4 @@
-removed_chunk,migrated_code,commit_date
+removed_chunk,migrated_code,commit_date,commit_hash
 "      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -24,24 +24,24 @@ removed_chunk,migrated_code,commit_date
       }, done.fail);
 
     it(""should handle multiple ink lists"", function (done) {
-","```javascript
-      try {
-        const { data } = await AnnotationFactory.create();
+","AnnotationFactory.create().then(async ({ data }) => {
 
         expect(data.annotationType).toEqual(AnnotationType.INK);
+
         expect(data.inkLists.length).toEqual(1);
+
         expect(data.inkLists[0]).toEqual([
           { x: 1, y: 1 },
           { x: 1, y: 2 },
           { x: 2, y: 2 },
           { x: 3, y: 3 },
         ]);
-      } catch (error) {
-        throw error;
-      }
 
-    it(""should handle multiple ink lists"", async () => {
-```",2021-04-17 16:23:40
+        done();
+      }).catch(done.fail);
+    });
+
+    it(""should handle multiple ink lists"", async function () {",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
 "      AnnotationFactory.create(
 
       ).then(({ data, viewable }) => {
@@ -57,17 +57,21 @@ removed_chunk,migrated_code,commit_date
       }, done.fail);
 
     it(""should handle missing parent properties"", function (done) {
-","```javascript
-      const { data, viewable } = await AnnotationFactory.create();
+","it(""should handle missing parent properties"", async () => {
+  try {
+    const { data, viewable } = await AnnotationFactory.create();
 
-      expect(data.annotationType).toEqual(AnnotationType.POPUP);
+    expect(data.annotationType).toEqual(AnnotationType.POPUP);
 
-      expect(data.modificationDate).toEqual(""D:20190423"");
+    expect(data.modificationDate).toEqual(""D:20190423"");
 
-      expect(data.color).toEqual(new Uint8ClampedArray([0, 0, 255]));
-
-    it(""should handle missing parent properties"", async () => {
-```",2021-04-17 16:23:40
+    expect(data.color).toEqual(new Uint8ClampedArray([0, 0, 255]));
+  } catch (error) {
+    done.fail(error);
+  } finally {
+    done();
+  }
+});",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
 "	provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, _context: monaco.languages.CompletionContext, token: CancellationToken): Thenable<monaco.languages.CompletionList> {
 
 		const offset = this._positionToOffset(resource, position);
@@ -161,60 +165,101 @@ removed_chunk,migrated_code,commit_date
 			};
 
 		});
-","```javascript
-async provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, _context: monaco.languages.CompletionContext, token: CancellationToken): Promise<monaco.languages.CompletionList> {
+","provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, _context: monaco.languages.CompletionContext, token: CancellationToken): Thenable<monaco.languages.CompletionList> {
+
 	const offset = this._positionToOffset(resource, position);
-	const worker = await this._worker(resource);
-	const info = await worker.getCompletionsAtPosition(resource.toString(), offset);
 
-	if (!info) {
-		return;
-	}
+	return this._worker(resource).then(worker => {
 
-	const suggestions: MyCompletionItem[] = info.entries.map(entry => {
-		let range = wordRange;
-		if (entry.replacementSpan) {
-			const p1 = model.getPositionAt(entry.replacementSpan.start);
-			const p2 = model.getPositionAt(entry.replacementSpan.start + entry.replacementSpan.length);
-			range = new Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
+		return worker.getCompletionsAtPosition(resource.toString(), offset);
+
+	}).then(info => {
+
+		if (!info) {
+
+			return;
+
 		}
-		return {
+
+		let suggestions: MyCompletionItem[] = info.entries.map(entry => {
+
+			let range = wordRange;
+
+			if (entry.replacementSpan) {
+
+				const p1 = model.getPositionAt(entry.replacementSpan.start);
+
+				const p2 = model.getPositionAt(entry.replacementSpan.start + entry.replacementSpan.length);
+
+				range = new Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
+
+			}
+
+			return {
+
+				uri: resource,
+
+				position: position,
+
+				range: range,
+
+				label: entry.name,
+
+				insertText: entry.name,
+
+				sortText: entry.sortText,
+
+				kind: SuggestAdapter.convertKind(entry.kind)
+
+			};
+
+		});
+
+		return suggestions;
+
+}
+
+resolveCompletionItem(_model: monaco.editor.IReadOnlyModel, _position: Position, item: monaco.languages.CompletionItem, token: CancellationToken): Thenable<monaco.languages.CompletionItem> {
+
+	let MyItem = <MyCompletionItem>item;
+
+	return this._worker(resource).then(worker => {
+
+		return worker.getCompletionEntryDetails(resource.toString(),
+
+			this._positionToOffset(resource, position),
+
+			myItem.label);
+
+
+
+	}).then(details => {
+
+		if (!details) {
+
+			return MyItem;
+
+		return <MyCompletionItem>{
+
 			uri: resource,
+
 			position: position,
-			range: range,
-			label: entry.name,
-			insertText: entry.name,
-			sortText: entry.sortText,
-			kind: SuggestAdapter.convertKind(entry.kind)
+
+			label: details.name,
+
+			kind: SuggestAdapter.convertKind(details.kind),
+
+			detail: displayPartsToString(details.displayParts),
+
+			documentation: {
+
+				value: displayPartsToString(details.documentation)
+
+			}
+
 		};
-	});
 
-	return { suggestions };
-}
-
-async resolveCompletionItem(_model: monaco.editor.IReadOnlyModel, _position: Position, item: monaco.languages.CompletionItem, token: CancellationToken): Promise<monaco.languages.CompletionItem> {
-	const myItem = <MyCompletionItem>item;
-	const worker = await this._worker(resource);
-	const details = await worker.getCompletionEntryDetails(resource.toString(),
-		this._positionToOffset(resource, position),
-		myItem.label);
-
-	if (!details) {
-		return myItem;
-	}
-
-	return <MyCompletionItem>{
-		uri: resource,
-		position: position,
-		label: details.name,
-		kind: SuggestAdapter.convertKind(details.kind),
-		detail: displayPartsToString(details.displayParts),
-		documentation: {
-			value: displayPartsToString(details.documentation)
-		}
-	};
-}
-```",2019-12-20 18:47:49
+	});",2019-12-20 19:47:49+01:00,e4ab9e4360fc8cd559a6550f329340986fb00135
 "      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -228,15 +273,18 @@ async resolveCompletionItem(_model: monaco.editor.IReadOnlyModel, _position: Pos
       }, done.fail);
 
     it(""should correctly parse state model and state when defined"", function (done) {
-","```javascript
-      const { data } = await AnnotationFactory.create();
+","const annotationFactoryResult = AnnotationFactory.create();
+annotationFactoryResult.then(({ data }) => {
+  expect(data.stateModel).toBeNull();
+  expect(data.state).toBeNull();
+  done();
+}).catch(done.fail);
 
-      expect(data.stateModel).toBeNull();
-
-      expect(data.state).toBeNull();
-
-    it(""should correctly parse state model and state when defined"", async function () {
-```",2021-04-17 16:23:40
+it(""should correctly parse state model and state when defined"", async function () {
+  const { data } = await AnnotationFactory.create();
+  expect(data.stateModel).toBeNull();
+  expect(data.state).toBeNull();
+});",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
 "render(process.argv[2] || '/')
 
   .then(html => console.log(html))
@@ -248,17 +296,12 @@ async resolveCompletionItem(_model: monaco.editor.IReadOnlyModel, _position: Pos
     process.exit(1)
 
   })
-","```javascript
-(async () => {
-  try {
-    const html = await render(process.argv[2] || '/');
-    console.log(html);
-  } catch (err) {
+","render(process.argv[2] || '/')
+  .then(html => console.log(html))
+  .catch((err) => {
     console.error(err);
     process.exit(1);
-  }
-})();
-```",2020-11-03 20:26:27
+  });",2020-11-03 21:26:27+01:00,d441d79c6ca3eb3c0f64bba1217375e6505401c0
 "      ModelA.create({ name: 'model-A' }, function(error, toyA) {
 
         assert.ifError(error);
@@ -326,38 +369,71 @@ async resolveCompletionItem(_model: monaco.editor.IReadOnlyModel, _position: Pos
         });
 
       }
-","```javascript
-try {
-  const toyA = await ModelA.create({ name: 'model-A' });
-  const toyB = await ModelB.create({ name: 'model-B' });
+","ModelA.create({ name: 'model-A' }, function(error, toyA) {
 
-  const parent = await Parent.create({
-    children: [
-      {
-        name: 'Child 1',
-        toy: { kind: 'Test1', value: toyA._id }
-      },
-      {
-        name: 'Child 2'
-      },
-      {
-        name: 'Child 3',
-        toy: { kind: 'Test2', value: toyB._id }
-      }
-    ]
-  });
+  assert.ifError(error);
 
-  const doc = await Parent.findById(parent._id).populate('children.toy.value');
+  ModelB.create({ name: 'model-B' }, function(error, toyB) {
 
-  assert.equal(doc.children[0].toy.value.name, 'model-A');
-  assert.equal(doc.children[1].toy.value, null);
-  assert.equal(doc.children[2].toy.value.name, 'model-B');
-} catch (error) {
-  // Instead of assert.ifError or .catch(done), we let the async function
-  // fail by throwing the error, which will be caught by the test runner.
-  throw error;
-}
-```",2023-02-08 19:49:02
+    assert.ifError(error);
+
+    Parent.create({
+
+      children: [
+
+        {
+
+          name: 'Child 1',
+
+          toy: { kind: 'Test1', value: toyA._id }
+
+        },
+
+        {
+
+          name: 'Child 2'
+
+        },
+
+        {
+
+          name: 'Child 3',
+
+          toy: { kind: 'Test2', value: toyB._id }
+
+        }
+
+      ]
+
+    }, function(error, doc) {
+
+      assert.ifError(error);
+
+      test(doc._id);
+
+    });
+
+  function test(id) {
+
+    Parent.findById(id, function(error, doc) {
+
+      assert.ifError(error);
+
+      doc.populate('children.toy.value').then(function(doc) {
+
+        assert.equal(doc.children[0].toy.value.name, 'model-A');
+
+        assert.equal(doc.children[1].toy.value, null);
+
+        assert.equal(doc.children[2].toy.value.name, 'model-B');
+
+        done();
+
+      }).catch(done);
+
+    });
+
+  }",2023-02-08 14:49:02-05:00,55c53d0c813f88d9e7a1d45e95a2b62b3dd7fdf9
 "        libraryLoader.requireLibrary(libraryLoader.SORTABLE).then(() => {
 
             new Sortable(this.$widgetsEnabled[0], {
@@ -377,25 +453,31 @@ try {
                 handle: '.handle',
 
                 animation: 150
-","```javascript
-try {
+","try {
   await libraryLoader.requireLibrary(libraryLoader.SORTABLE);
 
   new Sortable(this.$widgetsEnabled[0], {
+
     group: 'widgets',
+
     handle: '.handle',
+
     animation: 150
+
   });
 
   new Sortable(this.$widgetsDisabled[0], {
+
     group: 'widgets',
+
     handle: '.handle',
+
     animation: 150
+
   });
 } catch (error) {
-  console.error('Failed to load the sortable library:', error);
-}
-```",2019-08-22 20:14:01
+  console.error('Error loading library or initializing Sortable:', error);
+}",2019-08-22 22:14:01+02:00,b84542064cd4d0615f298f9f9ef68690c8fe92a6
 "module.exports = (req, res) => {
 
   const start = process.hrtime()
@@ -421,22 +503,21 @@ try {
     res.end('Error: ' + err)
 
   })
-","```javascript
-module.exports = async (req, res) => {
-  const start = process.hrtime();
-  try {
-    const html = await render(req.url);
-    const end = process.hrtime(start);
-    const time = ((end[0] * 1e9) + end[1]) / 1e6;
-    // @ts-ignore
-    res.setHeader('X-Nuxt-Coldstart', global._coldstart + 'ms');
-    res.setHeader('X-Nuxt-Responsetime', time + 'ms');
-  } catch (err) {
-    console.error(err);
-    res.end('Error: ' + err);
-  }
-};
-```",2020-11-03 20:26:27
+","module.exports = async (req, res) => {
+    const start = process.hrtime();
+
+    try {
+        const html = await render(req.url);
+        const end = process.hrtime(start);
+        const time = ((end[0] * 1e9) + end[1]) / 1e6;
+        // @ts-ignore
+        res.setHeader('X-Nuxt-Coldstart', global._coldstart + 'ms');
+        res.setHeader('X-Nuxt-Responsetime', time + 'ms');
+    } catch (err) {
+        console.error(err);
+        res.end('Error: ' + err);
+    }
+};",2020-11-03 21:26:27+01:00,d441d79c6ca3eb3c0f64bba1217375e6505401c0
 "      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -466,28 +547,25 @@ module.exports = async (req, res) => {
       }, done.fail);
 
       function (done) {
-","```javascript
-async function (done) {
-  try {
-    const { data } = await AnnotationFactory.create();
+","(async () => {
 
-    expect(data.annotationType).toEqual(AnnotationType.LINK);
-    expect(data.url).toBeUndefined();
-    expect(data.unsafeUrl).toBeUndefined();
-    expect(data.dest).toEqual([
-      { num: 17, gen: 0 },
-      { name: ""XYZ"" },
-      0,
-      841.89,
-      null,
-    ]);
-  } catch (error) {
-    // The async/await equivalent of `done.fail` is to throw the error,
-    // which will cause the test runner to fail the test.
-    throw error;
-  }
-}
-```",2021-04-17 16:23:40
+  const { data } = await AnnotationFactory.create();
+
+  expect(data.annotationType).toEqual(AnnotationType.LINK);
+
+  expect(data.url).toBeUndefined();
+
+  expect(data.unsafeUrl).toBeUndefined();
+
+  expect(data.dest).toEqual([
+    { num: 17, gen: 0 },
+    { name: ""XYZ"" },
+    0,
+    841.89,
+    null,
+  ]);
+
+})().catch((error) => done(error)).finally(() => done());",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
 "  getPageDict(pageIndex) {
 
     const capability = createPromiseCapability();
@@ -639,12 +717,18 @@ async function (done) {
     next();
 
     return capability.promise;
-","```javascript
-async getPageDict(pageIndex) {
+","async getPageDict(pageIndex) {
+
+  const nodesToVisit = [this]; // Use 'this' instead of 'xref'.
+  let currentPageIndex = 0;
+  let count, currentNode;
+
   while (nodesToVisit.length) {
-    const currentNode = nodesToVisit.pop();
+
+    currentNode = nodesToVisit.pop();
 
     if (isRef(currentNode)) {
+
       count = pageKidsCountCache.get(currentNode);
 
       // Skip nodes where the page can't be.
@@ -653,79 +737,67 @@ async getPageDict(pageIndex) {
         continue;
       }
 
-      try {
-        const obj = await xref.fetchAsync(currentNode);
+      const obj = await this.xref.fetchAsync(currentNode); // Use 'this.xref' instead of 'xref'.
 
-        if (isDict(obj, ""Page"") || (isDict(obj) && !obj.has(""Kids""))) {
-          if (pageIndex === currentPageIndex) {
-            // Cache the Page reference, since it can *greatly* improve
-            // performance by reducing redundant lookups in long documents
-            // where all nodes are found at *one* level of the tree.
-            if (currentNode && !pageKidsCountCache.has(currentNode)) {
-              pageKidsCountCache.put(currentNode, 1);
-            }
-            return [obj, currentNode];
-          }
+      if (isDict(obj, 'Page') || (isDict(obj) && !obj.has('Kids'))) {
+        if (pageIndex === currentPageIndex) {
+          // Cache the Page reference...
+          capability.resolve([obj, currentNode]);
+        } else {
           currentPageIndex++;
+        }
+      } else {
+        capability.reject(new FormatError('Page dictionary kid reference points to wrong type of object.'));
+      }
+
+    } else if (!isDict(currentNode)) { // Check for an indirect object, not a Page dict.
+      capability.reject(new FormatError('Page dictionary kids object is not an array.'));
+    } else {
+      count = currentNode.get('Count');
+
+      if (Number.isInteger(count) && count >= 0) {
+
+        // Cache the Kids count...
+        const objId = currentNode.objId;
+        if (objId && !pageKidsCountCache.has(objId)) {
+          pageKidsCountCache.put(objId, count);
+        }
+
+        // Skip nodes where the page can't be...
+        if (currentPageIndex + count <= pageIndex) {
+          currentPageIndex += count;
           continue;
         }
-        nodesToVisit.push(obj);
-        continue;
-      } catch (reason) {
-        throw reason;
-      }
-    }
 
-    // Must be a child page dictionary.
-    if (!isDict(currentNode)) {
-      throw new FormatError(
-        ""Page dictionary kid reference points to wrong type of object.""
-      );
-    }
+        const kids = currentNode.get('Kids');
 
-    count = currentNode.get(""Count"");
-    if (Number.isInteger(count) && count >= 0) {
-      // Cache the Kids count, since it can reduce redundant lookups in
-      // documents where all nodes are found at *one* level of the tree.
-      const objId = currentNode.objId;
-      if (objId && !pageKidsCountCache.has(objId)) {
-        pageKidsCountCache.put(objId, count);
-      }
-      // Skip nodes where the page can't be.
-      if (currentPageIndex + count <= pageIndex) {
-        currentPageIndex += count;
-        continue;
-      }
-    }
+        if (!Array.isArray(kids)) {
+          // Prevent errors in corrupt PDF documents that violate the...
+          if (isName(currentNode.get('Type'), 'Page') ||
+              (!currentNode.has('Type') && currentNode.has('Contents'))) {
+            if (currentPageIndex === pageIndex) {
+              capability.resolve([currentNode, null]);
+            } else {
+              currentPageIndex++;
+            }
+          } else {
+            capability.reject(new FormatError('Page dictionary kids object is not an array.'));
+          }
 
-    const kids = currentNode.get(""Kids"");
-    if (!Array.isArray(kids)) {
-      // Prevent errors in corrupt PDF documents that violate the
-      // specification by *inlining* Page dicts directly in the Kids
-      // array, rather than using indirect objects (fixes issue9540.pdf).
-      if (
-        isName(currentNode.get(""Type""), ""Page"") ||
-        (!currentNode.has(""Type"") && currentNode.has(""Contents""))
-      ) {
-        if (currentPageIndex === pageIndex) {
-          return [currentNode, null];
-        }
-        currentPageIndex++;
-        continue;
+          // Always check all `Kids` nodes...
+          for (let last = kids.length - 1; last >= 0; last--) {
+            nodesToVisit.push(kids[last]);
+          }
+      } else {
+        capability.reject(new Error(`Page index ${pageIndex} not found.`));
       }
-      throw new FormatError(""Page dictionary kids object is not an array."");
-    }
 
-    // Always check all `Kids` nodes, to avoid getting stuck in an empty
-    // node further down in the tree (see issue5644.pdf, issue8088.pdf),
-    // and to ensure that we actually find the correct `Page` dict.
-    for (let last = kids.length - 1; last >= 0; last--) {
-      nodesToVisit.push(kids[last]);
+      currentPageIndex++;
     }
   }
-  throw new Error(`Page index ${pageIndex} not found.`);
-}
-```",2019-11-04 15:02:08
+
+  return capability.promise;
+}",2019-11-04 16:02:08+01:00,0d89006bf16b7262fe6aceb35557a9b54e3ec396
 "  return hashPassword(newPlaintextPassword).then(hash => {
 
     const update = {
@@ -749,26 +821,20 @@ async getPageDict(pageIndex) {
     Meteor.users.update({_id: user._id}, update);
 
   });
-","```javascript
-const hash = await hashPassword(newPlaintextPassword);
+","return hashPassword(newPlaintextPassword).then(async (hash) => {
+  const update = {
+    $unset: {
+      'services.password.reset': 1,
+    },
+    $set: {'services.password.bcrypt': hash},
+  };
 
-const update = {
-  $unset: {
-    'services.password.reset': 1
-  },
-  $set: {
-    'services.password.bcrypt': hash
+  if (options.logout) {
+    update.$unset['services.resume.loginTokens'] = 1;
   }
-};
 
-if (options.logout) {
-  update.$unset['services.resume.loginTokens'] = 1;
-}
-
-Meteor.users.update({
-  _id: user._id
-}, update);
-```",2022-08-26 18:53:40
+  await Meteor.users.update({ _id: user._id }, update);
+});",2022-08-26 15:53:40-03:00,d08790778a984e28ac73d81a5f42cd366b82ceb0
 " * @template {Options} Opts
 
  * @param {Opts} opts
@@ -852,59 +918,106 @@ function _resolveConfig(filePath, opts, sync) {
 const resolveConfig = (filePath, opts) => _resolveConfig(filePath, opts, false);
 
 resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
-","```javascript
- * @template {Options} Opts
- * @param {Opts} opts
- * @return {Opts[""sync""] extends true ? SyncExplorer : Explorer}
- */
-function getExplorer(opts) {
+","* @template {Options} Opts
+* 
+* @param {Opts} opts
+
+* @return {Promise<Opts[""sync""] extends true ? SyncExplorer : Explorer>}
+
+async function getExplorer(opts) {
+
   // Normalize opts before passing to a memoized function
+
   opts = { sync: false, cache: false, ...opts };
-  return getExplorerMemoized(opts);
-}
+
+  return await getExplorerMemoized(opts);
 
 async function _resolveConfig(filePath, opts, sync) {
-  const loadOpts = {
-    sync: Boolean(sync),
-  };
 
-  /** @type {[any, any]} */
-  const arr = [];
+    const arr = [
+        
+    ];
 
-  const unwrapAndMerge = ([result, editorConfigured]) => {
-    const merged = {
-      ...editorConfigured,
-      ...mergeOverrides(result, filePath),
+
+
+    const unwrapAndMerge = ([result, editorConfigured]) => {
+
+        const merged = {
+
+            ...editorConfigured,
+
+            ...mergeOverrides(result, filePath),
+
+        };
+
+
+
+        for (const optionName of [""plugins"", ""pluginSearchDirs""]) {
+
+            if (Array.isArray(merged[optionName])) {
+
+                merged[optionName] = merged[optionName].map((value) =>
+
+                    typeof value === ""string"" && value.startsWith(""."") // relative path
+
+                        ? require('path').resolve(require('path').dirname(result.filepath), value)
+
+                        : value
+
+                );
+
+            }
+
+        }
+
+
+
+        if (!result && !editorConfigured) {
+
+            return null;
+
+        }
+
+        // We are not using this option
+
+        delete merged.insertFinalNewline;
+
+        return merged;
+
     };
 
-    for (const optionName of [""plugins"", ""pluginSearchDirs""]) {
-      if (Array.isArray(merged[optionName])) {
-        merged[optionName] = merged[optionName].map((value) =>
-          typeof value === ""string"" && value.startsWith(""."") // relative path
-            ? path.resolve(path.dirname(result.filepath), value)
-            : value
-        );
-      }
+
+    if (sync) {
+
+        const result = unwrapAndMerge(arr);
+
+        return new Promise((resolve) => resolve(result));
+
+    } else {
+
+        return await new Promise((resolve, reject) => {
+
+            Promise.all(arr).then((values) => {
+                const value = unwrapAndMerge(values);
+                resolve(value);
+
+            }, (error) => {
+                reject(error);
+            });
+
+        });
+
     }
 
-    if (!result && !editorConfigured) {
-      return null;
-    }
-    // We are not using this option
-    delete merged.insertFinalNewline;
-    return merged;
-  };
-
-  if (loadOpts.sync) {
-    return unwrapAndMerge(arr);
-  }
-  const results = await Promise.all(arr);
-  return unwrapAndMerge(results);
 }
 
-const resolveConfig = (filePath, opts) => _resolveConfig(filePath, opts, false);
-resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
-```",2022-05-05 11:15:08
+
+
+async function resolveConfig(filePath, opts) {
+  return await _resolveConfig(filePath, opts, false);
+}
+
+resolveConfig.sync = async (filePath, opts) => await _resolveConfig(filePath, opts, true);",2022-05-05 19:15:08+08:00,34fadbe67d13df908023fb9a047eee1e90734aec
 "  it('eachAsync() with parallel > numDocs (gh-8422)', function() {
 
     return co(function*() {
@@ -954,37 +1067,35 @@ resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
       assert.deepEqual(docs.map(d => d.order), [1, 2, 3]);
 
     });
-","```javascript
+","describe('gh-8422', function() {
   it('eachAsync() with parallel > numDocs (gh-8422)', async function() {
     await Movie.deleteMany({});
-
-    await Movie.create([
+    const docs = [
       { name: 'Kickboxer' },
       { name: 'Ip Man' },
       { name: 'Enter the Dragon' }
-    ]);
-
+    ];
+    await Movie.create(docs);
     let numDone = 0;
     const test = async function() {
       await new Promise((resolve) => setTimeout(resolve, 100));
       ++numDone;
     };
-
     await Movie.find().cursor().eachAsync(test, { parallel: 4 });
     assert.equal(numDone, 3);
   });
 
   it('eachAsync() with sort, parallel, and sync function (gh-8557)', async function() {
     await User.create([{ order: 1 }, { order: 2 }, { order: 3 }]);
-
-    const cursor = User.aggregate([{ $sort: { order: 1 } }]).
-      cursor();
-
-    const docs = [];
-    await cursor.eachAsync((doc) => docs.push(doc), { parallel: 3 });
-    assert.deepEqual(docs.map(d => d.order), [1, 2, 3]);
+    const cursor = User.aggregate([{ $sort: { order: 1 } }]).cursor();
+    let numDone = 0;
+    const test = async function() {
+      ++numDone;
+    };
+    await cursor.eachAsync(test, { parallel: 3 });
+    assert.deepEqual(numDone, 3);
   });
-```",2021-08-29 21:23:24
+});",2021-08-29 23:23:24+02:00,308934210593f11b950528350c8fe82560224d48
 "  it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)', function() {
 
     return mongoose.createConnection(uri, opts).asPromise().then(() => assert.ok(false), err => {
@@ -992,28 +1103,25 @@ resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
       assert.equal(err.name, 'MongooseServerSelectionError');
 
     });
-","```javascript
-  it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)', async function() {
-    try {
-      await mongoose.createConnection(uri, opts).asPromise();
-      assert.ok(false, 'Promise should have rejected');
-    } catch (err) {
-      assert.equal(err.name, 'MongooseServerSelectionError');
-    }
-  });
-```",2023-02-01 20:02:31
+","it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)', async function() {
+  try {
+    await mongoose.createConnection(uri, opts);
+    assert.ok(false);
+  } catch (err) {
+    assert.equal(err.name, 'MongooseServerSelectionError');
+  }
+});",2023-02-01 15:02:31-05:00,f0c55f3278fd4aa3633baecfdf2b3776ca6cec4a
 "    }).then(done);
 
   it(""performs a normal search and finds the previous result"", function (done) {
 
     testSearch({
-","```javascript
-    });
+","// Original Code:
+}).then(done);
 
-  it(""performs a normal search and finds the previous result"", async function () {
+it(""performs a normal search and finds the previous result"", async function () {
 
-    await testSearch({
-```",2021-01-12 14:21:19
+  await testSearch({",2021-01-12 15:21:19+01:00,6dae2677d5fabe3116065c6ada5e50aec451dcba
 "	public provideCodeActions(model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken): Promise<monaco.languages.CodeActionList> {
 
 		return this._worker(resource).then(worker => {
@@ -1057,32 +1165,20 @@ resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
 				dispose: () => { }
 
 			};
-","```javascript
-	public async provideCodeActions(model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken): Promise<monaco.languages.CodeActionList> {
-
-		const worker = await this._worker(resource);
-
-		const start = this._positionToOffset(resource, { lineNumber: range.startLineNumber, column: range.startColumn });
-		const end = this._positionToOffset(resource, { lineNumber: range.endLineNumber, column: range.endColumn });
-
-		const formatOptions = FormatHelper._convertOptions(model.getOptions());
-		const errorCodes = context.markers.filter(m => m.code).map(m => m.code).map(Number);
-
-		const codeFixes = await worker.getCodeFixesAtPosition(resource.toString(), start, end, errorCodes, formatOptions);
-
-		const actions = codeFixes.filter(fix => {
-			// Removes any 'make a new file'-type code fix
-			return fix.changes.filter(change => change.isNewFile).length === 0;
-		}).map(fix => {
-			return this._tsCodeFixActionToMonacoCodeAction(model, context, fix);
-		});
-
-		return {
-			actions: actions,
-			dispose: () => { }
-		};
-	}
-```",2019-12-20 18:47:49
+","public provideCodeActions(model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken): Promise<monaco.languages.CodeActionList> {
+  return this._worker(resource)
+    .then(worker => {
+      const start = this._positionToOffset(resource, { lineNumber: range.startLineNumber, column: range.startColumn });
+      const end = this._positionToOffset(resource, { lineNumber: range.endLineNumber, column: range.endColumn });
+      const formatOptions = FormatHelper._convertOptions(model.getOptions());
+      const errorCodes = context.markers.filter(m => m.code).map(m => m.code).map(Number);
+      return worker.getCodeFixesAtPosition(resource.toString(), start, end, errorCodes, formatOptions);
+    })
+    .then(codeFixes => {
+      return codeFixes.filter(fix => fix.changes.filter(change => change.isNewFile).length === 0).map(fix => this._tsCodeFixActionToMonacoCodeAction(model, context, fix));
+    })
+    .then(result => ({ actions: result, dispose: () => {} }));
+}",2019-12-20 19:47:49+01:00,e4ab9e4360fc8cd559a6550f329340986fb00135
 "      AnnotationFactory.create(
 
       )
@@ -1188,60 +1284,43 @@ resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
         .catch(done.fail);
 
     it(""should render checkboxes for printing using normal appearance"", function (done) {
-","```javascript
-    it(""should render checkboxes for printing using normal appearance"", async function (done) {
-      try {
-        const annotation = await AnnotationFactory.create();
+","async () => {
+  try {
+    const annotation = await AnnotationFactory.create();
 
-        const annotationStorage = new Map();
-        annotationStorage.set(annotation.data.id, { value: true });
+    const annotationStorage = new Map();
+    annotationStorage.set(annotation.data.id, { value: true });
 
-        const [, opList] = await Promise.all([
-          annotation,
-          annotation.getOperatorList(
-            partialEvaluator,
-            task,
-            false,
-            annotationStorage
-          ),
-        ]);
+    let [opList] = await Promise.all([
+      annotation,
+      annotation.getOperatorList(partialEvaluator, task, false, annotationStorage)
+    ]);
 
-        expect(opList.argsArray.length).toEqual(3);
-        expect(opList.fnArray).toEqual([
-          OPS.beginAnnotation,
-          OPS.setFillRGBColor,
-          OPS.endAnnotation,
-        ]);
-        expect(opList.argsArray[1]).toEqual(
-          new Uint8ClampedArray([26, 51, 76])
-        );
+    expect(opList.argsArray.length).toEqual(3);
+    expect(opList.fnArray).toEqual([
+      OPS.beginAnnotation,
+      OPS.setFillRGBColor,
+      OPS.endAnnotation
+    ]);
+    expect(opList.argsArray[1]).toEqual(new Uint8ClampedArray([26, 51, 76]));
 
-        const annotationStorage2 = new Map();
-        annotationStorage2.set(annotation.data.id, { value: true });
+    annotation = await annotation.getOperatorList(partialEvaluator, task, false, annotationStorage);
 
-        const opList2 = await annotation.getOperatorList(
-          partialEvaluator,
-          task,
-          false,
-          annotationStorage2
-        );
+    opList = await annotation.getOperatorList(partialEvaluator, task, false, annotationStorage);
 
-        expect(opList2.argsArray.length).toEqual(3);
-        expect(opList2.fnArray).toEqual([
-          OPS.beginAnnotation,
-          OPS.setFillRGBColor,
-          OPS.endAnnotation,
-        ]);
-        expect(opList2.argsArray[1]).toEqual(
-          new Uint8ClampedArray([26, 51, 76])
-        );
+    expect(opList.argsArray.length).toEqual(3);
+    expect(opList.fnArray).toEqual([
+      OPS.beginAnnotation,
+      OPS.setFillRGBColor,
+      OPS.endAnnotation
+    ]);
+    expect(opList.argsArray[1]).toEqual(new Uint8ClampedArray([26, 51, 76]));
 
-        done();
-      } catch (error) {
-        done.fail(error);
-      }
-    });
-```",2021-04-17 16:23:40
+    done();
+  } catch (error) {
+    done.fail(error);
+  }
+};",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
 "      AnnotationFactory.create(
 
       )
@@ -1285,27 +1364,20 @@ resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
 
 
     it(""should save choice"", function (done) {
-","```javascript
-try {
-  const annotation = await AnnotationFactory.create();
-  const annotationStorage = new Map();
-  annotationStorage.set(annotation.data.id, { value: ""a value"" });
+","async it(""should save choice"", async function () {
+  try {
+    const annotation = await AnnotationFactory.create();
+    const annotationStorage = new Map();
+    annotationStorage.set(annotation.data.id, { value: ""A value"" });
 
-  const appearance = await annotation._getAppearance(
-    partialEvaluator,
-    task,
-    annotationStorage
-  );
+    const appearance = await annotation._getAppearance(partialEvaluator, task, annotationStorage);
 
-  expect(appearance).toEqual(
-    ""/Tx BMC q BT /Helv 5 Tf 1 0 0 1 0 0 Tm"" +
-      "" 2.00 2.00 Td (a value) Tj ET Q EMC""
-  );
-} catch (error) {
-  console.error(""Annotation processing failed:"", error);
-  throw error;
-}
-```",2021-04-17 16:23:40
+    expect(appearance).toEqual(""/Tx BMC q BT /Helv 5 Tf 1 0 0 1 0 0 Tm2.00 2.00 Td (a value) Tj ET Q EMC"");
+    done();
+  } catch (error) {
+    done(error);
+  }
+});",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
 "    it(""should handle unknown text alignment, maximum length and flags"", function (done) {
 
       AnnotationFactory.create(
@@ -1337,26 +1409,26 @@ try {
 
 
     it(""should not set invalid text alignment, maximum length and flags"", function (done) {
-","```javascript
-    it(""should handle unknown text alignment, maximum length and flags"", async function () {
-      const {
-        data
-      } = await AnnotationFactory.create();
+","it(""should handle unknown text alignment, maximum length and flags"", async () => {
+  const { data } = await AnnotationFactory.create();
 
-      expect(data.annotationType).toEqual(AnnotationType.WIDGET);
-      expect(data.textAlignment).toEqual(null);
-      expect(data.maxLen).toEqual(null);
-      expect(data.readOnly).toEqual(false);
-      expect(data.hidden).toEqual(false);
-      expect(data.multiLine).toEqual(false);
-      expect(data.comb).toEqual(false);
-      expect(data.defaultFieldValue).toEqual(""foo"");
-    });
+  expect(data.annotationType).toEqual(AnnotationType.WIDGET);
+  expect(data.textAlignment).toEqual(null);
+  expect(data.maxLen).toEqual(null);
+  expect(data.readOnly).toEqual(false);
+  expect(data.hidden).toEqual(false);
+  expect(data.multiLine).toEqual(false);
+  expect(data.comb).toEqual(false);
+  expect(data.defaultFieldValue).toEqual(""foo"");
+});
 
-
-
-    it(""should not set invalid text alignment, maximum length and flags"", function (done) {
-```",2021-04-17 16:23:40
+it(""should not set invalid text alignment, maximum length and flags"", async () => {
+  try {
+    // Your code that might throw an error if it's being tested with invalid values
+  } catch (error) {
+    // Handle the error
+  }
+});",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
 "      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -1370,14 +1442,13 @@ try {
       }, done.fail);
 
     it(""should parse IRT/RT for a group type"", function (done) {
-","```javascript
-    it(""should parse IRT/RT for a group type"", async function () {
-      const { data } = await AnnotationFactory.create();
+","const annotation = await AnnotationFactory.create();
 
-      expect(data.inReplyTo).toEqual(annotationRef.toString());
-      expect(data.replyType).toEqual(""R"");
-    });
-```",2021-04-17 16:23:40
+expect(annotation.data.inReplyTo).toEqual(annotationRef.toString());
+
+expect(annotation.data.replyType).toEqual(""R"");
+
+done();",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
 "    it('updateOne()', function(done) {
 
       BlogPost.create({ title: 'interoperable update as promise' }, function(err) {
@@ -1535,70 +1606,58 @@ try {
       });
 
 
-","```javascript
-    it('updateOne()', async function() {
-      await BlogPost.create({ title: 'interoperable update as promise' });
+","it('updateOne()', async function() {
 
-      const res = await BlogPost.updateOne({ title: 'interoperable update as promise' }, { title: 'interoperable update as promise delta' });
+  await BlogPost.create({ title: 'interoperable update as promise' });
 
-      assert.equal(res.matchedCount, 1);
-      assert.equal(res.modifiedCount, 1);
+  const res = await BlogPost.updateOne(
+    { title: 'interoperable update as promise' },
+    { title: 'interoperable update as promise delta' }
+  );
 
-      const count = await BlogPost.countDocuments({ title: 'interoperable update as promise delta' });
-      assert.equal(count, 1);
-    });
+  assert.equal(res.matchedCount, 1);
+  assert.equal(res.modifiedCount, 1);
 
-    it('findOne()', async function() {
-      const created = await BlogPost.create({ title: 'interoperable findOne as promise' });
-      const found = await BlogPost.findOne({ title: 'interoperable findOne as promise' });
-      assert.equal(found.id, created.id);
-    });
+  const count = await BlogPost.count({ title: 'interoperable update as promise delta' });
 
-    it('find()', async function() {
-      const [createdOne, createdTwo] = await BlogPost.create([
-        { title: 'interoperable find as promise' },
-        { title: 'interoperable find as promise' }
-      ]);
+  assert.equal(count, 1);
+});
 
-      const found = await BlogPost.find({ title: 'interoperable find as promise' }).sort('_id');
-      assert.equal(found.length, 2);
+it('findOne()', async function() {
 
-      const ids = {};
-      ids[String(found[0]._id)] = 1;
-      ids[String(found[1]._id)] = 1;
+  await BlogPost.create({ title: 'interoperable findOne As promise' });
 
-      assert.ok(String(createdOne._id) in ids);
-      assert.ok(String(createdTwo._id) in ids);
-    });
+  const found = await BlogPost.findOne({ title: 'interoperable findOne As promise' });
 
-    it('op can be changed', async function() {
-      const created = await BlogPost.create({ title: title });
-      const query = BlogPost.countDocuments({ title: title });
-      const found = await query.exec('findOne');
-      assert.equal(found.id, created.id);
-    });
+  assert.equal(found.id, created.id);
+});
 
-    it.skip('count()', async function() {
-      try {
-        await BlogPost.create({ title: 'interoperable count as promise 2' });
-        const query = BlogPost.countDocuments({ title: 'interoperable count as promise 2' });
-        const count = await query.exec();
-        assert.equal(count, 1);
-      } catch (error) {
-        throw error;
-      }
-    });
+it('find()', async function() {
 
-    it.skip('update()', async function() {
-      await BlogPost.create({ title: 'interoperable update as promise 2' });
+  await BlogPost.create({ title: 'interoperable find as promise' }, function(err) {});
 
-      const query = BlogPost.updateOne({ title: 'interoperable update as promise 2' }, { title: 'interoperable update as promise delta 2' });
-      await query.exec();
+  const found = await BlogPost.find({ title: 'interoperable find as promise' }).sort('_id');
 
-      const count = await BlogPost.countDocuments({ title: 'interoperable update as promise delta 2' });
-      assert.equal(count, 1);
-    });
-```",2023-02-07 17:39:03
+  assert.equal(found.length, 2);
+
+  const ids = {};
+  ids[String(found[0]._id)] = 1;
+  ids[String(found[1]._id)] = 1;
+
+  assert.ok(String(createdOne._id) in ids);
+  assert.ok(String(createdTwo._id) In ids);
+});
+
+it('op can be changed', async function() {
+
+  await BlogPost.create({ title: title });
+
+  const found = await BlogPost.count({ title: title });
+
+  assert.equal(found.id, created.id);
+});
+
+// Skipped tests as they are not needed for this conversion",2023-02-07 12:39:03-05:00,3ae89172dd14aee576d97fb6c47b54e7d76640c0
 "  findMongoPids = function(dbDir_unused, port) {
 
     return new Promise((resolve, reject) => {
@@ -1928,108 +1987,104 @@ try {
       );
 
     });
-","```javascript
-findMongoPids = async function(dbDir_unused, port) {
-  const execPromise = (command, options) => {
-    return new Promise((resolve, reject) => {
-      child_process.exec(command, options, (error, stdout, stderr) => {
-        if (error) {
-          error.cmd = command;
-          return reject(error);
-        }
-        resolve({ stdout, stderr });
-      });
-    });
-  };
+","findMongoPids = async function (dbDir_unused, port) {
+
+  let mongo_pids = {};
 
   try {
-    const { stdout } = await execPromise('tasklist /fi ""IMAGENAME eq mongod.exe""');
+    const { stdout } = await new Promise((resolve, reject) => {
+      child_process.exec(
+        'tasklist /fi ""IMAGENAME eq mongod.exe""',
+        (error, stdout, stderr) => {
+          if (error) {
+            reject(new Error(""Couldn't run tasklist.exe: "" + JSON.stringify(error)));
+          } else {
+            resolve({ stdout });
+          }
+        },
+      );
+    });
 
-    const mongo_pids = {};
-    stdout.split('\n').forEach(line => {
+    stdout.split('\n').forEach((line) => {
       const m = line.match(/^mongod.exe\s+(\d+) /);
       if (m) {
         mongo_pids[m[1]] = true;
       }
     });
 
-    const { stdout: netstat_stdout } = await execPromise('netstat -ano', {
-      maxBuffer: 1024 * 1024 * 10,
-    });
-
     const pids = [];
-    netstat_stdout.split('\n').forEach(line => {
-      const m = line.match(/^\s*TCP\s+\S+:(\d+)\s+\S+\s+LISTENING\s+(\d+)/);
-      if (m) {
-        const found_pid = parseInt(m[2], 10);
-        const found_port = parseInt(m[1], 10);
 
-        if (mongo_pids[found_pid] && (!port || port === found_port)) {
-          delete mongo_pids[found_pid];
-          pids.push({
-            pid: found_pid,
-            port: found_port,
-            app_dir: null,
-          });
+    try {
+      const { stdout: netstatStdout } = await new Promise((resolve, reject) => {
+        child_process.exec(
+          'netstat -ano',
+          { maxBuffer: 1024 * 1024 * 10 },
+          (error, stdout, stderr) => {
+            if (error) {
+              reject(new Error(""Couldn't run netstat -ano: "" + JSON.stringify(error)));
+            } else {
+              resolve({ stdout });
+            }
+          },
+        );
+      });
+
+      netstatStdout.split('\n').forEach((line) => {
+        const m = line.match(/^\s*TCP\s+\S+:(\d+)\s+\S+\s+LISTENING\s+(\d+)/);
+        if (m) {
+          const found_pid = parseInt(m[2], 10);
+          const found_port = parseInt(m[1], 10);
+
+          if (mongo_pids[found_pid] && (!port || port === found_port)) {
+            delete mongo_pids[found_pid];
+            pids.push({
+              pid: found_pid,
+              port: found_port,
+              app_dir: null,
+            });
+          }
         }
-      }
-    });
+      });
 
-    return pids;
+      return pids;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   } catch (error) {
-    if (error.cmd && error.cmd.includes('tasklist')) {
-      let additionalInfo = JSON.stringify(error);
-      if (error.code === 'ENOENT') {
-        additionalInfo = ""tasklist wasn't found on your system, it usually can be found at C:\\Windows\\System32\\."";
-      }
-      throw new Error(""Couldn't run tasklist.exe: "" + additionalInfo);
-    }
-    if (error.cmd && error.cmd.includes('netstat')) {
-      throw new Error(""Couldn't run netstat -ano: "" + JSON.stringify(error));
-    }
+    console.error(error);
     throw error;
   }
 };
 
-findMongoPids = async function(dbDir, port) {
-  const execPromise = (command, options) => {
-    return new Promise((resolve, reject) => {
-      child_process.exec(command, options, (error, stdout, stderr) => {
-        if (error) {
-          return reject(error);
-        }
-        resolve({ stdout, stderr });
-      });
-    });
-  };
-
-  let psScript = 'ps ax';
-  if (process.platform === 'darwin') {
-    psScript =
-      'if type pgrep >/dev/null 2>&1; then ' +
-      'pgrep -lf mongod; test ""$?"" -eq 0 -o ""$?"" -eq 1;' +
-      'else ps ax; fi';
-  }
-
-  const {
-    LANG = 'en_US.UTF-8',
-    LC_ALL = LANG,
-    LANGUAGE = LANG,
-    ...env
-  } = process.env;
-
-  Object.assign(env, { LANG, LC_ALL, LANGUAGE });
+findMongoPids = async function (dbDir, port) {
+  let ret = [];
 
   try {
-    const { stdout } = await execPromise(psScript, {
-      env,
-      maxBuffer: 1024 * 1024 * 10,
+    const { stdout } = await new Promise((resolve, reject) => {
+      child_process.exec(
+        'ps ax',
+        {
+          env: {
+            LANG: 'en_US.UTF-8',
+            LC_ALL: 'en_US.UTF-8',
+            LANGUAGE: 'en_US.UTF-8',
+          },
+          maxBuffer: 1024 * 1024 * 10,
+        },
+        (error, stdout, stderr) => {
+          if (error) {
+            reject(new Error(""Couldn't run ps ax: "" + JSON.stringify(error)));
+          } else {
+            resolve({ stdout });
+          }
+        },
+      );
     });
 
-    const ret = [];
-    stdout.split('\n').forEach(line => {
+    stdout.split('\n').forEach((line) => {
       const m = line.match(
-        /^\s*(\d+).+mongod .+--port (\d+) --dbpath (.+(?:\/|\\)db)/
+        /^\s*(\d+).+mongod .+--port (\d+) --dbpath (.+(?:\/|\\)db)/,
       );
       if (m && m.length === 4) {
         const foundPid = parseInt(m[1], 10);
@@ -2045,12 +2100,13 @@ findMongoPids = async function(dbDir, port) {
         }
       }
     });
+
     return ret;
   } catch (error) {
-    throw new Error(""Couldn't run ps ax: "" + JSON.stringify(error));
+    console.error(error);
+    throw error;
   }
-};
-```",2022-12-15 00:48:59
+};",2022-12-14 21:48:59-03:00,a76c30693f8697885787e9baab80107a8471a0c4
 "        server.put('options', opts).then(() => {
 
             toastService.showPersistent({
@@ -2066,21 +2122,15 @@ findMongoPids = async function(dbDir, port) {
                 closeAfter: 2000
 
             })
-","```javascript
-try {
-  await server.put('options', opts);
-  toastService.showPersistent({
+","server.put('options', opts);
+
+toastService.showPersistent({
     id: ""options-change-saved"",
     title: ""Options status"",
     message: ""Options change have been saved."",
     icon: ""slider"",
     closeAfter: 2000
-  });
-} catch (error) {
-  console.error(""Failed to save options:"", error);
-  // Optionally, show an error toast to the user
-}
-```",2022-11-20 22:20:42
+})",2022-11-20 23:20:42+01:00,bcb3a707f403e711c4a1bbe89deba313c34d7ae3
 "      return partialEvaluator
 
         .getOperatorList({
@@ -2254,23 +2304,33 @@ try {
       });
 
     });
-","```javascript
-async function getOperatorList() {
-  const [pageOpList, annotations, newAnnotations] = await Promise.all([]);
+","try {
+  const partialEvaluatorResult = await partialEvaluator.getOperatorList({
+    stream: contentStream,
+    task,
+    resources: this.resources,
+    operatorList: opList,
+  });
 
+  return opList;
+} catch (error) {
+  throw error;
+}
+
+const pageOpListPromise = new Promise((resolve) => {
+  resolve();
+}).then(() => {});
+
+return pageOpListPromise.then(async function ([pageOpList, annotations, newAnnotations]) {
   if (newAnnotations) {
-    // Some annotations can already exist (if it has the refToReplace
-    // property). In this case, we replace the old annotation by the new
-    // one.
-    annotations = annotations.filter(
-      a => !(a.ref && deletedAnnotations.has(a.ref))
-    );
+    annotations = annotations.filter((a) => !(A.ref && deletedAnnotations.has(A.ref)));
+
     for (let i = 0, ii = newAnnotations.length; i < ii; i++) {
       const newAnnotation = newAnnotations[i];
+
       if (newAnnotation.refToReplace) {
-        const j = annotations.findIndex(
-          a => a.ref && isRefsEqual(a.ref, newAnnotation.refToReplace)
-        );
+        const j = annotations.findIndex((a) => IsRefsEqual(A.ref, newAnnotation.refToReplace));
+
         if (j >= 0) {
           annotations.splice(j, 1, newAnnotation);
           newAnnotations.splice(i--, 1);
@@ -2278,79 +2338,54 @@ async function getOperatorList() {
         }
       }
     }
-    annotations = annotations.concat(newAnnotations);
-  }
 
-  if (
-    annotations.length === 0 ||
-    intent & RenderingIntentFlag.ANNOTATIONS_DISABLE
-  ) {
-    pageOpList.flush(/* lastChunk = */ true);
+    const intentAny = !!(intent & RenderingIntentFlag.ANY),
+      intentDisplay = !!(intent & RenderingIntentFlag.DISPLAY),
+      intentPrint = !!(intent & RenderingIntentFlag.PRINT);
+
+    const opListPromises = [];
+
+    for (const annotation of annotations) {
+      if (
+        intentAny ||
+        (intentDisplay &&
+          annotation.mustBeViewed(annotationStorage, renderForms) &&
+          annotation.mustBeViewedWhenEditing(isEditing, modifiedIds)) ||
+        (intentPrint && annotation.mustBePrinted(annotationStorage))
+      ) {
+        try {
+          const { opList, separateForm, separateCanvas } = await annotation.getOperatorList(
+            partialEvaluator,
+            task,
+            intent,
+            annotationStorage
+          );
+
+          pageOpList.addOpList(opList);
+
+          form ||= separateForm;
+          canvas ||= separateCanvas;
+        } catch (error) {
+          warn(`getOperatorList - ignoring annotation data during ""${task.name}"" task: ""${error}"".`);
+        }
+      }
+    }
+
+    pageOpList.flush(/* lastChunk = */ true, /* separateAnnots = */ { form, canvas });
+
     return { length: pageOpList.totalLength };
   }
-
-  const renderForms = !!(intent & RenderingIntentFlag.ANNOTATIONS_FORMS);
-  const isEditing = !!(intent & RenderingIntentFlag.IS_EDITING);
-  const intentAny = !!(intent & RenderingIntentFlag.ANY);
-  const intentDisplay = !!(intent & RenderingIntentFlag.DISPLAY);
-  const intentPrint = !!(intent & RenderingIntentFlag.PRINT);
-
-  // Collect the operator list promises for the annotations. Each promise
-  // is resolved with the complete operator list for a single annotation.
-  const opListPromises = [];
-  for (const annotation of annotations) {
-    if (
-      intentAny ||
-      (intentDisplay &&
-        annotation.mustBeViewed(annotationStorage, renderForms) &&
-        annotation.mustBeViewedWhenEditing(isEditing, modifiedIds)) ||
-      (intentPrint && annotation.mustBePrinted(annotationStorage))
-    ) {
-      opListPromises.push(
-        annotation
-          .getOperatorList(partialEvaluator, task, intent, annotationStorage)
-          .catch(function (reason) {
-            warn(
-              ""getOperatorList - ignoring annotation data during "" +
-                `""${task.name}"" task: ""${reason}"".`
-            );
-            return {
-              opList: null,
-              separateForm: false,
-              separateCanvas: false,
-            };
-          })
-      );
-    }
-  }
-
-  const opLists = await Promise.all(opListPromises);
-  let form = false,
-    canvas = false;
-  for (const { opList, separateForm, separateCanvas } of opLists) {
-    pageOpList.addOpList(opList);
-    form ||= separateForm;
-    canvas ||= separateCanvas;
-  }
-  pageOpList.flush(
-    /* lastChunk = */ true,
-    /* separateAnnots = */ { form, canvas }
-  );
-  return { length: pageOpList.totalLength };
-}
-```",2025-03-17 12:20:51
+});",2025-03-17 13:20:51+01:00,d00482380af454d544324d927ec1af9e17ccb4a8
 "  parseAsync(argv, parseOptions) {
 
     this.parse(argv, parseOptions);
 
     return Promise.all(this._actionResults).then(() => this);
-","```javascript
-  async parseAsync(argv, parseOptions) {
-    this.parse(argv, parseOptions);
+","async parseAsync(argv, parseOptions) {
+    await this.parse(argv, parseOptions);
     await Promise.all(this._actionResults);
     return this;
-  }
-```",2021-05-06 06:02:31
+}",2021-05-06 18:02:31+12:00,59c81532be707170d068b4e4dd93175a19fa8d9a
 "const { warn, error } = require('./util/log')
 
 program
@@ -2412,48 +2447,67 @@ creator
   })
 
   .catch(error)
-","```javascript
-const { warn, error } = require('./util/log');
+","const { warn, error } = require('./util/log')
 
 program
-  .usage('<app-name>')
-  .parse(process.argv);
 
-const projectName = program.args[0];
+  .usage('<app-name>')
+
+  .parse(process.argv)
+
+
+
+const projectName = program.args[0]
+
 if (!projectName) {
-  warn(`\n  Please provide an app name.`);
-  program.outputHelp();
-  process.exit(1);
+
+  warn(`\n  Please provide an app name.`)
+
+  program.outputHelp()
+
+  process.exit(1)
+
 }
 
 const createGenerator = (id, requirePath = id) => ({
+
   id,
+
   apply: require(requirePath)
-});
+
+})
 
 const builtInGenerators = fs
-  .readdirSync(path.resolve(__dirname, './generators'))
-  .filter(dir => dir.charAt(0) !== '.')
-  .map(id => createGenerator(id, `./generators/${id}`));
 
-debug(builtInGenerators);
+  .readdirSync(path.resolve(__dirname, './generators'))
+
+  .filter(dir => dir.charAt(0) !== '.')
+
+  .map(id => createGenerator(id, `./generators/${id}`))
+
+debug(builtInGenerators)
 
 const installedGenerators = resolveInstalledGenerators().map(id => {
-  return createGenerator(id);
-});
 
-const targetDir = path.resolve(process.cwd(), projectName);
-const creator = new Creator(projectName, builtInGenerators.concat(installedGenerators));
+  return createGenerator(id)
 
-(async () => {
-  try {
-    await creator.create(targetDir);
+})
+
+const targetDir = path.resolve(process.cwd(), projectName)
+
+const creator = new Creator(projectName, builtInGenerators.concat(installedGenerators))
+
+creator
+
+  .create(targetDir)
+
+  .then(() => {
+
     // TODO: log instructions
-  } catch (e) {
-    error(e);
-  }
-})();
-```",2017-12-28 18:06:17
+
+  })
+
+  .catch(error)",2017-12-28 13:06:17-05:00,9fc43f8fa51f5a5d1c36d07ea34db0f042264316
 "  set(name, value) {
 
     return this._initializedPromise.then(() => {
@@ -2497,36 +2551,49 @@ const creator = new Creator(projectName, builtInGenerators.concat(installedGener
       return this._writeToStorage(this.prefs);
 
     });
-","```javascript
-  async set(name, value) {
-    await this._initializedPromise;
+","async set(name, value) {
 
-    if (this.defaults[name] === undefined) {
-      throw new Error(`Set preference: ""${name}"" is undefined.`);
-    } else if (value === undefined) {
-      throw new Error('Set preference: no value is specified.');
-    }
+  await this._initializedPromise;
 
-    let valueType = typeof value;
-    let defaultType = typeof this.defaults[name];
+  if (this.defaults[name] === undefined) {
 
-    if (valueType !== defaultType) {
-      if (valueType === 'number' && defaultType === 'string') {
-        value = value.toString();
-      } else {
-        throw new Error(`Set preference: ""${value}"" is a ${valueType}, ` +
-                        `expected a ${defaultType}.`);
-      }
+    throw new Error(`Set preference: ""${name}"" Is undefined.`);
+
+  } else if (value === undefined) {
+
+    throw new Error('Set preference: no value is specified.');
+
+  }
+
+  let valueType = typeof value;
+
+  let defaultType = typeof this.defaults[name];
+
+  if (valueType !== defaultType) {
+
+    if (valueType === 'number' && defaultType === 'string') {
+
+      value = value.toString();
+
+    } else {
+
+      throw new Error(`Set preference: ""${value}"" Is a ${valueType}, ` +
+
+                      `expected a ${defaultType}.`);
+
     }
 
     if (valueType === 'number' && !Number.isInteger(value)) {
+
       throw new Error(`Set preference: ""${value}"" must be an integer.`);
+
     }
 
-    this.prefs[name] = value;
-    return await this._writeToStorage(this.prefs);
-  }
-```",2018-07-30 14:48:16
+  this.prefs[name] = value;
+
+  return this._writeToStorage(this.prefs);
+
+}",2018-07-30 16:48:16+02:00,233b3274bf7973aa06a674dddef585f4313f3742
 "      const result = XfaLayer.render(parameters);
 
       return Promise.resolve(result);
@@ -2582,42 +2649,42 @@ const creator = new Creator(projectName, builtInGenerators.concat(installedGener
         console.error(error);
 
       });
-","```javascript
-try {
-  const xfaHtml = await this.pdfPage.getXfa();
-
-  if (this._cancelled || !xfaHtml) {
-    return {
-      textDivs: []
-    };
-  }
-
-  const parameters = {
-    viewport: viewport.clone({
-      dontFlip: true
-    }),
-    div: this.div,
-    xfaHtml,
-    annotationStorage: this.annotationStorage,
-    linkService: this.linkService,
-    intent,
-  };
-
-  if (this.div) {
-    // The div already exists, so update it.
-    return XfaLayer.update(parameters);
-  }
-
-  // Create an xfa layer div and render the form.
-  this.div = document.createElement(""div"");
-  this.pageDiv.append(this.div);
-  parameters.div = this.div;
-
-  return XfaLayer.render(parameters);
+","try {
+  const result = await XfaLayer.render(parameters);
+  return result;
 } catch (error) {
   console.error(error);
 }
-```",2022-12-11 12:07:44
+
+return this.pdfPage
+  .getXfa()
+  .then(xfaHtml => {
+    if (this._cancelled || !xfaHtml) {
+      return { textDivs: [] };
+    }
+
+    const parameters = {
+      viewport: viewport.clone({ dontFlip: true }),
+      div: this.div,
+      xfaHtml,
+      annotationStorage: this.annotationStorage,
+      linkService: this.linkService,
+      intent,
+    };
+
+    if (this.div) {
+      return XfaLayer.update(parameters);
+    }
+
+    // Create an xfa layer div and render the form
+    this.div = document.createElement(""div"");
+    this.pageDiv.append(this.div);
+    parameters.div = this.div;
+    return XfaLayer.render(parameters);
+  })
+  .catch(error => {
+    console.error(error);
+  });",2022-12-11 13:07:44+01:00,828efd9d000ab868369ac19cbc2ed0f8cc09c92f
 "function loadNoteToEditor(noteId) {
 
     $.get(baseApiUrl + 'notes/' + noteId).then(note => {
@@ -2689,61 +2756,75 @@ function loadNote(noteId, callback) {
         callback(note);
 
     });
-","```javascript
-async function loadNoteToEditor(noteId) {
-    try {
-        const note = await $.get(baseApiUrl + 'notes/' + noteId);
+","function loadNoteToEditor(noteId) {
+
+    $.get(baseApiUrl + 'notes/' + noteId).then(note => {
 
         globalCurrentNote = note;
+
         globalCurrentNoteLoadTime = Math.floor(new Date().getTime() / 1000);
 
         if (newNoteCreated) {
+
             newNoteCreated = false;
+
             $(""#note-title"").focus().select();
+
         }
 
         handleEncryption(note.detail.encryption > 0, false, () => {
+
             $(""#note-detail-wrapper"").show();
 
-            // this may fail if the dialog has not been previously opened
             try {
+
                 $(""#encryption-password-dialog"").dialog('close');
-            } catch (e) {}
+
+            }
+
+            catch(e) {}
 
             $(""#encryption-password"").val('');
+
             decryptNoteIfNecessary(note);
+
             $(""#note-title"").val(note.detail.note_title);
+
             noteChangeDisabled = true;
 
-            // Clear contents and remove all stored history. This is to prevent undo from going across notes
+            // Clear contents and remove all stored history. this is to prevent undo from going across notes
+
             $('#note-detail').summernote('reset');
+
             $('#note-detail').summernote('code', note.detail.note_text);
 
             document.location.hash = noteId;
-            addRecentNote(noteId, note.detail.note_id);
-            noteChangeDisabled = false;
-            setNoteBackgroundIfEncrypted(note);
-        });
-    } catch (error) {
-        console.error(""Failed to load note for editor:"", error);
-    }
-}
 
-async function loadNote(noteId, callback) {
-    try {
-        const note = await $.get(baseApiUrl + 'notes/' + noteId);
+            addRecentNote(noteId, note.detail.note_id);
+
+            noteChangeDisabled = false;
+
+            setNoteBackgroundIfEncrypted(note);
+
+        });
+
+    });
+
+function loadNote(noteId, callback) {
+
+    $.get(baseApiUrl + 'notes/' + noteId).then(note => {
 
         if (note.detail.encryption > 0 && !isEncryptionAvailable()) {
+
             return;
+
         }
 
         decryptNoteIfNecessary(note);
+
         callback(note);
-    } catch (error) {
-        console.error(""Failed to load note:"", error);
-    }
-}
-```",2017-11-04 00:01:32
+
+    });",2017-11-03 20:01:32-04:00,702d47e6b0b1c71ead1111c1d3952fbaf86abf2a
 "  read() {
 
     return this._readCapability.promise.then(() => {
@@ -2791,36 +2872,50 @@ async function loadNote(noteId, callback) {
       return Promise.resolve({ value: buffer, done: false, });
 
     });
-","```javascript
-  async read() {
-    await this._readCapability.promise;
+","async read() {
 
-    if (this._done) {
-      return { value: undefined, done: true, };
-    }
+  await this._readCapability.promise;
 
-    if (this._storedError) {
-      throw this._storedError;
-    }
+  if (this._done) {
 
-    let chunk = this._readableStream.read();
+    return { value: undefined, done: true };
 
-    if (chunk === null) {
-      this._readCapability = createPromiseCapability();
-      return this.read();
-    }
-
-    this._loaded += chunk.length;
-
-    if (this.onProgress) {
-      this.onProgress({
-        loaded: this._loaded,
-        total: this._contentLength,
-      });
-    }
-
-    // Ensure that `read()` method returns ArrayBuffer.
-    let buffer = new Uint8Array(chunk).buffer;
-    return { value: buffer, done: false, };
   }
-```",2018-07-30 11:58:09
+
+  if (this._storedError) {
+
+    throw this._storedError;
+
+  }
+
+  let chunk = this._readableStream.read();
+
+  if (chunk === null) {
+
+    this._readCapability = createPromiseCapability();
+
+    return await this.read();
+
+  }
+
+  this._loaded += chunk.length;
+
+  if (this.onProgress) {
+
+    this.onProgress({
+
+      loaded: this._loaded,
+
+      total: this._contentLength,
+
+    });
+
+  }
+
+  // Ensure that `read()` method returns ArrayBuffer.
+
+  let buffer = new Uint8Array(chunk).buffer;
+
+  return { value: buffer, done: false };
+
+}",2018-07-30 13:58:09+02:00,099ed0885239f070f7c7e1d703b57cc64c3f634d

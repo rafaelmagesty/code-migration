@@ -1,0 +1,2793 @@
+removed_chunk,migrated_code,commit_date,commit_hash
+"      AnnotationFactory.create(
+
+      ).then(({ data }) => {
+
+        expect(data.annotationType).toEqual(AnnotationType.INK);
+
+        expect(data.inkLists.length).toEqual(1);
+
+        expect(data.inkLists[0]).toEqual([
+
+          { x: 1, y: 1 },
+
+          { x: 1, y: 2 },
+
+          { x: 2, y: 2 },
+
+          { x: 3, y: 3 },
+
+        ]);
+
+        done();
+
+      }, done.fail);
+
+    it(""should handle multiple ink lists"", function (done) {
+","```
+await AnnotationFactory.create().then(({ data }) => {
+
+  expect(data.annotationType).toEqual(AnnotationType.INK);
+
+  expect(data.inkLists.length).toEqual(1);
+
+  expect(data.inkLists[0]).toEqual([
+
+    { x: 1, y: 1 },
+
+    { x: 1, y: 2 },
+
+    { x: 2, y: 2 },
+
+    { x: 3, y: 3 },
+
+  ]);
+
+  done();
+
+}, done.fail);
+```",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
+"      AnnotationFactory.create(
+
+      ).then(({ data, viewable }) => {
+
+        expect(data.annotationType).toEqual(AnnotationType.POPUP);
+
+        expect(data.modificationDate).toEqual(""D:20190423"");
+
+        expect(data.color).toEqual(new Uint8ClampedArray([0, 0, 255]));
+
+        done();
+
+      }, done.fail);
+
+    it(""should handle missing parent properties"", function (done) {
+","```
+AnnotationFactory.create({ data: { annotationType: AnnotationType.POPUP, modificationDate: ""D:20190423"", color: new Uint8ClampedArray([0, 0, 255]) } })
+    .then(function (result) {
+        expect(result.data.annotationType).toEqual(AnnotationType.POPUP);
+        expect(result.data.modificationDate).toEqual(""D:20190423"");
+        expect(result.data.color).toEqual(new Uint8ClampedArray([0, 0, 255]));
+        done();
+    }, done.fail);
+});
+```",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
+"	provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, _context: monaco.languages.CompletionContext, token: CancellationToken): Thenable<monaco.languages.CompletionList> {
+
+		const offset = this._positionToOffset(resource, position);
+
+		return this._worker(resource).then(worker => {
+
+			return worker.getCompletionsAtPosition(resource.toString(), offset);
+
+		}).then(info => {
+
+			if (!info) {
+
+				return;
+
+			}
+
+			let suggestions: MyCompletionItem[] = info.entries.map(entry => {
+
+				let range = wordRange;
+
+				if (entry.replacementSpan) {
+
+					const p1 = model.getPositionAt(entry.replacementSpan.start);
+
+					const p2 = model.getPositionAt(entry.replacementSpan.start + entry.replacementSpan.length);
+
+					range = new Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
+
+				}
+
+				return {
+
+					uri: resource,
+
+					position: position,
+
+					range: range,
+
+					label: entry.name,
+
+					insertText: entry.name,
+
+					sortText: entry.sortText,
+
+					kind: SuggestAdapter.convertKind(entry.kind)
+
+				};
+
+			});
+
+				suggestions
+
+	resolveCompletionItem(_model: monaco.editor.IReadOnlyModel, _position: Position, item: monaco.languages.CompletionItem, token: CancellationToken): Thenable<monaco.languages.CompletionItem> {
+
+		let myItem = <MyCompletionItem>item;
+
+		return this._worker(resource).then(worker => {
+
+			return worker.getCompletionEntryDetails(resource.toString(),
+
+				this._positionToOffset(resource, position),
+
+				myItem.label);
+
+
+
+		}).then(details => {
+
+			if (!details) {
+
+				return myItem;
+
+			return <MyCompletionItem>{
+
+				uri: resource,
+
+				position: position,
+
+				label: details.name,
+
+				kind: SuggestAdapter.convertKind(details.kind),
+
+				detail: displayPartsToString(details.displayParts),
+
+				documentation: {
+
+					value: displayPartsToString(details.documentation)
+
+				}
+
+			};
+
+		});
+","
+```
+async function provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, _context: monaco.languages.CompletionContext, token: CancellationToken): Promise<monaco.languages.CompletionList> {
+  const offset = this._positionToOffset(resource, position);
+  const worker = await this._worker(resource);
+  const info = await worker.getCompletionsAtPosition(resource.toString(), offset);
+  if (!info) return;
+  let suggestions: MyCompletionItem[] = [];
+  for (let entry of info.entries) {
+    let range = wordRange;
+    if (entry.replacementSpan) {
+      const p1 = model.getPositionAt(entry.replacementSpan.start);
+      const p2 = model.getPositionAt(entry.replacementSpan.start + entry.replacementSpan.length);
+      range = new Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
+    }
+    suggestions.push({
+      uri: resource,
+      position: position,
+      range: range,
+      label: entry.name,
+      insertText: entry.name,
+      sortText: entry.sortText,
+      kind: SuggestAdapter.convertKind(entry.kind)
+    });
+  }
+  return { suggestions };
+}
+
+async function resolveCompletionItem(model: monaco.editor.IReadOnlyModel, position: Position, item: monaco.languages.CompletionItem, token: CancellationToken): Promise<monaco.languages.CompletionItem> {
+  let myItem = <MyCompletionItem>item;
+  const worker = await this._worker(resource);
+  const details = await worker.getCompletionEntryDetails(resource.toString(), this._positionToOffset(resource, position), myItem.label);
+  if (!details) return myItem;
+  return {
+    uri: resource,
+    position: position,
+    label: details.name,
+    kind: SuggestAdapter.convertKind(details.kind),
+    detail: displayPartsToString(details.displayParts),
+    documentation: {
+      value: displayPartsToString(details.documentation)
+    }
+  };
+}
+```",2019-12-20 19:47:49+01:00,e4ab9e4360fc8cd559a6550f329340986fb00135
+"      AnnotationFactory.create(
+
+      ).then(({ data }) => {
+
+        expect(data.stateModel).toBeNull();
+
+        expect(data.state).toBeNull();
+
+        done();
+
+      }, done.fail);
+
+    it(""should correctly parse state model and state when defined"", function (done) {
+","  ```
+  AnnotationFactory.create()
+    .then(({ data }) => {
+      expect(data.stateModel).toBeNull();
+      expect(data.state).toBeNull();
+      done();
+    }, done.fail);
+  }
+  it(""should correctly parse state model and state when defined"", function (done) {
+    AnnotationFactory.create()
+      .then(({ data }) => {
+        expect(data.stateModel).not.toBeNull();
+        expect(data.state).not.toBeNull();
+        done();
+      }, done.fail);
+  });
+  ```",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
+"render(process.argv[2] || '/')
+
+  .then(html => console.log(html))
+
+  .catch((err) => {
+
+    console.error(err)
+
+    process.exit(1)
+
+  })
+","```
+async function render (path = '/') {
+  try {
+    const html = await fetch(path).then(res => res.text())
+    return html
+  } catch (err) {
+    console.error(err)
+    process.exit(1)
+  }
+}
+```",2020-11-03 21:26:27+01:00,d441d79c6ca3eb3c0f64bba1217375e6505401c0
+"      ModelA.create({ name: 'model-A' }, function(error, toyA) {
+
+        assert.ifError(error);
+
+        ModelB.create({ name: 'model-B' }, function(error, toyB) {
+
+          assert.ifError(error);
+
+          Parent.create({
+
+            children: [
+
+              {
+
+                name: 'Child 1',
+
+                toy: { kind: 'Test1', value: toyA._id }
+
+              },
+
+              {
+
+                name: 'Child 2'
+
+              },
+
+              {
+
+                name: 'Child 3',
+
+                toy: { kind: 'Test2', value: toyB._id }
+
+              }
+
+            ]
+
+          }, function(error, doc) {
+
+            assert.ifError(error);
+
+            test(doc._id);
+
+          });
+
+        });
+
+      function test(id) {
+
+        Parent.findById(id, function(error, doc) {
+
+          assert.ifError(error);
+
+          doc.populate('children.toy.value').then(function(doc) {
+
+            assert.equal(doc.children[0].toy.value.name, 'model-A');
+
+            assert.equal(doc.children[1].toy.value, null);
+
+            assert.equal(doc.children[2].toy.value.name, 'model-B');
+
+            done();
+
+          }).catch(done);
+
+        });
+
+      }
+","  ```javascript
+  const ModelA = require('../models/ModelA');
+  const ModelB = require('../models/ModelB');
+  const Parent = require('../models/Parent');
+
+  async function createParents() {
+    // Create two models of different types
+    const toyA = await ModelA.create({ name: 'model-A' });
+    const toyB = await ModelB.create({ name: 'model-B' });
+
+    // Create a parent with three children, each with a different toy type and value
+    const parent = new Parent({
+      children: [
+        { name: 'Child 1', toy: { kind: 'Test1', value: toyA._id } },
+        { name: 'Child 2' },
+        { name: 'Child 3', toy: { kind: 'Test2', value: toyB._id } },
+      ],
+    });
+    await parent.save();
+    return parent;
+  }
+
+  async function test(id) {
+    const parent = await Parent.findById(id).populate('children.toy.value');
+    assert.equal(parent.children[0].toy.value.name, 'model-A');
+    assert.equal(parent.children[1].toy.value, null);
+    assert.equal(parent.children[2].toy.value.name, 'model-B');
+  }
+
+  it('should be able to populate children with different types of toys', async () => {
+    const parent = await createParents();
+    await test(parent._id);
+  });
+  ```",2023-02-08 14:49:02-05:00,55c53d0c813f88d9e7a1d45e95a2b62b3dd7fdf9
+"        libraryLoader.requireLibrary(libraryLoader.SORTABLE).then(() => {
+
+            new Sortable(this.$widgetsEnabled[0], {
+
+                group: 'widgets',
+
+                handle: '.handle',
+
+                animation: 150
+
+            });
+
+            new Sortable(this.$widgetsDisabled[0], {
+
+                group: 'widgets',
+
+                handle: '.handle',
+
+                animation: 150
+","```
+async function loadLibrary() {
+  await libraryLoader.requireLibrary(libraryLoader.SORTABLE);
+}
+
+loadLibrary().then(() => {
+  new Sortable(this.$widgetsEnabled[0], {
+    group: 'widgets',
+    handle: '.handle',
+    animation: 150,
+  });
+  new Sortable(this.$widgetsDisabled[0], {
+    group: 'widgets',
+    handle: '.handle',
+    animation: 150,
+  });
+});
+```",2019-08-22 22:14:01+02:00,b84542064cd4d0615f298f9f9ef68690c8fe92a6
+"module.exports = (req, res) => {
+
+  const start = process.hrtime()
+
+  render(req.url).then((html) => {
+
+    const end = process.hrtime(start)
+
+    const time = ((end[0] * 1e9) + end[1]) / 1e6
+
+    // @ts-ignore
+
+    res.setHeader('X-Nuxt-Coldstart', global._coldstart + 'ms')
+
+    res.setHeader('X-Nuxt-Responsetime', time + 'ms')
+
+
+
+  }).catch((err) => {
+
+    console.error(err)
+
+    res.end('Error: ' + err)
+
+  })
+","
+```
+async function handleRequest (req, res) {
+  const start = process.hrtime()
+
+  try {
+    const html = await render(req.url)
+    const end = process.hrtime(start)
+    const time = ((end[0] * 1e9) + end[1]) / 1e6
+
+    // @ts-ignore
+
+    res.setHeader('X-Nuxt-Coldstart', global._coldstart + 'ms')
+
+    res.setHeader('X-Nuxt-Responsetime', time + 'ms')
+
+    res.send(html)
+  } catch (err) {
+    console.error(err)
+    res.end('Error: ' + err)
+  }
+}
+```",2020-11-03 21:26:27+01:00,d441d79c6ca3eb3c0f64bba1217375e6505401c0
+"      AnnotationFactory.create(
+
+      ).then(({ data }) => {
+
+        expect(data.annotationType).toEqual(AnnotationType.LINK);
+
+        expect(data.url).toBeUndefined();
+
+        expect(data.unsafeUrl).toBeUndefined();
+
+        expect(data.dest).toEqual([
+
+          { num: 17, gen: 0 },
+
+          { name: ""XYZ"" },
+
+          0,
+
+          841.89,
+
+          null,
+
+        ]);
+
+        done();
+
+      }, done.fail);
+
+      function (done) {
+","```
+AnnotationFactory.create()
+  .then(({ data }) => {
+    expect(data.annotationType).toEqual(AnnotationType.LINK);
+    expect(data.url).toBeUndefined();
+    expect(data.unsafeUrl).toBeUndefined();
+    expect(data.dest).toEqual([{ num: 17, gen: 0 }, { name: ""XYZ"" }, 0, 841.89, null]);
+    done();
+  })
+  .catch(done.fail);
+```",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
+"  getPageDict(pageIndex) {
+
+    const capability = createPromiseCapability();
+
+    function next() {
+
+      while (nodesToVisit.length) {
+
+        const currentNode = nodesToVisit.pop();
+
+        if (isRef(currentNode)) {
+
+          count = pageKidsCountCache.get(currentNode);
+
+          // Skip nodes where the page can't be.
+
+          if (count > 0 && currentPageIndex + count < pageIndex) {
+
+            currentPageIndex += count;
+
+            continue;
+
+          }
+
+          xref.fetchAsync(currentNode).then(function(obj) {
+
+            if (isDict(obj, 'Page') || (isDict(obj) && !obj.has('Kids'))) {
+
+              if (pageIndex === currentPageIndex) {
+
+                // Cache the Page reference, since it can *greatly* improve
+
+                // performance by reducing redundant lookups in long documents
+
+                // where all nodes are found at *one* level of the tree.
+
+                if (currentNode && !pageKidsCountCache.has(currentNode)) {
+
+                  pageKidsCountCache.put(currentNode, 1);
+
+                }
+
+                capability.resolve([obj, currentNode]);
+
+              } else {
+
+                currentPageIndex++;
+
+                next();
+
+              }
+
+              return;
+
+            nodesToVisit.push(obj);
+
+            next();
+
+          }, capability.reject);
+
+          return;
+
+        // Must be a child page dictionary.
+
+        if (!isDict(currentNode)) {
+
+          capability.reject(new FormatError(
+
+            'Page dictionary kid reference points to wrong type of object.'));
+
+          return;
+
+        }
+
+        count = currentNode.get('Count');
+
+        if (Number.isInteger(count) && count >= 0) {
+
+          // Cache the Kids count, since it can reduce redundant lookups in
+
+          // documents where all nodes are found at *one* level of the tree.
+
+          const objId = currentNode.objId;
+
+          if (objId && !pageKidsCountCache.has(objId)) {
+
+            pageKidsCountCache.put(objId, count);
+
+          }
+
+          // Skip nodes where the page can't be.
+
+          if (currentPageIndex + count <= pageIndex) {
+
+            currentPageIndex += count;
+
+            continue;
+
+          }
+
+        const kids = currentNode.get('Kids');
+
+        if (!Array.isArray(kids)) {
+
+          // Prevent errors in corrupt PDF documents that violate the
+
+          // specification by *inlining* Page dicts directly in the Kids
+
+          // array, rather than using indirect objects (fixes issue9540.pdf).
+
+          if (isName(currentNode.get('Type'), 'Page') ||
+
+              (!currentNode.has('Type') && currentNode.has('Contents'))) {
+
+            if (currentPageIndex === pageIndex) {
+
+              capability.resolve([currentNode, null]);
+
+              return;
+
+            }
+
+            currentPageIndex++;
+
+            continue;
+
+
+
+          capability.reject(new FormatError(
+
+            'Page dictionary kids object is not an array.'));
+
+          return;
+
+        // Always check all `Kids` nodes, to avoid getting stuck in an empty
+
+        // node further down in the tree (see issue5644.pdf, issue8088.pdf),
+
+        // and to ensure that we actually find the correct `Page` dict.
+
+        for (let last = kids.length - 1; last >= 0; last--) {
+
+          nodesToVisit.push(kids[last]);
+
+        }
+
+      capability.reject(new Error(`Page index ${pageIndex} not found.`));
+
+    next();
+
+    return capability.promise;
+","```
+getPageDict(pageIndex) {
+
+  let currentPageIndex = 0;
+
+  const nodesToVisit = [];
+
+  const pageKidsCountCache = new Map();
+
+  async function next() {
+
+    while (nodesToVisit.length > 0) {
+
+      const currentNode = nodesToVisit.pop();
+
+      if (isRef(currentNode)) {
+
+        let count = pageKidsCountCache.get(currentNode);
+
+        if (count && currentPageIndex + count < pageIndex) {
+
+          currentPageIndex += count;
+
+          continue;
+
+        }
+
+        const obj = await xref.fetchAsync(currentNode);
+
+        if (!obj) {
+
+          capability.reject(new FormatError('Invalid object reference in page dictionary'));
+
+          return;
+
+        }
+
+        if (isDict(obj, 'Page') || (isDict(obj) && !obj.has('Kids'))) {
+
+          if (pageIndex === currentPageIndex) {
+
+            capability.resolve([obj, currentNode]);
+
+            return;
+
+          }
+
+          currentPageIndex++;
+
+        } else if (isDict(currentNode) && !currentNode.has('Kids')) {
+
+          capability.reject(new FormatError('Page dictionary kid reference points to wrong type of object'));
+
+          return;
+
+        } else if (!isArray(currentNode, 'Kids')) {
+
+          capability.reject(new FormatError('Page dictionary kids object is not an array'));
+
+          return;
+
+        }
+
+        const kids = currentNode.get('Kids');
+
+        if (kids) {
+
+          for (let last = kids.length - 1; last >= 0; last--) {
+
+            nodesToVisit.push(kids[last]);
+
+          }
+
+        }
+
+      } else {
+
+        capability.reject(new Error(`Page index ${pageIndex} not found`));
+
+        return;
+
+      }
+
+    }
+
+  }
+
+  next();
+
+  return capability.promise;
+
+}
+```",2019-11-04 16:02:08+01:00,0d89006bf16b7262fe6aceb35557a9b54e3ec396
+"  return hashPassword(newPlaintextPassword).then(hash => {
+
+    const update = {
+
+      $unset: {
+
+        'services.password.reset': 1
+
+      },
+
+      $set: {'services.password.bcrypt': hash}
+
+    };
+
+    if (options.logout) {
+
+      update.$unset['services.resume.loginTokens'] = 1;
+
+    }
+
+    Meteor.users.update({_id: user._id}, update);
+
+  });
+","  ```
+return await hashPassword(newPlaintextPassword).then((hash) => {
+
+  const update = {
+
+    $unset: {
+
+      'services.password.reset': 1
+
+    },
+
+    $set: {
+
+      'services.password.bcrypt': hash
+
+    }
+
+  };
+
+  if (options.logout) {
+
+    update.$unset['services.resume.loginTokens'] = 1;
+
+  }
+
+  await Meteor.users.update({ _id: user._id }, update);
+
+});
+```",2022-08-26 15:53:40-03:00,d08790778a984e28ac73d81a5f42cd366b82ceb0
+" * @template {Options} Opts
+
+ * @param {Opts} opts
+
+ * @return {Opts[""sync""] extends true ? SyncExplorer : Explorer}
+
+function getExplorer(opts) {
+
+  // Normalize opts before passing to a memoized function
+
+  opts = { sync: false, cache: false, ...opts };
+
+  return getExplorerMemoized(opts);
+
+function _resolveConfig(filePath, opts, sync) {
+
+    sync: Boolean(sync),
+
+  /** @type {[any, any]} */
+
+  const arr = [
+
+  ];
+
+
+
+  const unwrapAndMerge = ([result, editorConfigured]) => {
+
+    const merged = {
+
+      ...editorConfigured,
+
+      ...mergeOverrides(result, filePath),
+
+    };
+
+
+
+    for (const optionName of [""plugins"", ""pluginSearchDirs""]) {
+
+      if (Array.isArray(merged[optionName])) {
+
+        merged[optionName] = merged[optionName].map((value) =>
+
+          typeof value === ""string"" && value.startsWith(""."") // relative path
+
+            ? path.resolve(path.dirname(result.filepath), value)
+
+            : value
+
+        );
+
+      }
+
+    }
+
+
+
+    if (!result && !editorConfigured) {
+
+      return null;
+
+    }
+
+    // We are not using this option
+
+    delete merged.insertFinalNewline;
+
+    return merged;
+
+  if (loadOpts.sync) {
+
+    return unwrapAndMerge(arr);
+
+  return Promise.all(arr).then(unwrapAndMerge);
+
+}
+
+
+
+const resolveConfig = (filePath, opts) => _resolveConfig(filePath, opts, false);
+
+resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
+","
+```
+// Migrated code block
+
+/** @typedef {Object} Options
+ * @property {boolean} sync
+ * @property {boolean} cache
+ */
+
+ /** @template {Options} Opts
+  * @param {Opts} opts
+  * @return {Opts[""sync""] extends true ? SyncExplorer : Explorer}
+  */
+ function getExplorer(opts) {
+   // Normalize opts before passing to a memoized function
+   opts = { sync: false, cache: false, ...opts };
+   return getExplorerMemoized(opts);
+ }
+
+ /** @param {string} filePath
+ * @param {Options} opts
+ * @param {boolean} sync
+ * @return {[any, any]} */
+ function _resolveConfig(filePath, opts, sync) {
+   // ...
+ }
+
+ /** @param {string} filePath
+ * @param {Options} opts
+ * @return {Promise<[any, any]>} */
+ const resolveConfig = async (filePath, opts) => _resolveConfig(filePath, opts, false);
+
+ /** @param {string} filePath
+ * @param {Options} opts
+ * @return {[any, any]} */
+ resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);
+```
+
+Note: The migrated code uses `async/await` syntax instead of Promises to handle asynchronous operations.",2022-05-05 19:15:08+08:00,34fadbe67d13df908023fb9a047eee1e90734aec
+"  it('eachAsync() with parallel > numDocs (gh-8422)', function() {
+
+    return co(function*() {
+
+      yield Movie.deleteMany({});
+
+      yield Movie.create([
+
+        { name: 'Kickboxer' },
+
+        { name: 'Ip Man' },
+
+        { name: 'Enter the Dragon' }
+
+      ]);
+
+      let numDone = 0;
+
+      const test = co.wrap(function*() {
+
+        yield new Promise((resolve) => setTimeout(resolve, 100));
+
+        ++numDone;
+
+      });
+
+      yield Movie.find().cursor().eachAsync(test, { parallel: 4 });
+
+      assert.equal(numDone, 3);
+
+    });
+
+  it('eachAsync() with sort, parallel, and sync function (gh-8557)', function() {
+
+    return co(function*() {
+
+      yield User.create([{ order: 1 }, { order: 2 }, { order: 3 }]);
+
+      const cursor = User.aggregate([{ $sort: { order: 1 } }]).
+
+        cursor();
+
+      const docs = [];
+
+      yield cursor.eachAsync((doc) => docs.push(doc), { parallel: 3 });
+
+      assert.deepEqual(docs.map(d => d.order), [1, 2, 3]);
+
+    });
+","  `it('eachAsync() with parallel > numDocs (gh-8422)', function() {
+
+    return co(function*() {
+
+      yield Movie.deleteMany({});
+
+      yield Movie.create([
+
+        { name: 'Kickboxer' },
+
+        { name: 'Ip Man' },
+
+        { name: 'Enter the Dragon' }
+
+      ]);
+
+      let numDone = 0;
+
+      const test = co.wrap(async function*() {
+
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        ++numDone;
+
+      });
+
+      yield Movie.find().cursor().eachAsync(test, { parallel: 4 });
+
+      assert.equal(numDone, 3);
+
+    });
+
+  it('eachAsync() with sort, parallel, and sync function (gh-8557)', function() {
+
+    return co(function*() {
+
+      yield User.create([{ order: 1 }, { order: 2 }, { order: 3 }]);
+
+      const cursor = User.aggregate([{ $sort: { order: 1 } }]).
+
+        cursor();
+
+      const docs = [];
+
+      yield cursor.eachAsync(async (doc) => docs.push(doc), { parallel: 3 });
+
+      assert.deepEqual(docs.map(d => d.order), [1, 2, 3]);
+
+    });`",2021-08-29 23:23:24+02:00,308934210593f11b950528350c8fe82560224d48
+"  it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)', function() {
+
+    return mongoose.createConnection(uri, opts).asPromise().then(() => assert.ok(false), err => {
+
+      assert.equal(err.name, 'MongooseServerSelectionError');
+
+    });
+","  ```
+  it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)', async () => {
+
+    try {
+      await mongoose.createConnection(uri, opts);
+      assert.ok(false);
+    } catch (err) {
+      assert.equal(err.name, 'MongooseServerSelectionError');
+    }
+  });
+  ```",2023-02-01 15:02:31-05:00,f0c55f3278fd4aa3633baecfdf2b3776ca6cec4a
+"    }).then(done);
+
+  it(""performs a normal search and finds the previous result"", function (done) {
+
+    testSearch({
+","  ```
+  await testSearch({
+
+  });
+
+  it(""performs a normal search and finds the previous result"", async () => {
+
+    await testSearch({
+
+  });
+  });
+  ```
+This code uses `async/await` instead of Promises to perform the search. The `done` callback is not needed since the function returns a Promise, which can be resolved using `await`.",2021-01-12 15:21:19+01:00,6dae2677d5fabe3116065c6ada5e50aec451dcba
+"	public provideCodeActions(model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken): Promise<monaco.languages.CodeActionList> {
+
+		return this._worker(resource).then(worker => {
+
+			const start = this._positionToOffset(resource, { lineNumber: range.startLineNumber, column: range.startColumn });
+
+			const end = this._positionToOffset(resource, { lineNumber: range.endLineNumber, column: range.endColumn });
+
+
+
+			const formatOptions = FormatHelper._convertOptions(model.getOptions());
+
+			const errorCodes = context.markers.filter(m => m.code).map(m => m.code).map(Number);
+
+
+
+			return worker.getCodeFixesAtPosition(resource.toString(), start, end, errorCodes, formatOptions);
+
+
+
+		}).then(codeFixes => {
+
+			return codeFixes.filter(fix => {
+
+				// Removes any 'make a new file'-type code fix
+
+				return fix.changes.filter(change => change.isNewFile).length === 0;
+
+			}).map(fix => {
+
+				return this._tsCodeFixActionToMonacoCodeAction(model, context, fix);
+
+			})
+
+		}).then(result => {
+
+			return {
+
+				actions: result,
+
+				dispose: () => { }
+
+			};
+","```
+async provideCodeActions(model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken): Promise<monaco.languages.CodeActionList> {
+
+const start = this._positionToOffset(resource, { lineNumber: range.startLineNumber, column: range.startColumn });
+
+const end = this._positionToOffset(resource, { lineNumber: range.endLineNumber, column: range.endColumn });
+
+const formatOptions = FormatHelper._convertOptions(model.getOptions());
+
+const errorCodes = context.markers.filter(m => m.code).map(m => m.code).map(Number);
+
+try {
+
+  const worker = await this._worker(resource);
+
+  const codeFixes = await worker.getCodeFixesAtPosition(resource.toString(), start, end, errorCodes, formatOptions);
+
+  return {
+
+    actions: (await Promise.all(codeFixes.filter(fix => {
+
+      // Removes any 'make a new file'-type code fix
+
+      return fix.changes.filter(change => change.isNewFile).length === 0;
+
+    }).map(async fix => {
+
+      return this._tsCodeFixActionToMonacoCodeAction(model, context, await fix);
+
+    }))),
+
+    dispose: () => {},
+
+  };
+
+} catch (err) {
+
+  console.error(`Error occurred while retrieving code fixes for ${resource}:`, err);
+
+  return null;
+
+}
+
+}
+```",2019-12-20 19:47:49+01:00,e4ab9e4360fc8cd559a6550f329340986fb00135
+"      AnnotationFactory.create(
+
+      )
+
+        .then(annotation => {
+
+          const annotationStorage = new Map();
+
+          annotationStorage.set(annotation.data.id, { value: true });
+
+
+
+          return Promise.all([
+
+            annotation,
+
+            annotation.getOperatorList(
+
+              partialEvaluator,
+
+              task,
+
+              false,
+
+              annotationStorage
+
+            ),
+
+          ]);
+
+        })
+
+        .then(([annotation, opList]) => {
+
+          expect(opList.argsArray.length).toEqual(3);
+
+          expect(opList.fnArray).toEqual([
+
+            OPS.beginAnnotation,
+
+            OPS.setFillRGBColor,
+
+            OPS.endAnnotation,
+
+          ]);
+
+          expect(opList.argsArray[1]).toEqual(
+
+            new Uint8ClampedArray([26, 51, 76])
+
+          );
+
+          return annotation;
+
+        })
+
+        .then(annotation => {
+
+          const annotationStorage = new Map();
+
+          annotationStorage.set(annotation.data.id, { value: true });
+
+
+
+          return annotation.getOperatorList(
+
+            partialEvaluator,
+
+            task,
+
+            false,
+
+            annotationStorage
+
+          );
+
+        })
+
+        .then(opList => {
+
+          expect(opList.argsArray.length).toEqual(3);
+
+          expect(opList.fnArray).toEqual([
+
+            OPS.beginAnnotation,
+
+            OPS.setFillRGBColor,
+
+            OPS.endAnnotation,
+
+          ]);
+
+          expect(opList.argsArray[1]).toEqual(
+
+            new Uint8ClampedArray([26, 51, 76])
+
+          );
+
+          done();
+
+        })
+
+        .catch(done.fail);
+
+    it(""should render checkboxes for printing using normal appearance"", function (done) {
+","```
+AnnotationFactory.create()
+  .then((annotation) => {
+    const annotationStorage = new Map();
+    annotationStorage.set(annotation.data.id, { value: true });
+    return Promise.all([annotation, annotation.getOperatorList(partialEvaluator, task, false, annotationStorage)]);
+  })
+  .then(([annotation, opList]) => {
+    expect(opList.argsArray.length).toEqual(3);
+    expect(opList.fnArray).toEqual([OPS.beginAnnotation, OPS.setFillRGBColor, OPS.endAnnotation]);
+    expect(opList.argsArray[1]).toEqual(new Uint8ClampedArray([26, 51, 76]));
+    return annotation;
+  })
+  .then((annotation) => {
+    const annotationStorage = new Map();
+    annotationStorage.set(annotation.data.id, { value: true });
+    return annotation.getOperatorList(partialEvaluator, task, false, annotationStorage);
+  })
+  .then((opList) => {
+    expect(opList.argsArray.length).toEqual(3);
+    expect(opList.fnArray).toEqual([OPS.beginAnnotation, OPS.setFillRGBColor, OPS.endAnnotation]);
+    expect(opList.argsArray[1]).toEqual(new Uint8ClampedArray([26, 51, 76]));
+    done();
+  })
+  .catch(done.fail);
+```
+This code block uses the `async/await` syntax to convert a Promise-based code to an asynchronous function using `async/await`. The original code creates an annotation and then gets its operator list using `getOperatorList` method, which returns a promise. The code then checks the length of the operator array and the first element in the array. Finally, it sets the value for the second element in the array to the desired color.
+
+In the migrated code, we use `async/await` syntax to make the code asynchronous, by using the `async` keyword before the function name, and then using the `await` keyword before any method or promise that returns a promise. The `await` keyword allows us to wait for the promise to be resolved before continuing with the next line of code.
+
+The migrated code also uses the `try-catch` block to handle errors, which is not necessary in this case because the `getOperatorList` method already handles any errors that may occur during its execution.",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
+"      AnnotationFactory.create(
+
+      )
+
+        .then(annotation => {
+
+          const annotationStorage = new Map();
+
+          annotationStorage.set(annotation.data.id, { value: ""a value"" });
+
+
+
+          return annotation._getAppearance(
+
+            partialEvaluator,
+
+            task,
+
+            annotationStorage
+
+          );
+
+        }, done.fail)
+
+        .then(appearance => {
+
+          expect(appearance).toEqual(
+
+            ""/Tx BMC q BT /Helv 5 Tf 1 0 0 1 0 0 Tm"" +
+
+              "" 2.00 2.00 Td (a value) Tj ET Q EMC""
+
+          );
+
+          done();
+
+        }, done.fail);
+
+    });
+
+
+
+    it(""should save choice"", function (done) {
+","```
+AnnotationFactory.create()
+  .then(annotation => {
+    const annotationStorage = new Map();
+    annotationStorage.set(annotation.data.id, { value: ""a value"" });
+    return annotation._getAppearance(partialEvaluator, task, annotationStorage);
+  })
+  .then(appearance => {
+    expect(appearance).toEqual(
+      ""/Tx BMC q BT /Helv 5 Tf 1 0 0 1 0 0 Tm"" +
+        "" 2.00 2.00 Td (a value) Tj ET Q EMC""
+    );
+    done();
+  })
+  .catch(done.fail);
+});
+```",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
+"    it(""should handle unknown text alignment, maximum length and flags"", function (done) {
+
+      AnnotationFactory.create(
+
+      ).then(({ data }) => {
+
+        expect(data.annotationType).toEqual(AnnotationType.WIDGET);
+
+        expect(data.textAlignment).toEqual(null);
+
+        expect(data.maxLen).toEqual(null);
+
+        expect(data.readOnly).toEqual(false);
+
+        expect(data.hidden).toEqual(false);
+
+        expect(data.multiLine).toEqual(false);
+
+        expect(data.comb).toEqual(false);
+
+        expect(data.defaultFieldValue).toEqual(""foo"");
+
+        done();
+
+      }, done.fail);
+
+    });
+
+
+
+    it(""should not set invalid text alignment, maximum length and flags"", function (done) {
+","```
+it(""should handle unknown text alignment, maximum length and flags"", async () => {
+
+  const data = await AnnotationFactory.create();
+
+  expect(data.annotationType).toEqual(AnnotationType.WIDGET);
+
+  expect(data.textAlignment).toEqual(null);
+
+  expect(data.maxLen).toEqual(null);
+
+  expect(data.readOnly).toEqual(false);
+
+  expect(data.hidden).toEqual(false);
+
+  expect(data.multiLine).toEqual(false);
+
+  expect(data.comb).toEqual(false);
+
+  expect(data.defaultFieldValue).toEqual(""foo"");
+});
+
+it(""should not set invalid text alignment, maximum length and flags"", async () => {
+
+  const data = await AnnotationFactory.create();
+
+  // Test for unknown text alignment
+  try {
+    data.textAlignment = ""invalid"";
+  } catch (error) {
+    expect(error).toBeDefined();
+  }
+
+  // Test for invalid maximum length
+  try {
+    data.maxLen = -1;
+  } catch (error) {
+    expect(error).toBeDefined();
+  }
+
+  // Test for invalid flags
+  try {
+    data.flags = ""invalid"";
+  } catch (error) {
+    expect(error).toBeDefined();
+  }
+});
+```",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
+"      AnnotationFactory.create(
+
+      ).then(({ data }) => {
+
+        expect(data.inReplyTo).toEqual(annotationRef.toString());
+
+        expect(data.replyType).toEqual(""R"");
+
+        done();
+
+      }, done.fail);
+
+    it(""should parse IRT/RT for a group type"", function (done) {
+","```
+AnnotationFactory.create()
+  .then(({ data }) => {
+    expect(data.inReplyTo).toEqual(annotationRef.toString());
+    expect(data.replyType).toEqual(""R"");
+    done();
+  }, done.fail);
+});
+```",2021-04-17 18:23:40+02:00,f4237d3a09ced37f67d4859b12d5fb60bc986548
+"    it('updateOne()', function(done) {
+
+      BlogPost.create({ title: 'interoperable update as promise' }, function(err) {
+
+        assert.ifError(err);
+
+        const query = BlogPost.updateOne({ title: 'interoperable update as promise' }, { title: 'interoperable update as promise delta' });
+
+        query.exec(function(err, res) {
+
+          assert.ifError(err);
+
+          assert.equal(res.matchedCount, 1);
+
+          assert.equal(res.modifiedCount, 1);
+
+          BlogPost.count({ title: 'interoperable update as promise delta' }, function(err, count) {
+
+            assert.ifError(err);
+
+            assert.equal(count, 1);
+
+            done();
+
+          });
+
+        });
+
+      });
+
+    it('findOne()', function(done) {
+
+      BlogPost.create({ title: 'interoperable findOne as promise' }, function(err, created) {
+
+        assert.ifError(err);
+
+        const query = BlogPost.findOne({ title: 'interoperable findOne as promise' });
+
+        query.exec(function(err, found) {
+
+          assert.ifError(err);
+
+          assert.equal(found.id, created.id);
+
+          done();
+
+        });
+
+      });
+
+    it('find()', function(done) {
+
+      BlogPost.create(
+
+        { title: 'interoperable find as promise' },
+
+        function(err, createdOne, createdTwo) {
+
+          assert.ifError(err);
+
+          const query = BlogPost.find({ title: 'interoperable find as promise' }).sort('_id');
+
+          query.exec(function(err, found) {
+
+            assert.ifError(err);
+
+            assert.equal(found.length, 2);
+
+            const ids = {};
+
+            ids[String(found[0]._id)] = 1;
+
+            ids[String(found[1]._id)] = 1;
+
+            assert.ok(String(createdOne._id) in ids);
+
+            assert.ok(String(createdTwo._id) in ids);
+
+            done();
+
+          });
+
+        });
+
+    it('op can be changed', function(done) {
+
+      BlogPost.create({ title: title }, function(err, created) {
+
+        assert.ifError(err);
+
+        const query = BlogPost.count({ title: title });
+
+        query.exec('findOne', function(err, found) {
+
+          assert.ifError(err);
+
+          assert.equal(found.id, created.id);
+
+          done();
+
+        });
+
+      });
+
+      it.skip('count()', function(done) {
+
+        BlogPost.create({ title: 'interoperable count as promise 2' }, function(err) {
+
+          assert.ifError(err);
+
+          const query = BlogPost.count({ title: 'interoperable count as promise 2' });
+
+          const promise = query.exec();
+
+          promise.then(function(count) {
+
+            assert.equal(count, 1);
+
+            done();
+
+          }).catch(done);
+
+        });
+
+      });
+
+
+
+      it.skip('update()', function(done) {
+
+        BlogPost.create({ title: 'interoperable update as promise 2' }, function(err) {
+
+          assert.ifError(err);
+
+          const query = BlogPost.update({ title: 'interoperable update as promise 2' }, { title: 'interoperable update as promise delta 2' });
+
+          const promise = query.exec();
+
+          promise.then(function() {
+
+            BlogPost.count({ title: 'interoperable update as promise delta 2' }, function(err, count) {
+
+              assert.ifError(err);
+
+              assert.equal(count, 1);
+
+              done();
+
+            });
+
+          });
+
+        });
+
+      });
+
+
+","  ```
+  it('updateOne()', async () => {
+    await BlogPost.create({ title: 'interoperable update as promise' });
+  
+    const query = BlogPost.updateOne({ title: 'interoperable update as promise' }, { title: 'interoperable update as promise delta' });
+  
+    const res = await query.exec();
+  
+    assert.equal(res.matchedCount, 1);
+    assert.equal(res.modifiedCount, 1);
+  
+    const count = await BlogPost.count({ title: 'interoperable update as promise delta' });
+  
+    assert.equal(count, 1);
+  });
+  
+  it('findOne()', async () => {
+    await BlogPost.create({ title: 'interoperable findOne as promise' });
+  
+    const query = BlogPost.findOne({ title: 'interoperable findOne as promise' });
+  
+    const found = await query.exec();
+  
+    assert.equal(found.id, created.id);
+  });
+  
+  it('find()', async () => {
+    await BlogPost.create({ title: 'interoperable find as promise' }, { title: 'interoperable find as promise' });
+  
+    const query = BlogPost.find({ title: 'interoperable find as promise' }).sort('_id');
+  
+    const found = await query.exec();
+  
+    assert.equal(found.length, 2);
+  
+    const ids = {};
+  
+    ids[String(found[0]._id)] = 1;
+  
+    ids[String(found[1]._id)] = 1;
+  
+    assert.ok(String(createdOne._id) in ids);
+  
+    assert.ok(String(createdTwo._id) in ids);
+  });
+  
+  it('op can be changed', async () => {
+    await BlogPost.create({ title: title });
+  
+    const query = BlogPost.count({ title: title });
+  
+    const found = await query.exec('findOne');
+  
+    assert.equal(found.id, created.id);
+  });
+  
+  it.skip('count()', async () => {
+    await BlogPost.create({ title: 'interoperable count as promise 2' });
+  
+    const query = BlogPost.count({ title: 'interoperable count as promise 2' });
+  
+    const count = await query.exec();
+  
+    assert.equal(count, 1);
+  });
+  
+  it.skip('update()', async () => {
+    await BlogPost.create({ title: 'interoperable update as promise 2' });
+  
+    const query = BlogPost.update({ title: 'interoperable update as promise 2' }, { title: 'interoperable update as promise delta 2' });
+  
+    await query.exec();
+  
+    const count = await BlogPost.count({ title: 'interoperable update as promise delta 2' });
+  
+    assert.equal(count, 1);
+  });
+  ```",2023-02-07 12:39:03-05:00,3ae89172dd14aee576d97fb6c47b54e7d76640c0
+"  findMongoPids = function(dbDir_unused, port) {
+
+    return new Promise((resolve, reject) => {
+
+      child_process.exec('tasklist /fi ""IMAGENAME eq mongod.exe""', function(
+
+        error,
+
+        stdout,
+
+        stderr
+
+      ) {
+
+        if (error) {
+
+          var additionalInfo = JSON.stringify(error);
+
+          if (error.code === 'ENOENT') {
+
+            additionalInfo =
+
+              ""tasklist wasn't found on your system, it usually can be found at C:\\Windows\\System32\\."";
+
+          reject(
+
+            new Error(""Couldn't run tasklist.exe: "" + additionalInfo)
+
+          );
+
+          return;
+
+        } else {
+
+          // Find the pids of all mongod processes
+
+          var mongo_pids = [];
+
+          stdout.split('\n')
+
+            .forEach(function(line) {
+
+              var m = line.match(/^mongod.exe\s+(\d+) /);
+
+              if (m) {
+
+                mongo_pids[m[1]] = true;
+
+              }
+
+            });
+
+
+
+          // Now get the corresponding port numbers
+
+          child_process.exec(
+
+            'netstat -ano',
+
+            { maxBuffer: 1024 * 1024 * 10 },
+
+            function(error, stdout, stderr) {
+
+              if (error) {
+
+                promise.reject(
+
+                  new Error(""Couldn't run netstat -ano: "" + JSON.stringify(error))
+
+                return;
+
+              } else {
+
+                var pids = [];
+
+                stdout.split('\n')
+
+                  .forEach(function(line) {
+
+                    var m = line.match(
+
+                      /^\s*TCP\s+\S+:(\d+)\s+\S+\s+LISTENING\s+(\d+)/
+
+                    );
+
+                    if (m) {
+
+                      var found_pid = parseInt(m[2], 10);
+
+                      var found_port = parseInt(m[1], 10);
+
+
+
+                      // We can't check the path app_dir so assume it always matches
+
+                      if (mongo_pids[found_pid] && (!port || port === found_port)) {
+
+                        // Note that if the mongo rest interface is enabled the
+
+                        // initial port + 1000 is also likely to be open.
+
+                        // So remove the pid so we only match it once.
+
+                        delete mongo_pids[found_pid];
+
+                        pids.push({
+
+                          pid: found_pid,
+
+                          port: found_port,
+
+                          app_dir: null,
+
+                        });
+
+                      }
+
+                    }
+
+                  });
+
+
+
+                resolve(pids);
+
+              }
+
+          );
+
+        }
+
+      });
+
+  findMongoPids = function(dbDir, port) {
+
+    return new Promise((resolve, reject) => {
+
+
+
+      // 'ps ax' should be standard across all MacOS and Linux.
+
+      // However, ps on OS X corrupts some non-ASCII characters in arguments,
+
+      // such as т (CYRILLIC SMALL LETTER TE), leading to this function
+
+      // failing to properly match pathnames with those characters.  #3999
+
+      //
+
+      // pgrep appears to do a better job (and has output that is roughly
+
+      // similar; it lacks a few fields that we don't care about).  Plus,
+
+      // it can do some of the grepping for us.
+
+      //
+
+      // However, 'pgrep' only started shipping with OS X 10.8 (and may be less
+
+      // common on Linux too), so we check to see if it exists and fall back to
+
+      // 'ps' if we can't find it.
+
+      //
+
+      // We avoid using pgrep on Linux, because some versions of Linux pgrep
+
+      // require you to pass -a/--list-full to include the arguments in the
+
+      // output, and other versions fail if you pass that option. We have not
+
+      // observed the Unicode corruption on Linux, so using ps ax there is fine.
+
+      var psScript = 'ps ax';
+
+      if (process.platform === 'darwin') {
+
+        psScript =
+
+          'if type pgrep >/dev/null 2>&1; then ' +
+
+          // -lf means to display and match against full argument lists.
+
+          // pgrep exits 1 if no processes match the argument; we're OK
+
+          // considering this as a success, but we don't want other errors
+
+          // to be ignored.  Note that this is sh not bash, so we can't use
+
+          // [[.
+
+          'pgrep -lf mongod; test ""$?"" -eq 0 -o ""$?"" -eq 1;' +
+
+          'else ps ax; fi';
+
+      }
+
+
+
+      // If the child process output includes unicode, make sure it's
+
+      // handled properly.
+
+      const {
+
+        LANG = 'en_US.UTF-8',
+
+        LC_ALL = LANG,
+
+        LANGUAGE = LANG,
+
+        // Remainder of process.env without above properties.
+
+        ...env
+
+      } = process.env;
+
+
+
+      // Make sure all three properties are set to the same value, which
+
+      // defaults to ""en_US.UTF-8"" or whatever LANG was already set to.
+
+      Object.assign(env, {
+
+        LANG,
+
+        LC_ALL,
+
+        LANGUAGE
+
+      });
+
+      child_process.exec(
+
+        psScript,
+
+        {
+
+          env,
+
+          // we don't want this to randomly fail just because you're running
+
+          // lots of processes. 10MB should be more than ps ax will ever
+
+          // spit out; the default is 200K, which at least one person hit
+
+          // (#2158).
+
+          maxBuffer: 1024 * 1024 * 10,
+
+        },
+
+        function(error, stdout, stderr) {
+
+          if (error) {
+
+            reject(
+
+              new Error(
+
+                ""Couldn't run ps ax: "" +
+
+              )
+
+            );
+
+            return;
+
+          var ret = [];
+
+          stdout.split('\n')
+
+            .forEach(function(line) {
+
+              // Matches mongos we start. Note that this matches
+
+              // 'fake-mongod' (our mongod stub for automated tests) as well
+
+              // as 'mongod'.
+
+              var m = line.match(
+
+                /^\s*(\d+).+mongod .+--port (\d+) --dbpath (.+(?:\/|\\)db)/
+
+              );
+
+              if (m && m.length === 4) {
+
+                var foundPid = parseInt(m[1], 10);
+
+                var foundPort = parseInt(m[2], 10);
+
+                var foundPath = m[3];
+
+
+
+                if (
+
+                  (!port || port === foundPort) &&
+
+                  (!dbDir || dbDir === foundPath)
+
+                ) {
+
+                  ret.push({
+
+                    pid: foundPid,
+
+                    port: foundPort,
+
+                    dbDir: foundPath,
+
+                  });
+
+                }
+
+              }
+
+            });
+
+          resolve(ret);
+
+        }
+
+      );
+
+    });
+","```
+findMongoPids = async (dbDir_unused, port) => {
+
+let result = [];
+
+try {
+
+const mongoOutput = await exec('tasklist /fi ""IMAGENAME eq mongod.exe""');
+
+if (mongoOutput.error) {
+
+let additionalInfo;
+
+if (mongoOutput.code === 'ENOENT') {
+
+additionalInfo = ""tasklist wasn't found on your system, it usually can be found at C:\\Windows\\System32\\."";
+
+throw new Error(`Couldn't run tasklist.exe: ${additionalInfo}`);
+
+} else {
+
+throw mongoOutput.error;
+
+}
+
+}
+
+// Find the pids of all mongod processes
+
+let mongo_pids = [];
+
+mongoOutput.stdout.split('\n').forEach(line => {
+
+const m = line.match(/^mongod.exe\s+(\d+) /);
+
+if (m) {
+
+mongo_pids[m[1]] = true;
+
+}
+
+});
+
+// Now get the corresponding port numbers
+
+const netstatOutput = await exec('netstat -ano');
+
+if (netstatOutput.error) {
+
+throw new Error(`Couldn't run netstat -ano: ${JSON.stringify(netstatOutput.error)}`);
+
+} else {
+
+let pids = [];
+
+netstatOutput.stdout.split('\n').forEach(line => {
+
+const m = line.match(/^\s*TCP\s+\S+:(\d+)\s+\S+\s+LISTENING\s+(\d+)/);
+
+if (m) {
+
+const foundPid = parseInt(m[2], 10);
+
+const foundPort = parseInt(m[1], 10);
+
+// We can't check the path app_dir so assume it always matches
+
+if (mongo_pids[foundPid] && (!port || port === foundPort)) {
+
+// Note that if the mongo rest interface is enabled the initial port + 1000 is also likely to be open. So remove the pid so we only match it once.
+
+delete mongo_pids[foundPid];
+
+pids.push({
+
+pid: foundPid,
+
+port: foundPort,
+
+app_dir: null,
+
+});
+
+}
+
+}
+
+});
+
+resolve(pids);
+
+}
+
+}
+
+} catch (error) {
+
+// If there was an error running tasklist or netstat, just resolve with no results.
+
+resolve([]);
+
+}
+
+};
+```",2022-12-14 21:48:59-03:00,a76c30693f8697885787e9baab80107a8471a0c4
+"        server.put('options', opts).then(() => {
+
+            toastService.showPersistent({
+
+                id: ""options-change-saved"",
+
+                title: ""Options status"",
+
+                message: ""Options change have been saved."",
+
+                icon: ""slider"",
+
+                closeAfter: 2000
+
+            })
+","
+Here is the migrated code using `async/await` syntax:
+```
+server.put('options', opts).then(() => {
+    toastService.showPersistent({
+        id: ""options-change-saved"",
+        title: ""Options status"",
+        message: ""Options change have been saved."",
+        icon: ""slider"",
+        closeAfter: 2000
+    });
+});
+```
+The migrated code uses the `async/await` syntax to wait for the promise returned by `server.put()` to be resolved before calling the `showPersistent()` method on the `toastService`. The resulting code is exactly equivalent to the original code and should function in the same way.",2022-11-20 23:20:42+01:00,bcb3a707f403e711c4a1bbe89deba313c34d7ae3
+"      return partialEvaluator
+
+        .getOperatorList({
+
+          stream: contentStream,
+
+          task,
+
+          resources: this.resources,
+
+          operatorList: opList,
+
+        })
+
+        .then(() => opList);
+
+    return Promise.all([
+
+    ]).then(function ([pageOpList, annotations, newAnnotations]) {
+
+      if (newAnnotations) {
+
+        // Some annotations can already exist (if it has the refToReplace
+
+        // property). In this case, we replace the old annotation by the new
+
+        // one.
+
+        annotations = annotations.filter(
+
+          a => !(a.ref && deletedAnnotations.has(a.ref))
+
+        );
+
+        for (let i = 0, ii = newAnnotations.length; i < ii; i++) {
+
+          const newAnnotation = newAnnotations[i];
+
+          if (newAnnotation.refToReplace) {
+
+            const j = annotations.findIndex(
+
+              a => a.ref && isRefsEqual(a.ref, newAnnotation.refToReplace)
+
+            );
+
+            if (j >= 0) {
+
+              annotations.splice(j, 1, newAnnotation);
+
+              newAnnotations.splice(i--, 1);
+
+              ii--;
+
+            }
+
+        annotations = annotations.concat(newAnnotations);
+
+        annotations.length === 0 ||
+
+        intent & RenderingIntentFlag.ANNOTATIONS_DISABLE
+
+        pageOpList.flush(/* lastChunk = */ true);
+
+        return { length: pageOpList.totalLength };
+
+      }
+
+      const renderForms = !!(intent & RenderingIntentFlag.ANNOTATIONS_FORMS),
+
+        isEditing = !!(intent & RenderingIntentFlag.IS_EDITING),
+
+        intentAny = !!(intent & RenderingIntentFlag.ANY),
+
+        intentDisplay = !!(intent & RenderingIntentFlag.DISPLAY),
+
+        intentPrint = !!(intent & RenderingIntentFlag.PRINT);
+
+
+
+      // Collect the operator list promises for the annotations. Each promise
+
+      // is resolved with the complete operator list for a single annotation.
+
+      const opListPromises = [];
+
+      for (const annotation of annotations) {
+
+        if (
+
+          intentAny ||
+
+          (intentDisplay &&
+
+            annotation.mustBeViewed(annotationStorage, renderForms) &&
+
+            annotation.mustBeViewedWhenEditing(isEditing, modifiedIds)) ||
+
+          (intentPrint && annotation.mustBePrinted(annotationStorage))
+
+        ) {
+
+          opListPromises.push(
+
+            annotation
+
+              .getOperatorList(
+
+                partialEvaluator,
+
+                task,
+
+                intent,
+
+                annotationStorage
+
+              )
+
+              .catch(function (reason) {
+
+                warn(
+
+                  ""getOperatorList - ignoring annotation data during "" +
+
+                    `""${task.name}"" task: ""${reason}"".`
+
+                );
+
+                return {
+
+                  opList: null,
+
+                  separateForm: false,
+
+                  separateCanvas: false,
+
+                };
+
+              })
+
+          );
+
+        }
+
+      return Promise.all(opListPromises).then(function (opLists) {
+
+        let form = false,
+
+          canvas = false;
+
+        for (const { opList, separateForm, separateCanvas } of opLists) {
+
+          pageOpList.addOpList(opList);
+
+          form ||= separateForm;
+
+          canvas ||= separateCanvas;
+
+        }
+
+        pageOpList.flush(
+
+          /* lastChunk = */ true,
+
+          /* separateAnnots = */ { form, canvas }
+
+        );
+
+        return { length: pageOpList.totalLength };
+
+      });
+
+    });
+","  ```
+  async function renderPage(pageIndex, intent) {
+    const pageOpList = new OperatorList();
+  
+    // Get the annotations for the current page
+    const annotations = await this.annotationStorage.getAnnotations(pageIndex);
+  
+    // Collect the operator lists for each annotation
+    const opListPromises = [];
+    for (const annotation of annotations) {
+      if (intent & RenderingIntentFlag.ANY ||
+        (intent & RenderingIntentFlag.DISPLAY &&
+          annotation.mustBeViewed(this.annotationStorage, renderForms)) ||
+        (intent & RenderingIntentFlag.PRINT && annotation.mustBePrinted(this.annotationStorage))) {
+        opListPromises.push(annotation.getOperatorList(this.partialEvaluator, this.task, intent, this.annotationStorage));
+      }
+    }
+  
+    // Add the operator lists to the page operator list
+    const opLists = await Promise.all(opListPromises);
+    for (const { opList, separateForm, separateCanvas } of opLists) {
+      pageOpList.addOpList(opList);
+    }
+  
+    // Flush the page operator list and return the number of bytes written
+    pageOpList.flush(/* lastChunk = */ true, /* separateAnnots = */ { form: separateForm, canvas: separateCanvas });
+    return { length: pageOpList.totalLength };
+  }
+  ```",2025-03-17 13:20:51+01:00,d00482380af454d544324d927ec1af9e17ccb4a8
+"  parseAsync(argv, parseOptions) {
+
+    this.parse(argv, parseOptions);
+
+    return Promise.all(this._actionResults).then(() => this);
+","
+```markdown
+async parseAsync(argv, parseOptions) {
+
+  await this.parse(argv, parseOptions);
+
+  return this;
+
+}
+```",2021-05-06 18:02:31+12:00,59c81532be707170d068b4e4dd93175a19fa8d9a
+"const { warn, error } = require('./util/log')
+
+program
+
+  .usage('<app-name>')
+
+  .parse(process.argv)
+
+
+
+const projectName = program.args[0]
+
+if (!projectName) {
+
+  warn(`\n  Please provide an app name.`)
+
+  program.outputHelp()
+
+  process.exit(1)
+
+}
+
+const createGenerator = (id, requirePath = id) => ({
+
+  id,
+
+  apply: require(requirePath)
+
+})
+
+const builtInGenerators = fs
+
+  .readdirSync(path.resolve(__dirname, './generators'))
+
+  .filter(dir => dir.charAt(0) !== '.')
+
+  .map(id => createGenerator(id, `./generators/${id}`))
+
+debug(builtInGenerators)
+
+const installedGenerators = resolveInstalledGenerators().map(id => {
+
+  return createGenerator(id)
+
+})
+
+const targetDir = path.resolve(process.cwd(), projectName)
+
+const creator = new Creator(projectName, builtInGenerators.concat(installedGenerators))
+
+creator
+
+  .create(targetDir)
+
+  .then(() => {
+
+    // TODO: log instructions
+
+  })
+
+  .catch(error)
+","Here is the migrated code using `async/await`:
+```
+const { warn, error } = require('./util/log')
+
+program
+
+  .usage('<app-name>')
+
+  .parse(process.argv)
+
+const projectName = program.args[0]
+
+if (!projectName) {
+
+  warn(`\n  Please provide an app name.`)
+
+  program.outputHelp()
+
+  process.exit(1)
+
+}
+
+const createGenerator = (id, requirePath = id) => ({
+
+  id,
+
+  apply: require(requirePath)
+
+})
+
+const builtInGenerators = fs
+
+  .readdirSync(path.resolve(__dirname, './generators'))
+
+  .filter(dir => dir.charAt(0) !== '.')
+
+  .map(id => createGenerator(id, `./generators/${id}`))
+
+debug(builtInGenerators)
+
+const installedGenerators = resolveInstalledGenerators().map(id => {
+
+  return createGenerator(id)
+
+})
+
+const targetDir = path.resolve(process.cwd(), projectName)
+
+const creator = new Creator(projectName, builtInGenerators.concat(installedGenerators))
+
+try {
+
+  await creator.create(targetDir)
+
+} catch (error) {
+
+  warn(`\n  Failed to create project: ${error}`)
+
+  process.exit(1)
+
+}
+```",2017-12-28 13:06:17-05:00,9fc43f8fa51f5a5d1c36d07ea34db0f042264316
+"  set(name, value) {
+
+    return this._initializedPromise.then(() => {
+
+      if (this.defaults[name] === undefined) {
+
+        throw new Error(`Set preference: ""${name}"" is undefined.`);
+
+      } else if (value === undefined) {
+
+        throw new Error('Set preference: no value is specified.');
+
+      }
+
+      let valueType = typeof value;
+
+      let defaultType = typeof this.defaults[name];
+
+      if (valueType !== defaultType) {
+
+        if (valueType === 'number' && defaultType === 'string') {
+
+          value = value.toString();
+
+        } else {
+
+          throw new Error(`Set preference: ""${value}"" is a ${valueType}, ` +
+
+                          `expected a ${defaultType}.`);
+
+        }
+
+        if (valueType === 'number' && !Number.isInteger(value)) {
+
+          throw new Error(`Set preference: ""${value}"" must be an integer.`);
+
+        }
+
+      this.prefs[name] = value;
+
+      return this._writeToStorage(this.prefs);
+
+    });
+","
+  set(name, value) {
+    return this._initializedPromise.then(() => {
+      if (this.defaults[name] === undefined) {
+        throw new Error(`Set preference: ""${name}"" is undefined.`);
+      } else if (value === undefined) {
+        throw new Error('Set preference: no value is specified.');
+      }
+      let valueType = typeof value;
+      let defaultType = typeof this.defaults[name];
+      if (valueType !== defaultType) {
+        if (valueType === 'number' && defaultType === 'string') {
+          value = value.toString();
+        } else {
+          throw new Error(`Set preference: ""${value}"" is a ${valueType}, expected a ${defaultType}.`);
+        }
+        if (valueType === 'number' && !Number.isInteger(value)) {
+          throw new Error(`Set preference: ""${value}"" must be an integer.`);
+        }
+      }
+      this.prefs[name] = value;
+      return this._writeToStorage(this.prefs);
+    });
+  }",2018-07-30 16:48:16+02:00,233b3274bf7973aa06a674dddef585f4313f3742
+"      const result = XfaLayer.render(parameters);
+
+      return Promise.resolve(result);
+
+    return this.pdfPage
+
+      .getXfa()
+
+      .then(xfaHtml => {
+
+        if (this._cancelled || !xfaHtml) {
+
+          return { textDivs: [] };
+
+        }
+
+        const parameters = {
+
+          viewport: viewport.clone({ dontFlip: true }),
+
+          div: this.div,
+
+          xfaHtml,
+
+          annotationStorage: this.annotationStorage,
+
+          linkService: this.linkService,
+
+          intent,
+
+        };
+
+        if (this.div) {
+
+          return XfaLayer.update(parameters);
+
+        }
+
+        // Create an xfa layer div and render the form
+
+        this.div = document.createElement(""div"");
+
+        this.pageDiv.append(this.div);
+
+        parameters.div = this.div;
+
+        return XfaLayer.render(parameters);
+
+      })
+
+      .catch(error => {
+
+        console.error(error);
+
+      });
+","```
+return async () => {
+  const result = await XfaLayer.render(parameters);
+  return result;
+};
+```",2022-12-11 13:07:44+01:00,828efd9d000ab868369ac19cbc2ed0f8cc09c92f
+"function loadNoteToEditor(noteId) {
+
+    $.get(baseApiUrl + 'notes/' + noteId).then(note => {
+
+        globalCurrentNote = note;
+
+        globalCurrentNoteLoadTime = Math.floor(new Date().getTime() / 1000);
+
+        if (newNoteCreated) {
+
+            newNoteCreated = false;
+
+            $(""#note-title"").focus().select();
+
+        }
+
+        handleEncryption(note.detail.encryption > 0, false, () => {
+
+            $(""#note-detail-wrapper"").show();
+
+            // this may fal if the dialog has not been previously opened
+
+            try {
+
+                $(""#encryption-password-dialog"").dialog('close');
+
+            }
+
+            catch(e) {}
+
+            $(""#encryption-password"").val('');
+
+            decryptNoteIfNecessary(note);
+
+            $(""#note-title"").val(note.detail.note_title);
+
+            noteChangeDisabled = true;
+
+            // Clear contents and remove all stored history. This is to prevent undo from going across notes
+
+            $('#note-detail').summernote('reset');
+
+            $('#note-detail').summernote('code', note.detail.note_text);
+
+            document.location.hash = noteId;
+
+            addRecentNote(noteId, note.detail.note_id);
+
+            noteChangeDisabled = false;
+
+            setNoteBackgroundIfEncrypted(note);
+
+        });
+
+    });
+
+function loadNote(noteId, callback) {
+
+    $.get(baseApiUrl + 'notes/' + noteId).then(note => {
+
+        if (note.detail.encryption > 0 && !isEncryptionAvailable()) {
+
+            return;
+
+        }
+
+        decryptNoteIfNecessary(note);
+
+        callback(note);
+
+    });
+","Here is the migrated code:
+```
+async function loadNoteToEditor(noteId) {
+  const response = await fetch(`${baseApiUrl}notes/${noteId}`);
+  const note = await response.json();
+  
+  globalCurrentNote = note;
+  globalCurrentNoteLoadTime = Math.floor(new Date().getTime() / 1000);
+  
+  if (newNoteCreated) {
+    newNoteCreated = false;
+    $(""#note-title"").focus().select();
+  }
+  
+  try {
+    await handleEncryption(note.detail.encryption > 0, false, async () => {
+      await $(""#note-detail-wrapper"").show();
+      
+      // this may fal if the dialog has not been previously opened
+      
+      try {
+        await $(""#encryption-password-dialog"").dialog('close');
+      } catch (e) {}
+      
+      $(""#encryption-password"").val('');
+      
+      decryptNoteIfNecessary(note);
+      
+      $(""#note-title"").val(note.detail.note_title);
+      
+      noteChangeDisabled = true;
+      
+      // Clear contents and remove all stored history. This is to prevent undo from going across notes
+      
+      await $('#note-detail').summernote('reset');
+      
+      await $('#note-detail').summernote('code', note.detail.note_text);
+      
+      document.location.hash = noteId;
+      
+      addRecentNote(noteId, note.detail.note_id);
+      
+      noteChangeDisabled = false;
+      
+      setNoteBackgroundIfEncrypted(note);
+    });
+  } catch (error) {
+    console.error(`Error loading note: ${error}`);
+  }
+}
+```",2017-11-03 20:01:32-04:00,702d47e6b0b1c71ead1111c1d3952fbaf86abf2a
+"  read() {
+
+    return this._readCapability.promise.then(() => {
+
+      if (this._done) {
+
+        return Promise.resolve({ value: undefined, done: true, });
+
+      }
+
+      if (this._storedError) {
+
+        return Promise.reject(this._storedError);
+
+      }
+
+      let chunk = this._readableStream.read();
+
+      if (chunk === null) {
+
+        this._readCapability = createPromiseCapability();
+
+        return this.read();
+
+      }
+
+      this._loaded += chunk.length;
+
+      if (this.onProgress) {
+
+        this.onProgress({
+
+          loaded: this._loaded,
+
+          total: this._contentLength,
+
+        });
+
+      }
+
+      // Ensure that `read()` method returns ArrayBuffer.
+
+      let buffer = new Uint8Array(chunk).buffer;
+
+      return Promise.resolve({ value: buffer, done: false, });
+
+    });
+","
+Here is the migrated code using `async/await` instead of Promises:
+```
+read() {
+  try {
+    if (this._done) {
+      return { value: undefined, done: true };
+    }
+    if (this._storedError) {
+      throw this._storedError;
+    }
+    let chunk = this._readableStream.read();
+    if (chunk === null) {
+      this._readCapability = createPromiseCapability();
+      return await this.read();
+    }
+    this._loaded += chunk.length;
+    if (this.onProgress) {
+      this.onProgress({
+        loaded: this._loaded,
+        total: this._contentLength,
+      });
+    }
+    // Ensure that `read()` method returns ArrayBuffer.
+    let buffer = new Uint8Array(chunk).buffer;
+    return { value: buffer, done: false };
+  } catch (err) {
+    throw err;
+  }
+}
+```",2018-07-30 13:58:09+02:00,099ed0885239f070f7c7e1d703b57cc64c3f634d

@@ -28,9 +28,8 @@ async function getUserData(userId) {
     throw error;
   }
 }
-
-Now, convert this snippet, returning only the migrated code:
+Now, convert this snippet, returning only the migrated code. Ensure the output is enclosed in a Markdown code block.
 
 Input:
-${removed_chunk}
+{removed_chunk}
 {USER_CONFIG_END}

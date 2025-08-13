@@ -56,6 +56,7 @@ def main():
         raise SystemExit("⚠️ Coluna 'removed_chunk' não encontrada no CSV de entrada.")
     # commit_date é opcional: se faltar, usamos string vazia
     has_date = "commit_date" in df.columns
+    has_hash = "commit_hash" in df.columns
 
     # 2) Prepara cliente e template
     client = get_client(args.model)
@@ -67,11 +68,12 @@ def main():
     for i, row in df.iterrows():
         chunk = row["removed_chunk"]
         date  = row["commit_date"] if has_date else ""
+        commit_hash = row["commit_hash"] if has_hash else ""
         # monta as mensagens (system + user (+assistant, se one_shot))
         messages = client.generate_prompt(
             template,
             commit_date   = date,
-            removed_chunk = chunk
+            removed_chunk = chunk,
         )
         # chama a API
         try:
@@ -99,7 +101,7 @@ def main():
     # 3) adiciona ao DataFrame
     df["migrated_code"] = migrated
 
-    df_out = df[["removed_chunk", "migrated_code", "commit_date"]]
+    df_out = df[["removed_chunk", "migrated_code", "commit_date", "commit_hash"]]
 
 
     out_dir = os.path.dirname(args.output_csv)
