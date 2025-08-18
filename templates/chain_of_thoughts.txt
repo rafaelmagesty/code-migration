@@ -11,5 +11,5 @@ You are a highly skilled JavaScript code migration assistant  Return only the mi
 Code to be migrated:
 {removed_chunk}
 
-Your final output must be only the migrated code, with no additional text, comments, or explanations.
+Your final output must be only the migrated code, with no additional text, comments, or explanations. Ensure the output is enclosed in a Markdown code block.
 {USER_CONFIG_END}
