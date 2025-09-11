@@ -1,66 +1,6 @@
 import pandas as pd
 import os
-from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
-import nltk
-
-# Tentar importar CodeBLEU, mas usar BLEU como fallback
-try:
-    from codebleu import calc_codebleu
-    USE_CODEBLEU = True
-    print("✅ CodeBLEU disponível")
-except ImportError:
-    USE_CODEBLEU = False
-    print("⚠️ CodeBLEU não disponível, usando BLEU como fallback")
-
-# Baixar dados do NLTK se necessário
-try:
-    nltk.download('punkt', quiet=True)
-except:
-    pass
-
-def calculate_similarity_score(reference, prediction):
-    """
-    Calcula score de similaridade entre dois códigos.
-    Tenta usar CodeBLEU primeiro, depois BLEU como fallback.
-    """
-    try:
-        if USE_CODEBLEU:
-            # Tentar CodeBLEU
-            result = calc_codebleu([reference], [prediction], lang="javascript")
-            return result.get('codebleu', 0.0)
-        else:
-            # Usar BLEU tradicional como fallback
-            smoothing = SmoothingFunction()
-            # Tokenizar por espaços e caracteres especiais
-            ref_tokens = reference.replace('\n', ' ').replace('\t', ' ').split()
-            pred_tokens = prediction.replace('\n', ' ').replace('\t', ' ').split()
-            
-            if not ref_tokens or not pred_tokens:
-                return 0.0
-                
-            score = sentence_bleu([ref_tokens], pred_tokens, 
-                                smoothing_function=smoothing.method1)
-            return score
-    except Exception as e:
-        # Em caso de qualquer erro, usar uma métrica simples de similaridade
-        print(f"❌ Erro no cálculo de similaridade: {e}")
-        # Métrica simples: caracteres em comum / total de caracteres
-        if not reference or not prediction:
-            return 0.0
-        
-        ref_clean = reference.lower().replace(' ', '').replace('\n', '').replace('\t', '')
-        pred_clean = prediction.lower().replace(' ', '').replace('\n', '').replace('\t', '')
-        
-        if not ref_clean or not pred_clean:
-            return 0.0
-            
-        # Similaridade de Jaccard simples
-        set_ref = set(ref_clean)
-        set_pred = set(pred_clean)
-        intersection = len(set_ref.intersection(set_pred))
-        union = len(set_ref.union(set_pred))
-        
-        return intersection / union if union > 0 else 0.0
+from codebleu import calc_codebleu
 
 # 1. Defina os caminhos dos arquivos de entrada e saída
 CAMINHO_BASE = os.path.dirname(os.path.dirname(os.path.abspath(os.path.realpath(__file__))))
@@ -162,17 +102,32 @@ for index, row in df_combined.iterrows():
                 continue
             
             # 1. Similaridade entre código migrado pela LLM e pelo desenvolvedor
-            score_llm_vs_dev = calculate_similarity_score(clean_migrated_dev, clean_migrated_llm)
-            codebleu_llm_vs_dev.append(score_llm_vs_dev)
+            try:
+                codebleu_result_llm_vs_dev = calc_codebleu([clean_migrated_dev], [clean_migrated_llm], lang="javascript")
+                score_llm_vs_dev = codebleu_result_llm_vs_dev['codebleu']
+                codebleu_llm_vs_dev.append(score_llm_vs_dev)
+            except Exception as e:
+                print(f"❌ Erro no CodeBLEU (LLM vs Dev) para o commit {commit_hash}: {e}")
+                codebleu_llm_vs_dev.append(None)
             
             # 2. Similaridade entre código original e código migrado pela LLM
-            score_original_vs_llm = calculate_similarity_score(clean_original, clean_migrated_llm)
-            codebleu_original_vs_llm.append(score_original_vs_llm)
+            try:
+                codebleu_result_original_vs_llm = calc_codebleu([clean_original], [clean_migrated_llm], lang="javascript")
+                score_original_vs_llm = codebleu_result_original_vs_llm['codebleu']
+                codebleu_original_vs_llm.append(score_original_vs_llm)
+            except Exception as e:
+                print(f"❌ Erro no CodeBLEU (Original vs LLM) para o commit {commit_hash}: {e}")
+                codebleu_original_vs_llm.append(None)
             
             # 3. Similaridade entre código original e código migrado pelo desenvolvedor
-            score_original_vs_dev = calculate_similarity_score(clean_original, clean_migrated_dev)
-            codebleu_original_vs_dev.append(score_original_vs_dev)
-            
+            try:
+                codebleu_result_original_vs_dev = calc_codebleu([clean_original], [clean_migrated_dev], lang="javascript")
+                score_original_vs_dev = codebleu_result_original_vs_dev['codebleu']
+                codebleu_original_vs_dev.append(score_original_vs_dev)
+            except Exception as e:
+                print(f"❌ Erro no CodeBLEU (Original vs Dev) para o commit {commit_hash}: {e}")
+                codebleu_original_vs_dev.append(None)
+
             # Log de sucesso para os primeiros itens processados
             if index < 3:
                 print(f"✅ Similaridade calculada para commit {commit_hash[:8]}: LLM vs Dev = {score_llm_vs_dev:.4f}")
@@ -180,7 +135,7 @@ for index, row in df_combined.iterrows():
                 print("✅ Processamento em andamento...")
             
     except Exception as e:
-        print(f"❌ Erro inesperado no CodeBLEU para o commit {commit_hash}: {e}")
+        print(f"❌ Erro inesperado no processamento para o commit {commit_hash}: {e}")
         codebleu_llm_vs_dev.append(None)
         codebleu_original_vs_llm.append(None)
         codebleu_original_vs_dev.append(None)
