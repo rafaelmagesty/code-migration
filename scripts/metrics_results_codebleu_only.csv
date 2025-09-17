@@ -19,7 +19,7 @@ identificador,codigo_original,codigo_desenvolvedor,codigo_llm,codebleu_original_
 
     return Promise.all(this._actionResults);
 
-  }`",0.8,0.8275862068965517,0.7741935483870968
+  }`",0.37148963787027417,0.4275189572311655,0.33917828623918733
 1,"    ""Sanity check operations"": browser => {
 
         import(""../operations/samples/Images.mjs"")
@@ -1446,7 +1446,7 @@ identificador,codigo_original,codigo_desenvolvedor,codigo_llm,codebleu_original_
   it(""Does something"", function() {
     expect(true).toBe(true);
   });
-});",1.0,0.37681159420289856,0.37681159420289856
+});",0.8645817587631123,0.3665492342791543,0.37396993355767105
 2,"}
 
 function initGreeter() {
@@ -1707,7 +1707,7 @@ window.remakeKeyboard = layout => {
       }, 500);
     }, 1100);
   }
-}",0.9433962264150944,0.9807692307692307,0.9245283018867925
+}",0.46984067623076686,0.5387929974799456,0.4078863876111513
 3,"        // TODO: rewrite tests with async/await once node 6 support is dropped
 
                 return produce(base, d => {
@@ -1726,7 +1726,7 @@ window.remakeKeyboard = layout => {
 
 d.b = 1
 
-}",0.8387096774193549,0.65625,0.7142857142857143
+}",0.38759702319950534,0.3709806629576039,0.4110655500769509
 4,"  var errors = [];
 
   var results = Promise.all(_.map(collection, function (...args) {
@@ -1781,7 +1781,7 @@ d.b = 1
   } catch (error) {
     errors.push(error);
   }
-}",0.8857142857142857,0.9428571428571428,0.8857142857142857
+}",0.2022078675963893,0.5166102553016814,0.2874317791858638
 5,"    let lastSendMessagePromise = Promise.resolve();
 
     function sendMessageAsync(message) {
@@ -1854,7 +1854,7 @@ function refreshClient(arch) {
   }).catch((error) => {
     console.error(error);
   });
-}",0.7631578947368421,0.9473684210526315,0.8055555555555556
+}",0.11205651862338592,0.42255928856590486,0.29859615747238644
 6,"        postStartupCallbacks.push(({
 
           // Build and write the target in one step.
@@ -1914,7 +1914,7 @@ function refreshClient(arch) {
     const clientTarget = makeClientTarget(app, arch, { minifiers });
     await refreshClient(arch);
     runLog.log(`Finished delayed build of ${arch} in ${new Date - start}ms`, { arrow: true });
-  }",0.8947368421052632,0.9714285714285714,0.918918918918919
+  }",0.4878685593411639,0.6332201505451962,0.37889583443017905
 7,"    const f = new Future();
 
     CssTools.minifyCssAsync(cssText)
@@ -1941,7 +1941,7 @@ async function minifyCssAsync(cssText) {
   } catch (error) {
     throw error;
   }
-}",0.65625,0.6111111111111112,0.7407407407407407
+}",0.33736814560820766,0.34740415176189304,0.41929257056017066
 8,"  (test, onComplete) => {
 
     Promise.all(promises).then(() => onComplete());
@@ -1953,7 +1953,7 @@ async function minifyCssAsync(cssText) {
     await Promise.all(promises);
     onComplete();
 
-}",0.8260869565217391,0.8333333333333334,0.8333333333333334
+}",0.3326083939028692,0.5211520516253755,0.37100019682459884
 9,"  return hashPassword(newPlaintextPassword).then(hash => {
 
     const update = {
@@ -2036,7 +2036,7 @@ Accounts.setPassword = (userId, newPlaintextPassword, options) => {
     update.$unset['services.resume.loginTokens'] = 1;
   }
   Meteor.users.update({ _id: user._id }, update);
-}",0.8863636363636364,0.9743589743589743,0.8636363636363636
+}",0.5414605858305395,0.5525984736512648,0.30790640642293454
 10,"      promise.then((result) => {
 
       }, (exception) => {
@@ -2056,7 +2056,7 @@ Accounts.setPassword = (userId, newPlaintextPassword, options) => {
   } catch (exception) {
     // handle exception
   }
-}",0.8076923076923077,0.6666666666666666,0.8214285714285714
+}",0.33352280250360644,0.3070859817745444,0.32591043117296464
 11,"  _doneQuerying: function () {
 
     const afterCaughtUp = () => {
@@ -2149,7 +2149,7 @@ Accounts.setPassword = (userId, newPlaintextPassword, options) => {
         self._fetchModifiedDocuments();
       }
     });
-  },",0.85,0.8292682926829268,0.9714285714285714
+  },",0.40691394407669196,0.5079562467684187,0.821728485973902
 12,"    // Build the output from scratch
 
     if (resetBuildPath) {
@@ -2190,7 +2190,7 @@ if (resetBuildPath) {
   files.mkdir_p(this.buildPath, 0o755);
   this.watchSet = new WatchSet();
 
-}",0.9428571428571428,0.9705882352941176,0.9705882352941176
+}",0.6506302605639551,0.7277877475360424,0.5893816895056101
 13,"        Promise.resolve().then(() => {
 
           try {
@@ -2218,7 +2218,7 @@ if (resetBuildPath) {
     files.rm_recursive(wildcardCacheFilename);
     await files.writeFileAtomically(cacheFilename, retAsJSON);
   } finally {}
-}",0.9,0.9,1.0
+}",0.4859488188534169,0.500501285224277,0.5283742278407739
 14,"    function startMongo(tries = 3) {
 
       self._startMongoAsync().then(
@@ -2326,7 +2326,7 @@ if (resetBuildPath) {
 }
 startMongo();
 self.updater.start();
-self.hmrServer.start();",0.975,0.975,1.0
+self.hmrServer.start();",0.7554129619015302,0.6670006071214558,0.5472042368348704
 15,"  findMongoPids = function(dbDir_unused, port) {
 
     return new Promise((resolve, reject) => {
@@ -3024,7 +3024,7 @@ self.hmrServer.start();",0.975,0.975,1.0
   } catch (error) {
     throw error;
   }
-}",1.0,0.8870967741935484,0.8870967741935484
+}",0.8410140174727907,0.2688732398861467,0.24889043383899825
 16,"  // Collect the data for this package, including looking up any specific
 
   // package version that we care about.
@@ -3118,7 +3118,7 @@ Object.assign(PackageQuery.prototype, {
   } catch (err) {
     console.error(err);
   }
-}",0.9210526315789473,0.8108108108108109,0.7837837837837838
+}",0.3700809344702598,0.3648258234620396,0.22084972856616464
 17,"  function (test, expect) {
 
     // var id1 = await ;
@@ -3192,7 +3192,7 @@ Object.assign(PackageQuery.prototype, {
 
   // const fakeOp2 = {};
 
-}",0.9210526315789473,0.9736842105263158,0.9459459459459459
+}",0.4571122410884989,0.6628321155320787,0.4543326896330332
 18,"    Promise.resolve(
 
       Meteor.isServer &&
@@ -3243,7 +3243,7 @@ Object.assign(PackageQuery.prototype, {
 
   }
 
-}",0.8484848484848485,0.9117647058823529,0.875
+}",0.37393318211933124,0.4615268160927579,0.7012960896913982
 19,"  LocalCollection.prototype[methodNameAsync] = function(...args) {
 
     return new Promise((resolve, reject) => self[methodName](...args,(err, result) => {
@@ -3265,7 +3265,7 @@ Object.assign(PackageQuery.prototype, {
 ","LocalCollection.prototype[methodNameAsync] = async function(...args) {
   const result = await self[methodName](...args);
   return result;
-};",0.8125,0.875,0.9285714285714286
+};",0.11063582366254544,0.1728492202649178,0.6386812238093251
 20,"runWebAppServer()
 
   .then(_ => _)
@@ -3289,7 +3289,7 @@ Object.assign(PackageQuery.prototype, {
     console.error(e.stack);
     process.exit(1);
   }
-}",0.5,0.8709677419354839,0.4666666666666667
+}",0.2786883145924798,0.4017699703306725,0.2967092636195499
 21,"  it('get an empty list of roles for an empty user', function () {
 
     assert.sameMembers(Roles.getRolesForUser(undefined), [])
@@ -9224,7 +9224,7 @@ Object.assign(PackageQuery.prototype, {
   //   })
 
   // })
-",The output of your `migrateRoles` method should be the following object:,1.0,0.4489795918367347,0.4489795918367347
+",The output of your `migrateRoles` method should be the following object:,0.35871812233082195,0.25001253878085516,0.2500093971460033
 22,"    const isThenable =
 
       Promise.resolve(resultOrThenable).then(
@@ -9254,7 +9254,7 @@ Object.assign(PackageQuery.prototype, {
     } catch (e) {
         self.error(e);
     }
-}",0.7096774193548387,0.8387096774193549,0.8666666666666667
+}",0.1871846602568238,0.36323084629643754,0.2736285920898144
 23,"      // TODO [FIBERS]: this is a big workaround. The Tracker is now receiving promises,
 
         // so it's finishing before time. Hopefully this PR will fix this behavior
@@ -9283,7 +9283,7 @@ Object.assign(PackageQuery.prototype, {
       resolve();
     }, 100);
   });
-}",0.5681818181818182,0.7272727272727273,0.78125
+}",0.14110814178199088,0.27878612373971084,0.5603563872020778
 24,"    return files.rm_recursive_async(
 
     ).then(() => {
@@ -9305,7 +9305,7 @@ Object.assign(PackageQuery.prototype, {
   } catch (error) {
     console.error(error);
   }
-}",0.7931034482758621,0.896551724137931,0.8888888888888888
+}",0.40679998963865993,0.40150666277080505,0.4758116644938726
 25,"  console.log(""-> allRemovePromises"", allRemovePromises);
 
 
@@ -9328,7 +9328,7 @@ async function removeProjects() {
   } catch (error) {
     console.error(error);
   }
-}",0.6896551724137931,0.9032258064516129,0.6774193548387096
+}",0.39389526554564547,0.5524706356252475,0.46071480077141813
 26,"var devBundleBinCommand = process.argv[2];
 
 var args = process.argv.slice(3);
@@ -9469,7 +9469,7 @@ async function getChildProcess() {
     return null;
   }
 }
-module.exports = getChildProcess();",0.875,0.9148936170212766,0.9148936170212766
+module.exports = getChildProcess();",0.4912268466885648,0.4097513511015608,0.39299195179359614
 27,"exports.getEnv = function (options) {
 
   var devBundle = options && options.devBundle;
@@ -9681,7 +9681,7 @@ let cachedMSVSVersion;
   }
 };
 
-var cachedMSVSVersion;",0.92,1.0,0.92
+var cachedMSVSVersion;",0.5954615731599937,0.7915718155466577,0.5826524242890078
 28,"var fs = require(""fs"");
 
 var path = require(""path"");
@@ -9832,7 +9832,7 @@ async function getDevBundleDir() {
     console.error(""Error getting dev bundle directory:"", error);
     return Promise.reject(error);
   }
-}",0.975609756097561,0.9302325581395349,0.9090909090909091
+}",0.5006507844182273,0.6376452986728234,0.40809190096277864
 29,"      this._publishCursorPromise = res._publishCursor(self).then(() => {
 
         // _publishCursor only returns after the initial added callbacks have run.
@@ -9867,7 +9867,7 @@ async function getDevBundleDir() {
       } catch (e) {
         self.error(e);
       }
-    }",0.9032258064516129,0.9032258064516129,0.9333333333333333
+    }",0.6650954549684801,0.3142780670458327,0.41957578273376717
 30,"      this._publishCursorPromise = Promise.all(
 
         res.map(c => c._publishCursor(self))
@@ -9907,7 +9907,7 @@ async function getDevBundleDir() {
   } catch (e) {
     self.error(e);
   }
-}",0.8571428571428571,0.9642857142857143,0.8928571428571429
+}",0.3507069725973658,0.29062927563860397,0.39351112215448153
 31,"      new Promise((resolve, reject) => {
 
         object[methodName](...args, (err, res) => {
@@ -9944,7 +9944,7 @@ async function getDevBundleDir() {
 
    }
 
-  }",0.7941176470588235,0.7142857142857143,0.9
+  }",0.09247902724798952,0.16121728053971573,0.3118024599508773
 32,"	private _doValidate(resource: Uri): void {
 
 		this._worker(resource).then(worker => {
@@ -10140,7 +10140,7 @@ private _convertDiagnostics(resource: Uri, diag: ts.Diagnostic): monaco.editor.I
     endColumn,
     message: diag.messageText,
   };
-}",0.9772727272727273,0.9545454545454546,0.9333333333333333
+}",0.5789667416519877,0.6592420734725188,0.517189353713275
 33,"	provideCompletionItems(model: monaco.editor.IReadOnlyModel, position: Position, _context: monaco.languages.CompletionContext, token: CancellationToken): Thenable<monaco.languages.CompletionList> {
 
 		const offset = this._positionToOffset(resource, position);
@@ -10360,7 +10360,7 @@ private _convertDiagnostics(resource: Uri, diag: ts.Diagnostic): monaco.editor.I
       return [];
     }
   };
-}",0.9761904761904762,0.9761904761904762,0.9534883720930233
+}",0.5643437875770845,0.5698055791961261,0.48936532030766144
 34,"	provideSignatureHelp(model: monaco.editor.IReadOnlyModel, position: Position, token: CancellationToken): Thenable<monaco.languages.SignatureHelpResult> {
 
 		let resource = model.uri;
@@ -10565,7 +10565,7 @@ private _convertDiagnostics(resource: Uri, diag: ts.Diagnostic): monaco.editor.I
   } catch (err) {
     console.error(err);
   }
-}",0.9767441860465116,1.0,0.9767441860465116
+}",0.6240924312686785,0.7588100691718251,0.6196217047680499
 35,"	provideHover(model: monaco.editor.IReadOnlyModel, position: Position, token: CancellationToken): Thenable<monaco.languages.Hover> {
 
 		let resource = model.uri;
@@ -10674,7 +10674,7 @@ private _convertDiagnostics(resource: Uri, diag: ts.Diagnostic): monaco.editor.I
   } catch (error) {
     console.log('Error in provideHover: ', error);
   }
-}",1.0,0.5882352941176471,0.5882352941176471
+}",0.6005378200197256,0.10292317920410855,0.0958957292692139
 36,"	public provideDocumentHighlights(model: monaco.editor.IReadOnlyModel, position: Position, token: CancellationToken): Thenable<monaco.languages.DocumentHighlight[]> {
 
 		return this._worker(resource).then(worker => {
@@ -10739,7 +10739,7 @@ private _convertDiagnostics(resource: Uri, diag: ts.Diagnostic): monaco.editor.I
             kind: entry.isWriteAccess ? monaco.languages.DocumentHighlightKind.Write : monaco.languages.DocumentHighlightKind.Text,
         };
     });
-}",0.975,0.9230769230769231,0.9
+}",0.5516610016566256,0.553826818723052,0.4739280621453969
 37,"	public provideDefinition(model: monaco.editor.IReadOnlyModel, position: Position, token: CancellationToken): Thenable<monaco.languages.Definition> {
 
 		return this._worker(resource).then(worker => {
@@ -10833,7 +10833,7 @@ private _convertDiagnostics(resource: Uri, diag: ts.Diagnostic): monaco.editor.I
     } catch (error) {
         console.log(error);
     }
-}",0.9743589743589743,1.0,0.9743589743589743
+}",0.5339202437772912,0.6316214005730285,0.5920572691965073
 38,"	provideReferences(model: monaco.editor.IReadOnlyModel, position: Position, context: monaco.languages.ReferenceContext, token: CancellationToken): Thenable<monaco.languages.Location[]> {
 
 		return this._worker(resource).then(worker => {
@@ -10946,7 +10946,7 @@ private _convertDiagnostics(resource: Uri, diag: ts.Diagnostic): monaco.editor.I
 
 	}
 
-};",0.9743589743589743,0.9736842105263158,0.9487179487179487
+};",0.5505508531691329,0.6882627082655531,0.5308543045760743
 39,"	public provideDocumentSymbols(model: monaco.editor.IReadOnlyModel, token: CancellationToken): Thenable<monaco.languages.DocumentSymbol[]> {
 
 		return this._worker(resource).then(worker => worker.getNavigationBarItems(resource.toString())).then(items => {
@@ -11057,7 +11057,7 @@ private _convertDiagnostics(resource: Uri, diag: ts.Diagnostic): monaco.editor.I
 	} catch (err) {
 		console.error(""Error getting navigation bar items:"", err);
 	}
-}",1.0,0.8409090909090909,0.8409090909090909
+}",0.6787306753322913,0.2908890601084813,0.29064207164296185
 40,"	protected _convertTextChanges(uri: Uri, change: ts.TextChange): monaco.editor.ISingleEditOperation {
 
 		return <monaco.editor.ISingleEditOperation>{
@@ -11124,7 +11124,7 @@ private _convertDiagnostics(resource: Uri, diag: ts.Diagnostic): monaco.editor.I
 			return edits.map((edit) => this._convertTextChanges(resource, edit));
 		}
 	} catch (error) {}
-}",0.9487179487179487,0.9459459459459459,0.8974358974358975
+}",0.4464951510590285,0.4829748431396217,0.32112033736458523
 41,"	provideOnTypeFormattingEdits(model: monaco.editor.IReadOnlyModel, position: Position, ch: string, options: monaco.languages.FormattingOptions, token: CancellationToken): Thenable<monaco.editor.ISingleEditOperation[]> {
 
 		return this._worker(resource).then(worker => {
@@ -11167,7 +11167,7 @@ private _convertDiagnostics(resource: Uri, diag: ts.Diagnostic): monaco.editor.I
 	if (edits) {
 		return edits.map(edit => this._convertTextChanges(resource, edit));
 	}
-}",0.9487179487179487,0.972972972972973,0.9230769230769231
+}",0.45949047749454097,0.6394886867782152,0.5377134841415838
 42,"	public provideCodeActions(model: monaco.editor.ITextModel, range: Range, context: monaco.languages.CodeActionContext, token: CancellationToken): Promise<monaco.languages.CodeActionList> {
 
 		return this._worker(resource).then(worker => {
@@ -11267,7 +11267,7 @@ private _convertDiagnostics(resource: Uri, diag: ts.Diagnostic): monaco.editor.I
       dispose: () => {}
     };
   })();
-}",0.9512195121951219,0.9230769230769231,0.8780487804878049
+}",0.665050385553092,0.6311273852340495,0.6297365304416933
 43,"'use strict';
 
 
@@ -11371,7 +11371,7 @@ class PromiseAdapter<T> implements jsonService.Thenable<T> {
   public static all<T>(values: jsonService.Thenable<T>[]): jsonService.Thenable<T[]> {
     return Promise.all(values);
   }
-}",0.8888888888888888,0.9090909090909091,0.8444444444444444
+}",0.07770029586425915,0.7221561894313913,0.21105034987598928
 44,"languages.onLanguage(htmlLanguageId, () => {
 
 	getMode().then((mode) => mode.setupMode(htmlDefaults));
@@ -11471,7 +11471,7 @@ export function registerHTMLLanguageService(
 	} catch (error) {
 		// Error handling
 	}
-}",0.7105263157894737,0.8709677419354839,0.8157894736842105
+}",0.24141397111014726,0.3191710115949714,0.11974570298218462
 45,"	test(mainLanguage + ' tokenization', (t: test.Test) => {
 
 		Promise.all(languages.map((l) => loadLanguage(l)))
@@ -11511,7 +11511,7 @@ export function registerHTMLLanguageService(
 		t.end();
 
 	});
-})",0.8235294117647058,0.8823529411764706,0.8823529411764706
+})",0.4105796941144954,0.6908570508097202,0.6508772348811883
 46,"	languages.setMonarchTokensProvider(
 
 		languageId,
@@ -11551,7 +11551,7 @@ export function registerHTMLLanguageService(
   } catch (err) {
     console.error(err);
   }
-}",0.9393939393939394,0.967741935483871,0.9090909090909091
+}",0.36565388560029255,0.2397189400103641,0.3011024496181407
 47,"			this._worker = editor.createWebWorker<TypeScriptWorker>({
 
 				// module that exports the create() method and returns a `TypeScriptWorker` instance
@@ -11767,7 +11767,7 @@ async getLanguageServiceWorker(...resources: Uri[]): Promise<TypeScriptWorker> {
 
 		})
 
-		.then((_) => _client);",1.0,1.0,1.0
+		.then((_) => _client);",0.49397741259052513,0.9472252550224332,0.6231236139656534
 48,"  var self = this;
 
   var finalPromise = new Promise(fn);
@@ -12060,7 +12060,7 @@ async function save(options) {
     }
     return Promise.reject(err);
   }
-}",0.9777777777777777,0.9777777777777777,0.9565217391304348
+}",0.48887242716945994,0.5399326554793243,0.4778848036283626
 49," *     product.save(function (err, product) {
 
  *       if (err) ..
@@ -12102,7 +12102,7 @@ async function save(options) {
     } catch (err) {
         // Handle error
     }
-}",0.6136363636363636,0.6571428571428571,0.625
+}",0.1929521899632423,0.0448252627159076,0.12040649070792347
 50," *     product.save(function (err, product) {
 
  *       if (err) ..
@@ -12144,7 +12144,7 @@ async function save(options) {
    } catch (err) {
       // handle error
    }
-}",0.6136363636363636,0.6571428571428571,0.625
+}",0.1929521899632423,0.05978477081269766,0.15557808565841835
 51," *     product.save(function (err, product) {
 
  *       if (err) ..
@@ -12202,7 +12202,7 @@ async function save(options) {
   } catch (err) {
     // ...
   }
-}",0.8297872340425532,0.5348837209302325,0.5555555555555556
+}",0.38116454906243735,0.06681017103712718,0.03386343784456899
 52," *     // populates a single object
 
  *     User.findById(id, function (err, user) {
@@ -12378,7 +12378,7 @@ async function populateUsersWithWeapons() {
   } catch (err) {
     console.error(err);
   }
-}",0.7916666666666666,0.8958333333333334,0.7755102040816326
+}",0.17023671905594023,0.41175931448574743,0.22846027999273033
 53," *     // pass a spread of docs and a callback
 
  *     Candy.create({ type: 'jelly bean' }, { type: 'snickers' }, function (err, jellybean, snickers) {
@@ -12459,7 +12459,7 @@ async function populateUsersWithWeapons() {
             }
         }
     },
-};",0.8048780487804879,0.8095238095238095,0.7619047619047619
+};",0.17718188871836715,0.15165794891919887,0.30528466565345225
 54," * This function does not trigger any middleware.
 
  *     Character.deleteOne({ name: 'Eddard Stark' }).then(next);
@@ -12477,7 +12477,7 @@ async function populateUsersWithWeapons() {
   } catch (error) {
     console.log(error);
   }
-}",0.84375,0.9,0.8125
+}",0.46126876757272245,0.41048939946384555,0.5108517338477622
 55," * This function does not trigger any middleware
 
  *     Character.deleteMany({ name: /Stark/, age: { $gte: 18 } }, callback)
@@ -12503,7 +12503,7 @@ async function deleteManyCharacters() {
   } finally {
     next(); // callback
   }
-}",0.9142857142857143,0.8888888888888888,0.8648648648648649
+}",0.5525666823286467,0.3752209902725515,0.4139004282366877
 56,"  it('eachAsync() with parallel > numDocs (gh-8422)', function() {
 
     return co(function*() {
@@ -12634,7 +12634,7 @@ it('eachAsync() with sort, parallel, and sync function (gh-8557)', async functio
 
   assert.deepEqual(docs.map(d => d.order), [1, 2, 3]);
 
-});",0.9795918367346939,0.9795918367346939,1.0
+});",0.6159459718145898,0.7095715129546403,0.851566128299238
 57,"    return Movie.findOneAndUpdate(query, update, options).then(doc => {
 
       doc.genre; // 'Action', Mongoose set a default value.
@@ -12692,7 +12692,7 @@ it('eachAsync() with sort, parallel, and sync function (gh-8557)', async functio
     } catch (error) {
       console.log('Error occurred while updating movie', error);
     }
-  }",0.9117647058823529,0.8823529411764706,0.9117647058823529
+  }",0.5568008574810014,0.3050717915904262,0.2594421496983111
 58,"  before(function() {
 
     return db.asPromise().
@@ -12802,7 +12802,7 @@ it('eachAsync() with sort, parallel, and sync function (gh-8557)', async functio
       this.skip();
     }
   } catch (error) {}
-}",0.9285714285714286,0.9761904761904762,0.9047619047619048
+}",0.4167201992094509,0.5981362850173638,0.5375555583916903
 59,"  before(function() {
 
 
@@ -12960,7 +12960,7 @@ it('eachAsync() with sort, parallel, and sync function (gh-8557)', async functio
 
 
 
-  })",0.9285714285714286,1.0,0.9285714285714286
+  })",0.4803115425026858,0.6497547621681035,0.5923426132563174
 60,"      bootMongo.promise.then(function(_conn) {
 
         assert.equal(_conn, conn);
@@ -12983,7 +12983,7 @@ it('eachAsync() with sort, parallel, and sync function (gh-8557)', async functio
         // Clean up resources here
       }
       done();
-    }",0.7586206896551724,0.8125,0.71875
+    }",0.22983632935992204,0.3704427837246142,0.28673867356805227
 61,"    MR.mapReduce(o).then(function(results, stats) {
 
       assert.equal(typeof stats, 'undefined');
@@ -13003,7 +13003,7 @@ it('eachAsync() with sort, parallel, and sync function (gh-8557)', async functio
   } finally {
     done();
   }
-}",0.8928571428571429,0.9285714285714286,0.9642857142857143
+}",0.3024916114011817,0.44969961605260766,0.5246775117752173
 62,"    it('when return promise', function(done) {
 
       A.aggregate([group, project]).then(function(res) {
@@ -13167,7 +13167,7 @@ it('with Aggregate syntax if callback not provided', async () => {
   assert.equal(res.length, 1);
   assert.ok('maxAge' in res[0]);
   assert.equal(maxAge, res[0].maxAge);
-});",0.9473684210526315,0.9487179487179487,0.9487179487179487
+});",0.6227757428466472,0.6537412329979413,0.7832674024493561
 63,"      return Promise.all([
 
       ]).then(() => Base.listIndexes()).
@@ -13199,7 +13199,7 @@ it('with Aggregate syntax if callback not provided', async () => {
     assert.deepEqual(otherIndex.key, { other: 1 });
     assert.deepEqual(otherIndex.partialFilterExpression, { kind: 'Device' });
   }
-  test();",0.972972972972973,0.972972972972973,1.0
+  test();",0.4718388479662597,0.4042690772969017,0.42990360977303516
 64,"import { createConnection, Schema, Connection } from 'mongoose';
 
 conn.model('Test', new Schema({ name: { type: String } }));
@@ -13441,7 +13441,7 @@ async function syncIndexes() {
 
 connect();
 retrieveDoc();
-syncIndexes();",0.8888888888888888,0.9285714285714286,0.8666666666666667
+syncIndexes();",0.43087748803263415,0.3560328578773428,0.1185578988242354
 65," *     product.remove(function (err, product) {
 
  *       if (err) return handleError(err);
@@ -13493,7 +13493,7 @@ syncIndexes();",0.8888888888888888,0.9285714285714286,0.8666666666666667
   }
 }
 
-module.exports = removeProduct;",0.8378378378378378,0.7027027027027027,0.7878787878787878
+module.exports = removeProduct;",0.14306698478391236,0.12311253866776811,0.22370877460171235
 66," *     const promise = aggregate.exec();
 
  *     promise.then(..);
@@ -13504,7 +13504,7 @@ module.exports = removeProduct;",0.8378378378378378,0.7027027027027027,0.7878787
 "," *     const result = await aggregate.exec();
 
  * @return {Promise} Returns a Promise if no ""callback"" is given.
-",`const promise = await aggregate.exec();`,0.696969696969697,0.6428571428571429,0.6129032258064516
+",`const promise = await aggregate.exec();`,0.41065257868864136,0.2617870901352544,0.2595800385765834
 67,"  return new Promise((resolve, reject) => {
 
     const db = module.exports();
@@ -13593,7 +13593,7 @@ reject(err);
 
  }
 
-}",0.90625,0.9142857142857143,0.8285714285714286
+}",0.27659398057314755,0.4941456178383501,0.4001054487511061
 68,"Connection.prototype.openUri = function openUri(uri, options, callback) {
 
   if (typeof options === 'function') {
@@ -13848,7 +13848,7 @@ async function _createMongoClient(conn, uri, options) {
   } catch (error) {
     return callback(error);
   }
-}",0.7735849056603774,0.9387755102040817,0.75
+}",0.4009126343995265,0.5991461195890547,0.22345943807467988
 69,"  const promise = new Promise((resolve, reject) => {
 
     let client;
@@ -13990,7 +13990,7 @@ async function _createMongoClient(conn, uri, options) {
     }
     resolve(_this);
   }).catch(reject);
-});",0.775,0.85,0.9117647058823529
+});",0.17233258531297274,0.45038388705751164,0.5327460930736193
 70,"  it('should buffer commands until connection is established', function(done) {
 
     let connected = false;
@@ -14118,7 +14118,7 @@ it('returns a promise if buffering and no callback (gh-7676)', async () => {
   } catch (err) {
     console.log(err);
   }
-});",0.8780487804878049,0.9512195121951219,0.926829268292683
+});",0.30907981226175796,0.5967731026702764,0.49934144567026295
 71,"    db.openUri(start.uri, function(err) {
 
       assert.ifError(err);
@@ -14138,7 +14138,7 @@ it('returns a promise if buffering and no callback (gh-7676)', async () => {
   } catch (error) {
     throw error;
   }
-}",0.6538461538461539,0.7857142857142857,0.6538461538461539
+}",0.2976190476190476,0.34161201344043124,0.3306609347015786
 72,"  it('throws a MongooseServerSelectionError on server selection timeout (gh-8451)', function() {
 
     return mongoose.createConnection(uri, opts).asPromise().then(() => assert.ok(false), err => {
@@ -14165,7 +14165,7 @@ it('returns a promise if buffering and no callback (gh-7676)', async () => {
   } catch (err) {
     assert.equal(err.name, 'MongooseServerSelectionError');
   }
-});",0.9444444444444444,0.9166666666666666,0.9166666666666666
+});",0.4724734923959223,0.5991517600862154,0.36353409364604883
 73,"  const cb = (err, docs) => {
 
     if (err) {
@@ -14414,7 +14414,7 @@ it('returns a promise if buffering and no callback (gh-7676)', async () => {
 
   }
 
-};",0.9302325581395349,0.9767441860465116,0.9534883720930233
+};",0.33184065135813523,0.7535645610966812,0.561641974122331
 74,"  if (!callback) {
 
     return Query.base.deleteOne.call(this);
@@ -14468,7 +14468,7 @@ Query.prototype._deleteOne = async function _deleteOne() {
   } catch (err) {
     callback(err);
   }
-}",0.8285714285714286,0.8857142857142857,0.875
+}",0.11264868088258331,0.36342562496361985,0.4192361725490629
 75,"Query.prototype._deleteMany = wrapThunk(function(callback) {
 
     callback(this.error());
@@ -14499,7 +14499,7 @@ Query.prototype._deleteOne = async function _deleteOne() {
         res => { await callback(null, res); },
         err => { await callback(err); }
     );
-}",0.9032258064516129,1.0,0.9032258064516129
+}",0.3259975462242364,0.6178656960945051,0.39877202379153065
 76,"    const p1 = Temp.create({ nested: { nums: [1, 2, 3, 4, 5] } });
 
     p1.then(function(t) {
@@ -14540,7 +14540,7 @@ async function run() {
   assert.equal(t.$__.activePaths.paths['nested.nums'], 'modify');
 }
 // Call the async function and handle any errors that may occur
-run().catch(err => console.error(err));",1.0,0.9302325581395349,0.9302325581395349
+run().catch(err => console.error(err));",0.6522853435332382,0.47326871393033576,0.5660862132928082
 77,"    it('updateOne()', function(done) {
 
       BlogPost.create({ title: 'interoperable update as promise' }, function(err) {
@@ -14797,7 +14797,7 @@ describe('Asynchronous Queries', () => {
     const count = await query.exec();
     assert.equal(count, 1);
   });
-});",1.0,0.9512195121951219,0.9512195121951219
+});",0.3635294095432261,0.4021692003945639,0.6681120672694802
 78,"      it('find()', function(done) {
 
         BlogPost.create(
@@ -15043,7 +15043,7 @@ describe('Asynchronous Queries', () => {
     } catch (error) {
       done(new Error(error));
     }
-  });",0.8666666666666667,1.0,0.8666666666666667
+  });",0.18185968076472675,0.5967884010189919,0.5134822711964142
 79,"      savePromise.then(function() {
 
         assert.ok(!doc.$__.$versionError);
@@ -15419,7 +15419,7 @@ it('with positional notation on path not existing in schema (gh-1048)', async ()
   assert.ok(Array.isArray(newB.numbers));
   assert.equal(newB.numbers[1], 3);
   done();
-});",1.0,0.9607843137254902,0.9607843137254902
+});",0.5475385379210287,0.5587378698002622,0.6263112176953236
 80,"      Movie.insertMany(movies, function(error, docs) {
 
         assert.ifError(error);
@@ -15500,7 +15500,7 @@ it('with positional notation on path not existing in schema (gh-1048)', async ()
   } catch (error) {
     assert.ifError(error);
   }
-}",0.7555555555555555,0.8666666666666667,0.7804878048780488
+}",0.18071014988494097,0.44706994459683763,0.37062572008132194
 81,"    it('should have fields when create', function(done) {
 
       cat.save(function(err, doc) {
@@ -15659,7 +15659,7 @@ it('should not change updatedAt when save with no modifications', async function
     return doc.save();
   });
   assert.ok(doc.updatedAt.getTime() === old.getTime());
-});",1.0,1.0,1.0
+});",0.5750382526472033,0.5933667489348421,0.7802609778622369
 82,"      instance.save(function(error) {
 
         assert.ifError(error);
@@ -15702,7 +15702,7 @@ it('should not change updatedAt when save with no modifications', async function
   } catch (error) {
     assert.ifError(error);
   }
-}",0.9743589743589743,0.7948717948717948,0.8157894736842105
+}",0.4569124334063134,0.47016745095404955,0.7665873430159766
 83,"      Model.updateOne(q, u, o).then(function() {
 
         done();
@@ -15711,7 +15711,7 @@ it('should not change updatedAt when save with no modifications', async function
 ","      await Model.updateOne(q, u, o);
 ","Model.updateOne(q, u, o).then(async () => {
   await done();
-});",0.7391304347826086,0.7777777777777778,0.6923076923076923
+});",0.3414642082607867,0.3936852422736162,0.43788501491590814
 84,"      ModelA.create({ name: 'model-A' }, function(error, toyA) {
 
         assert.ifError(error);
@@ -15833,7 +15833,7 @@ it('should not change updatedAt when save with no modifications', async function
   } catch (error) {
     done();
   }
-}",0.95,0.85,0.9
+}",0.45681510096311095,0.23822792519157,0.1894399623811333
 85,"QueryCursor.prototype.close = function(callback) {
 
   return promiseOrCallback(callback, cb => {
@@ -15889,7 +15889,7 @@ it('should not change updatedAt when save with no modifications', async function
     cb(error);
     this.listeners('error').length > 0 && this.emit('error', error);
   }
-}",0.8648648648648649,0.8571428571428571,0.8857142857142857
+}",0.3692226887689258,0.3787606836961881,0.4012772689937404
 86,"  callback = this.$handleCallbackError(callback);
 
 
@@ -15946,7 +15946,7 @@ return await this.db.base._promiseOrCallback(callback, async (cb) => {
   } catch (error) {
     console.error(error);
   }
-});",0.9230769230769231,0.8717948717948718,0.8461538461538461
+});",0.31663800576657636,0.3575424013872309,0.24311661234658083
 87," *     Event.init().then(function(Event) {
 
  *       // You can also use `Event.on('index')` if you prefer event emitters
@@ -15968,7 +15968,7 @@ return await this.db.base._promiseOrCallback(callback, async (cb) => {
   }
 }
 
-initEvent();",0.696969696969697,0.7941176470588235,0.7666666666666667
+initEvent();",0.44313559373122646,0.40224696101292934,0.5592515011329273
 88,"      TestModel.diffIndexes().then((diff) => {
 
         assert.deepEqual(diff, { toCreate: [{ age: 1, title: 'text', description: 'text' }], toDrop: [] });
@@ -16014,7 +16014,7 @@ initEvent();",0.696969696969697,0.7941176470588235,0.7666666666666667
     } finally {
         done();
     }
-}",0.9166666666666666,0.9444444444444444,0.9714285714285714
+}",0.6118180918375143,0.5659270870081321,0.7642228697899217
 89,"        doc.save().then();
 ","        await doc.save();
 ","async function saveDoc() {
@@ -16023,7 +16023,7 @@ initEvent();",0.696969696969697,0.7941176470588235,0.7666666666666667
     } catch (e) {
         // handle error
     }
-}",0.75,0.5833333333333334,0.5833333333333334
+}",0.375,0.375,0.5434716312621715
 90,"      it('should allow setting values to a given property gh-13510', function() {
 
         doc.save().then();
@@ -16038,7 +16038,7 @@ initEvent();",0.696969696969697,0.7941176470588235,0.7666666666666667
 
     await doc.save();
 
-  });",0.8157894736842105,0.96875,0.8421052631578947
+  });",0.714239063061145,0.741509496219227,0.725267940886448
 91,"  console.log(`Processing ~${files.length} files`);
 
   Promise.all([pugifyAllFiles(), copyAllRequiredFiles()]).then(() => {
@@ -16079,7 +16079,7 @@ initEvent();",0.696969696969697,0.7941176470588235,0.7666666666666667
     } catch (error) {
       // handle error here
     }
-  }",0.7368421052631579,0.7777777777777778,0.8235294117647058
+  }",0.4503260390383221,0.45741822494080453,0.5247898650459145
 92,"  // data that should persist across subPopulate calls
 
   const cache = {};
@@ -16111,7 +16111,7 @@ try {
 } catch (err) {
   console.error(err);
 }
-}",0.6666666666666666,0.75,0.7692307692307693
+}",0.05362047943598724,0.20794525812107972,0.23374692927749474
 93,"render(process.argv[2] || '/')
 
   .then(html => console.log(html))
@@ -16170,7 +16170,7 @@ try{
  console.error(err)
  process.exit(1)
 }
-}",0.7560975609756098,0.8333333333333334,0.8095238095238095
+}",0.4869417077325893,0.3334283094795888,0.14893173874137916
 94,"module.exports = (req, res) => {
 
   const start = process.hrtime()
@@ -16232,7 +16232,7 @@ try{
     console.error(err)
     res.end('Error: ' + err)
   }
-}",0.6888888888888889,0.8863636363636364,0.75
+}",0.2594669971118986,0.6357754105566727,0.24350002792052503
 95,"const getPluginMode = (src) => {
 
   return mode
@@ -16281,7 +16281,7 @@ export async function resolvePlugins (builder: Builder, app: NuxtApp) {
   } catch (error) {
     console.error(error);
   }
-}",0.8648648648648649,0.8888888888888888,0.868421052631579
+}",0.44347808248840725,0.19446598051970151,0.3144000788720467
 96,"import { CreateOptions } from '#app'
 
 const entry = process.server
@@ -16430,7 +16430,7 @@ export default async function entry() {
   } catch (err) {
     // handle error
   }
-}",0.7083333333333334,0.9714285714285714,0.7291666666666666
+}",0.35269747128165474,0.8125712088825614,0.14768909982400646
 97,"    if (nuxtApp.ssrContext && nuxtApp.ssrContext.event) {
 
       const redirectLocation = isExternal ? toPath : joinURL(useRuntimeConfig().app.baseURL, fullPath)
@@ -16492,7 +16492,7 @@ export default async function entry() {
   }
 }
 
-router.beforeEach((final) => final.fullPath === fullPath ? handleRedirect() : undefined);",0.7735849056603774,0.8863636363636364,0.7884615384615384
+router.beforeEach((final) => final.fullPath === fullPath ? handleRedirect() : undefined);",0.5620121973730564,0.30798436443961713,0.28156030184629277
 98,"    this.fetchBuiltInCMap = (name) => {
 
         return Promise.resolve(this.builtInCMapCache.get(name));
@@ -16542,7 +16542,7 @@ router.beforeEach((final) => final.fullPath === fullPath ? handleRedirect() : un
   } catch (error) {
     console.error(error);
   }
-};",1.0,1.0,1.0
+};",0.6614114750174944,0.5723294589008883,0.8008124968381749
 99,"    fetchIfRefAsync: function XRef_fetchIfRefAsync(obj, suppressEncryption) {
 
         return Promise.resolve(obj);
@@ -16615,7 +16615,7 @@ async function XRef_fetchAsync(ref, suppressEncryption) {
             reject(e);
         }
     }
-}",0.8285714285714286,0.9705882352941176,0.8529411764705882
+}",0.17211777798438266,0.5259684699416971,0.24818835033837794
 100,"  ensure(obj, prop, args) {
 
     return new Promise(function(resolve) {
@@ -16660,7 +16660,7 @@ async function XRef_fetchAsync(ref, suppressEncryption) {
 
       }
 
-    });",0.9354838709677419,1.0,0.9354838709677419
+    });",0.4972415326927174,1.0,0.6231399138212586
 101,"  ensure(obj, prop, args) {
 
     return new Promise((resolve, reject) => {
@@ -16752,7 +16752,7 @@ async function XRef_fetchAsync(ref, suppressEncryption) {
         this.streamManager.requestRange(ex.begin, ex.end)
             .then(ensureHelper, reject);
     }
-}",0.972972972972973,0.972972972972973,1.0
+}",0.34179365723014554,0.5459447655350229,0.6111347841265431
 102,"  read() {
 
     return this._headersCapability.promise.then(() => {
@@ -16836,7 +16836,7 @@ async function XRef_fetchAsync(ref, suppressEncryption) {
   } catch (error) {
     console.log(error);
   }
-}",0.9705882352941176,1.0,0.9705882352941176
+}",0.5114500451668931,0.6684389879192,0.49390145814894426
 103,"  read() {
 
     return this._readCapability.promise.then(() => {
@@ -16904,7 +16904,7 @@ async function XRef_fetchAsync(ref, suppressEncryption) {
   } catch (err) {
     console.error(""Error reading file"", err);
   }
-}",0.9705882352941176,0.9428571428571428,0.9705882352941176
+}",0.5672297497603214,0.409797078877163,0.48372331235310273
 104,"  read() {
 
     return this._readCapability.promise.then(() => {
@@ -17021,7 +17021,7 @@ async function XRef_fetchAsync(ref, suppressEncryption) {
   }
   const buffer = new Uint8Array(chunk).buffer;
   return Promise.resolve({ value: buffer, done: false });
-}",0.9473684210526315,0.875,0.8717948717948718
+}",0.6192615975875675,0.5670712549197434,0.6178293534169009
 105,"  read() {
 
     return this._readCapability.promise.then(() => {
@@ -17150,7 +17150,7 @@ async function XRef_fetchAsync(ref, suppressEncryption) {
 
     }
 
-  }",0.9473684210526315,0.9736842105263158,0.972972972972973
+  }",0.6136115188155618,0.5375032751576284,0.7315988491298401
 106,"function resolveCall(fn, args, thisArg = null) {
 
     return Promise.resolve(undefined);
@@ -17167,7 +17167,7 @@ async function XRef_fetchAsync(ref, suppressEncryption) {
   return fn.apply(thisArg, args);
 ","async function resolveCall(fn, args = [], thisArg = null) {
   return Promise.resolve(undefined);
-}",0.8,0.84375,0.8275862068965517
+}",0.37366561403046394,0.4664924596408649,0.45070110385645834
 107,"  getLanguage() {
 
     return this._ready.then((l10n) => {
@@ -17256,7 +17256,7 @@ async translate(element) {
   } catch (error) {
     // Handle error
   }
-}",0.9090909090909091,0.9117647058823529,0.9393939393939394
+}",0.340928007444943,0.3231493849096382,0.7746862994130076
 108,"  register(name, element, callerCloseMethod = null, canForceClose = false) {
 
     return new Promise((resolve) => {
@@ -17385,7 +17385,7 @@ The next step is to replace the `.then()` callbacks with `await`. This involves 
 
 After replacing the `.then()` and `.catch()` or `.finally()` calls with `await`, we wrap the logic in an `async function`. This allows us to use `await` within the function.
 
-Finally, we implement error handling by replacing the `.catch()` method with a `try...catch` block. This enables us to handle potential errors and prevent them from propagating to the caller.",0.9714285714285714,0.8536585365853658,0.8292682926829268
+Finally, we implement error handling by replacing the `.catch()` method with a `try...catch` block. This enables us to handle potential errors and prevent them from propagating to the caller.",0.8146647168036628,0.7937816821038459,0.7627749367915033
 109,"  unregister(name) {
 
     return new Promise((resolve) => {
@@ -17431,7 +17431,7 @@ Finally, we implement error handling by replacing the `.catch()` method with a `
   } finally {
     return;
   }
-}",0.9428571428571428,0.9428571428571428,1.0
+}",0.7526191170154337,0.790425058288329,0.866155570385197
 110,"  open(name) {
 
     return new Promise((resolve) => {
@@ -17528,7 +17528,7 @@ Finally, we implement error handling by replacing the `.catch()` method with a `
 
   return;
 
-}",0.972972972972973,0.972972972972973,1.0
+}",0.82213094276149,0.8226265752286981,0.9677954350343312
 111,"  close(name) {
 
     return new Promise((resolve) => {
@@ -17594,7 +17594,7 @@ Finally, we implement error handling by replacing the `.catch()` method with a `
   this._overlays[this._active].element.classList.add('hidden');
   this._active = null;
   window.removeEventListener('keydown', this._keyDownBound);
-}",0.9444444444444444,0.9444444444444444,1.0
+}",0.7886338811509583,0.7892462866186698,0.9585997475565178
 112,"  _writeToStorage(prefObj) {
 
     return new Promise(function(resolve) {
@@ -17637,7 +17637,7 @@ async function readFromStorage() {
         // Handle error
     }
     return prefObj;
-}",0.9032258064516129,0.8787878787878788,0.84375
+}",0.24775205654596014,0.24666918208760383,0.38987972580965297
 113,"  reset() {
 
     return this._initializedPromise.then(() => {
@@ -17666,7 +17666,7 @@ async function readFromStorage() {
      } catch (error) {
        console.log('Error:', error.message);
      }
-   }",0.90625,0.8823529411764706,0.9090909090909091
+   }",0.6206946068835405,0.5793653404989023,0.8136274691179002
 114,"  set(name, value) {
 
     return this._initializedPromise.then(() => {
@@ -17779,7 +17779,7 @@ async function readFromStorage() {
     this.prefs[name] = value;
     return await this._writeToStorage(this.prefs);
   }
-}",0.9767441860465116,0.9534883720930233,0.9761904761904762
+}",0.7962482679125819,0.860362293249389,0.7487128656551136
 115,"  get(name) {
 
     return this._initializedPromise.then(() => {
@@ -17841,7 +17841,7 @@ async function readFromStorage() {
     }
   }
   return getPreference();
-}",0.9459459459459459,0.9210526315789473,0.972972972972973
+}",0.8529978525024551,0.49531632403645826,0.5079385242369049
 116,"  getAll() {
 
     return this._initializedPromise.then(() => {
@@ -17870,7 +17870,7 @@ async getAll() {
   } catch (error) {
     console.log('Error in getAll:', error);
   }
-}",0.84375,0.8823529411764706,0.8529411764705882
+}",0.5211413249108231,0.7926578481322546,0.63114349952138
 117,"  _writeToStorage() {
 
     return new Promise((resolve) => {
@@ -18123,7 +18123,7 @@ async getAll() {
 
       return values;
 
-    });",0.9761904761904762,1.0,0.9761904761904762
+    });",0.5782359520010818,0.9667207113253895,0.6420559494956575
 118,"    return this.preferences.getAll().then(function(prefs) {
 
     }, function(reason) { });
@@ -18450,7 +18450,7 @@ async getAll() {
     } catch (e) {
         console.error('Error parsing hash parameters:', e);
     }
-}",1.0,1.0,1.0
+}",0.7326304049975357,0.65288703790195,0.8174984422920988
 119,"  _initializeL10n() {
 
     return this.l10n.getDirection().then((dir) => {
@@ -19219,7 +19219,7 @@ resolve(undefined);
 
 });
 
-}",1.0,1.0,1.0
+}",0.7521876162350292,0.9414353593683618,0.7304250002585477
 120,"  open(file, args) {
 
       return this.close().then(() => {
@@ -19239,7 +19239,7 @@ resolve(undefined);
     } catch (error) {
       // handle error
     }
-  }",0.7142857142857143,0.8571428571428571,0.8461538461538461
+  }",0.3479753896780583,0.40381436756156547,0.6730210288765848
 121,"        return {
 
           hash,
@@ -19324,7 +19324,7 @@ resolve(undefined);
   });
 
   return { hash, rotation, sidebarView, scrollMode, spreadMode };
-}",0.9230769230769231,0.825,0.7560975609756098
+}",0.4480329230255564,0.42947839196599025,0.20474681976082795
 122,"    function renderPDF(filename) {
 
       var loadingTask = getDocument(filename);
@@ -19410,7 +19410,7 @@ resolve(undefined);
   } catch (error) {
     console.log('Error:', error);
   }
-}",1.0,0.9411764705882353,0.9411764705882353
+}",0.4553254359327773,0.3919961877670234,0.5816618944918686
 123,"    },
 
     _scheduleNext: function InternalRenderTask__scheduleNext() {
@@ -19522,7 +19522,7 @@ resolve(undefined);
       });
     };
   }
-}",0.868421052631579,0.9487179487179487,0.868421052631579
+}",0.6561705766331323,0.7748607214070818,0.6875895603232257
 124,"    function loadDocument(recoveryMode) {
 
       var loadDocumentCapability = createPromiseCapability();
@@ -19633,7 +19633,7 @@ resolve(undefined);
     }
     
     return loadDocumentCapability.promise;
-}",0.8918918918918919,0.9444444444444444,0.8947368421052632
+}",0.15927677493914916,0.4149303165324483,0.2911440952209904
 125,"        this.xref.stream.manager.requestRanges(pendingRequests).then(() => {
 
           for (let i = 0, ii = nodesToRevisit.length; i < ii; i++) {
@@ -19710,7 +19710,7 @@ resolve(undefined);
 
   return;
 
-}",0.9302325581395349,0.9302325581395349,1.0
+}",0.8482169807799481,0.6879451471928321,0.6992704082866624
 126,"  getPageDict(pageIndex) {
 
     const capability = createPromiseCapability();
@@ -20075,7 +20075,7 @@ resolve(undefined);
 
     return capability.promise;
 
-}",1.0,0.8867924528301887,0.8867924528301887
+}",0.6966807789516448,0.5245846237128863,0.4367607231353303
 127,"function loadFakeWorker() {
 
     return new Promise(function(resolve, reject) {
@@ -20119,7 +20119,7 @@ resolve(undefined);
   } else {
     throw new Error('SystemJS must be used to load fake worker.');
   }
-}",0.8823529411764706,0.9090909090909091,0.967741935483871
+}",0.27472359572776406,0.40751468790582585,0.6847099904982648
 128,"  _adjustScaleWidth() {
 
     const container = this.items.scaleSelectContainer;
@@ -20284,7 +20284,7 @@ resolve(undefined);
   } catch (error) {
     // Handle errors here
   }
-}",0.7884615384615384,0.9761904761904762,0.7692307692307693
+}",0.1661178912183298,0.7989068916364341,0.10839986379443965
 129,"    pdfDocument
 
       .getMetadata()
@@ -20927,7 +20927,7 @@ formType,
 } catch (err) {
 console.error(err);
 }
-}",0.9523809523809523,0.9836065573770492,0.967741935483871
+}",0.8366117268365891,0.5145054063803732,0.4735006049647096
 130,"function initializePDFJS(callback) {
 
   Promise.all([
@@ -21020,7 +21020,7 @@ console.error(err);
     // Ensure that the callback is executed no matter what.
     const callback = () => {};
   }
-}",0.7906976744186046,0.9534883720930233,0.7555555555555555
+}",0.13596838913553033,0.5996347366596964,0.26786992399659665
 131,"    return new Promise(resolve => {
 
       FirefoxCom.request(""createSandbox"", data, resolve);
@@ -21051,7 +21051,7 @@ console.error(err);
     if (!result) {
       throw new Error(""Cannot create sandbox."");
     }
-  }",0.8484848484848485,0.8787878787878788,0.9666666666666667
+  }",0.42110479740807366,0.48579880613238374,0.4957654790437789
 132,"    }).then(done);
 
   it(""performs a normal search and finds the previous result"", function (done) {
@@ -21077,7 +21077,7 @@ console.error(err);
   } catch (error) {
     done(error);
   }
-}`",0.8275862068965517,0.6666666666666666,0.7666666666666667
+}`",0.43037251825691936,0.2557609415104528,0.2628405080272648
 133,"    }).then(done);
 
   it(""performs a case sensitive search"", function (done) {
@@ -21103,7 +21103,7 @@ console.error(err);
   } catch (error) {
     console.log(error);
   }
-}",0.7931034482758621,0.6333333333333333,0.7096774193548387
+}",0.3463589093535658,0.1973450652861923,0.27622155734467496
 134,"    }).then(done);
 
   it(""performs an entire word search"", function (done) {
@@ -21131,7 +21131,7 @@ console.error(err);
   } catch (error) {
     console.log(error);
   }
-}",0.7931034482758621,0.7857142857142857,0.8
+}",0.34533259726425247,0.26089535575049827,0.2617227862491021
 135,"    }).then(done);
 
   it(""performs a multiple term (no phrase) search"", function (done) {
@@ -21160,7 +21160,7 @@ console.error(err);
   } catch (error) {
     console.log(error);
   }
-}",0.7931034482758621,0.6571428571428571,0.6756756756756757
+}",0.3956458380113602,0.1958622561854249,0.10775292437269281
 136,"    }).then(done);
 ","    });
 
@@ -21223,7 +21223,7 @@ async function run() {
 
 run().then(done).catch((error) => {
   console.log(error);
-});",0.25,0.44,0.5
+});",0.3,0.3,0.1343935581069733
 137,"      it(""should print a date according to a format"", function (done) {
 
         Promise.all([
@@ -21625,7 +21625,7 @@ it(""should print some data according to a format"", async () => {
 it(""should trigger an event and modify the source"", async () => {
 
 
-});",0.9629629629629629,0.9629629629629629,1.0
+});",0.4836728953283797,0.4785063489473576,0.8644742509684513
 138,"      sandbox
 
         .dispatchEventInSandbox({
@@ -21703,7 +21703,7 @@ it(""should trigger an event and modify the source"", async () => {
       })
       .catch((error) => {
         done.fail(error);
-      });",1.0,0.9743589743589743,0.9743589743589743
+      });",0.6367390922435179,0.5962391035345926,0.6596183209817028
 139,"      sandbox
 
         .dispatchEventInSandbox({
@@ -21797,7 +21797,7 @@ it(""should trigger an event and modify the source"", async () => {
     });
     done();
   })
-  .catch(done.fail);",1.0,1.0,1.0
+  .catch(done.fail);",0.693054542906707,0.8285700714138017,0.7653830424164125
 140,"      sandbox
 
         .dispatchEventInSandbox({
@@ -21893,7 +21893,7 @@ it(""should trigger an event and modify the source"", async () => {
   } finally {
     done();
   }
-}",1.0,0.9473684210526315,0.9473684210526315
+}",0.6720294587305595,0.5327419381004547,0.6285486609555107
 141,"      sandbox
 
         .dispatchEventInSandbox({
@@ -21947,7 +21947,7 @@ it(""should trigger an event and modify the source"", async () => {
   } catch (err) {
     done.fail(err);
   }
-}",1.0,0.8888888888888888,0.8888888888888888
+}",0.4852949767608844,0.5172886238960939,0.7296592693578482
 142,"      sandbox
 
         .dispatchEventInSandbox({
@@ -22026,7 +22026,7 @@ it(""should trigger an event and modify the source"", async () => {
     } finally {
       done();
     }
-  };",0.9459459459459459,1.0,0.9459459459459459
+  };",0.6583203379380511,0.5850043615130048,0.665306745778991
 143,"    it(""should convert RGB color for different color spaces"", function (done) {
 
       Promise.all([
@@ -22295,7 +22295,7 @@ it(""should trigger an event and modify the source"", async () => {
       console.error(err);
     }
   }
-}",0.9565217391304348,0.8936170212765957,0.8936170212765957
+}",0.4807427953072184,0.2133182608967137,0.22073714867049207
 144,"    it(""should test language"", function (done) {
 
       Promise.all([
@@ -22370,7 +22370,7 @@ async function testPlatform() {
   } catch (error) {
     console.log(error);
   }
-}",0.8888888888888888,0.7297297297297297,0.7714285714285715
+}",0.3136575082518224,0.2240665588069461,0.2729729635092864
 145,"    },
 
   };
@@ -22397,7 +22397,7 @@ async function testPlatform() {
         console.error(""Error while processing binary CMap:"", err);
         return null;
     }
-}",0.7333333333333333,0.7941176470588235,0.6857142857142857
+}",0.3881999564337249,0.5503558180158058,0.3677809966684178
 146,"    return Promise.resolve(cMap);
 
   function extendCMap(cMap, fetchBuiltInCMap, useCMap) {
@@ -22603,7 +22603,7 @@ async function testPlatform() {
   } catch (error) {
     throw new Error(`Error parsing built-in CMap '${name}': ${error}`);
   }
-}",0.9555555555555556,0.717391304347826,0.717391304347826
+}",0.6209723161626655,0.22697986729733055,0.22409481235968653
 147,"        var cMap = new CMap();
 
         var lexer = new Lexer(encoding);
@@ -22655,7 +22655,7 @@ async function testPlatform() {
     // Handle potential errors
     console.error(err);
   }
-}",0.90625,0.9032258064516129,0.9354838709677419
+}",0.42297359427122116,0.4104688769918045,0.4557994562610641
 148,"  open() {
 
     this.overlayManager.open(this.overlayName).then(() => {
@@ -22788,7 +22788,7 @@ console.error(error);
 
 }
 
-};",0.8536585365853658,1.0,0.8536585365853658
+};",0.25610699199756615,0.873876075457699,0.3968638901954754
 149,"    if (rawName) {
 
       pageName = this.l10n.get(
@@ -22935,7 +22935,7 @@ console.error(error);
   } catch (error) {
     console.log(error);
   }
-}",0.8292682926829268,0.9487179487179487,0.8292682926829268
+}",0.33350957205652054,0.6234262428153728,0.3677253400344105
 150,"          this._pdfViewer.pagesPromise.then(() => {
 
             this._eventBus.dispatch(""print"", { source: this });
@@ -22951,7 +22951,7 @@ console.error(error);
   } catch (error) {
     console.log(error);
   }
-}",0.9354838709677419,0.8787878787878788,0.9354838709677419
+}",0.6222803033601907,0.5707139013940609,0.8036534615178439
 151,"  startCleanup() {
 
     return this.messageHandler.sendWithPromise(""Cleanup"", null).then(() => {
@@ -23056,7 +23056,7 @@ console.error(error);
 
   }
 
-}",0.9111111111111111,0.9761904761904762,0.9318181818181818
+}",0.506027981961473,0.6759579509802643,0.510081310857823
 152,"    it(""cleans up document resources"", function (done) {
 
       const promise = pdfDocument.cleanup();
@@ -23083,7 +23083,7 @@ console.error(error);
   } catch (error) {
     done.fail();
   }
-}",0.8275862068965517,0.8620689655172413,0.8275862068965517
+}",0.47509031253818607,0.27612405653234645,0.49520245845398025
 153,"    it(""cleans up document resources after rendering of page"", function (done) {
 
       let canvasAndCtx;
@@ -23355,7 +23355,7 @@ console.error(error);
 
   }
 
-});",0.918918918918919,0.9714285714285714,0.9444444444444444
+});",0.5316811581499475,0.3212339748107872,0.42364570465169127
 154,"    return shadow(
 
       this,
@@ -23456,7 +23456,7 @@ console.error(error);
 
     }
 
-  });",0.7560975609756098,0.9705882352941176,0.7804878048780488
+  });",0.34150535628880646,0.75235558100506,0.24021142615603563
 155,"    it(""should resolve with correct data"", function (done) {
 
       promiseCapability.promise.then(function (data) {
@@ -23523,7 +23523,7 @@ it(""should reject with correct reason"", async function () {
 
   });
 
-});",0.8888888888888888,0.9696969696969697,0.9166666666666666
+});",0.46447609830665826,0.49692243155190197,0.7148691229431283
 156,"        done.fail(""shall not dispatch DOM event."");
 
       Promise.resolve().then(() => {
@@ -23553,7 +23553,7 @@ it(""should reject with correct reason"", async function () {
   } catch (error) {
     console.log(""Error: "" + error);
   }
-}",0.7647058823529411,0.8,0.8
+}",0.4302364605068961,0.49784062909437193,0.5709873508663644
 157,"          throw new Error(""Should reject invalid parameters."");
 
       Promise.all([invalidTarget, invalidName, invalidDelay]).then(
@@ -23587,7 +23587,7 @@ it(""should reject with correct reason"", async function () {
  } finally {
     done.fail()
   }
-}",0.8823529411764706,0.90625,0.8055555555555556
+}",0.5646999323795485,0.40554283925153684,0.4015375405266929
 158,"      buttonClicked.then(function (type) {
 
         expect(type).toEqual(WaitOnType.EVENT);
@@ -23615,7 +23615,7 @@ it(""should reject with correct reason"", async function () {
   } finally {
     done();
   }
-}",0.9411764705882353,0.7941176470588235,0.7941176470588235
+}",0.4384139120116781,0.1759330438458388,0.1937112903487747
 159,"      buttonClicked.then(function (type) {
 
         expect(type).toEqual(WaitOnType.TIMEOUT);
@@ -23642,7 +23642,7 @@ it(""should resolve on event, using the EventBus"", async (done) => {
   } catch (e) {
     done.fail(e);
   }
-});",0.9393939393939394,0.9411764705882353,0.9411764705882353
+});",0.41242965343390514,0.47858590923304956,0.5917724779064294
 160,"      pageRendered.then(function (type) {
 
         expect(type).toEqual(WaitOnType.EVENT);
@@ -23672,7 +23672,7 @@ it(""should resolve on event, using the EventBus"", async (done) => {
         const result = await pageRendered;
         expect(result).toEqual(WaitOnType.EVENT);
         done();
-      });",0.9375,0.9393939393939394,0.9393939393939394
+      });",0.41242965343390514,0.4405164861337654,0.5312351538168801
 161,"      pageRendered.then(function (type) {
 
         expect(type).toEqual(WaitOnType.TIMEOUT);
@@ -23692,7 +23692,7 @@ it(""should resolve on event, using the EventBus"", async (done) => {
   } catch (e) {
     done();
   }
-}",0.7586206896551724,0.896551724137931,0.8571428571428571
+}",0.26031833135400084,0.2971129650861748,0.7896270952152479
 162,"    it(""should asynchronously fetch unknown keys"", function (done) {
 
       Promise.all(keyPromises)
@@ -23762,7 +23762,7 @@ it(""should asynchronously fetch correct values for multiple stored keys"", asyn
   expect(values[0]).toEqual(testFontFile3);
   expect(values[1]).toEqual(testFontFile2);
   expect(values[2]).toEqual(testFontFile);
-});",0.9473684210526315,0.9487179487179487,0.9487179487179487
+});",0.4471456346127993,0.45306123694557476,0.8605248056672062
 163,"      fontDict
 
         .getAsync(""FontFile"", ""FontFile2"", ""FontFile3"")
@@ -23794,7 +23794,7 @@ it(""should asynchronously fetch correct values for multiple stored keys"", asyn
 ","async function myFunction() {
     const value = await fontDict.getAsync(""FontFile"", ""FontFile2"", ""FontFile3"");
     expect(value).toEqual(testFontFile);
-}",0.8125,0.8484848484848485,0.9032258064516129
+}",0.23879609622660838,0.23979260581693482,0.6154294125095574
 164,"    const readPromise = Promise.all([read1(), read2(), promise1, promise2]);
 
     readPromise
@@ -23855,7 +23855,7 @@ it(""should asynchronously fetch correct values for multiple stored keys"", asyn
   } catch (reason) {
     done.fail(reason);
   }
-}",0.8888888888888888,0.8888888888888888,0.8857142857142857
+}",0.41366232861037633,0.5450513899370537,0.4363786540290552
 165,"    const readPromise = Promise.all([read(), promise]);
 
 
@@ -23909,7 +23909,7 @@ async function testReadCustomRanges() {
   } catch (reason) {
     done.fail(reason);
   }
-}",0.8787878787878788,0.9090909090909091,0.9090909090909091
+}",0.2509898883425326,0.533432772944977,0.37948159373960866
 166,"    const readPromises = Promise.all([
 
     readPromises
@@ -23974,7 +23974,7 @@ async function testReadCustomRanges() {
 
   }
 
-}",0.84375,0.9090909090909091,0.8181818181818182
+}",0.22754587378393343,0.3532851268759627,0.4970080263214043
 167,"    const readPromise = Promise.all([read(), promise]);
 
     readPromise
@@ -24016,7 +24016,7 @@ async function() {
   } catch (error) {
     done.fail();
   }
-}",0.90625,0.9090909090909091,0.8787878787878788
+}",0.2900220305448756,0.4804165576820655,0.3171460592304056
 168,"    const readPromise = Promise.all([
 
     readPromise
@@ -24066,7 +24066,7 @@ async function() {
                 done.fail(error);
             }
         })(),
-    ]);",0.84375,0.7948717948717948,0.717948717948718
+    ]);",0.248853061871926,0.31663042417005544,0.20066150723722817
 169,"  beforeAll(function (done) {
 
     loadingTask.promise
@@ -24129,7 +24129,7 @@ it(""renders to canvas with a default white background"", async () => {
   } finally {
     await loadingTask.destroy();
   }
-});",0.96875,0.9696969696969697,0.9393939393939394
+});",0.3117376377439463,0.32246954267283,0.5874941384829904
 170,"    renderTask.promise
 
       .then(function () {
@@ -24188,7 +24188,7 @@ it(""renders to canvas with a default white background"", async () => {
     CanvasFactory.destroy(canvasAndCtx);
     done();
   })
-  .catch(done.fail);",1.0,0.9444444444444444,0.9444444444444444
+  .catch(done.fail);",0.5575213109127252,0.5793443038973538,0.6805399579680056
 171,"    renderTask.promise
 
       .then(function () {
@@ -24252,7 +24252,7 @@ it(""renders to canvas with a default white background"", async () => {
 
   }
 
-}",0.9428571428571428,0.9444444444444444,0.9444444444444444
+}",0.5629431595655728,0.5840143747877468,0.7241699715726967
 172,"  beforeAll(function (done) {
 
     loadingTask.promise.then(function (doc) {
@@ -24289,7 +24289,7 @@ beforeAll(async () => {
   const doc = await loadingTask.promise;
   page = await doc.getPage(1);
 });
-afterAll(() => loadingTask.destroy());",0.896551724137931,0.6829268292682927,0.6585365853658537
+afterAll(() => loadingTask.destroy());",0.17340978300884768,0.1722151313534474,0.5334126459642378
 173,"    it(""should produce a reasonably small svg:image"", function (done) {
 
       withZlib(true, getSVGImage)
@@ -24406,7 +24406,7 @@ it(""should be able to produce a svg:image without zlib"", async () => {
   const imgUrl = svgImg.getAttributeNS(XLINK_NS, ""href"");
   expect(imgUrl).toMatch(/^data:image\/png;base64,/);
   expect(imgUrl.length).toBe(80246);
-});",0.9787234042553191,0.9583333333333334,0.9375
+});",0.73002316990328,0.440441498176488,0.6677695808455656
 174,"      sleep(10)
 
         .then(() => {
@@ -24489,7 +24489,7 @@ it(""should be able to produce a svg:image without zlib"", async () => {
       } catch (error) {
         console.log(error);
       }
-    };",0.9393939393939394,0.9117647058823529,0.9090909090909091
+    };",0.4419022458189811,0.36454724540608807,0.6532566490081153
 175,"      sleep(10)
 
         .then(() => {
@@ -24566,7 +24566,7 @@ it(""should be able to produce a svg:image without zlib"", async () => {
         console.error(error);
         done(error);
     }
-}",0.9230769230769231,0.9487179487179487,0.9736842105263158
+}",0.4729973918891884,0.3819014266906354,0.5828419466065258
 176,"      sleep(10)
 
         .then(() => {
@@ -24652,7 +24652,7 @@ async function test() {
     expect(reason.message).toEqual(""should not read when errored"");
     done();
   }
-}",0.9069767441860465,0.9512195121951219,0.9069767441860465
+}",0.5891782464357703,0.48453360726079014,0.595096961768945
 177,"      sleep(10)
 
         .then(() => {
@@ -24797,7 +24797,7 @@ async function test() {
   } catch (error) {
     console.error(error);
   }
-}",0.8809523809523809,0.9285714285714286,0.9512195121951219
+}",0.4146902826533127,0.46404710907386054,0.5054329729409743
 178,"        sleep(10)
 
           .then(() => {
@@ -24916,7 +24916,7 @@ async function test() {
   } catch (err) {
     console.error(err);
   }
-}",0.9285714285714286,0.9534883720930233,0.9302325581395349
+}",0.46159053818681167,0.3241412553352077,0.6009772907718587
 179,"      sleep(10)
 
         .then(() => {
@@ -25003,7 +25003,7 @@ async function test() {
       } catch (error) {
         console.log(error);
       }
-    }",0.875,0.925,0.8974358974358975
+    }",0.3995257147874347,0.31039315814744667,0.5269191147485908
 180,"  it(""parses beginbfchar"", function (done) {
 
     const cmapPromise = CMapFactory.create({ encoding: stream });
@@ -25809,7 +25809,7 @@ it(""attempts to load a built-in CMap with inconsistent API parameters"", async 
     useCMap: null,
   });
   expect(cmapPromise).toBeNull();
-});",1.0,0.9183673469387755,0.9183673469387755
+});",0.4222349318431706,0.3807638645474849,0.720738673102802
 181,"        ensure(obj, prop, args) {
 
           return new Promise(function (resolve) {
@@ -25864,7 +25864,7 @@ it(""attempts to load a built-in CMap with inconsistent API parameters"", async 
 
     throw err;
 
-}",0.9375,0.9375,0.8787878787878788
+}",0.4882572117157472,0.46017630945194654,0.48996309963454543
 182,"      const promises = [
 
       ];
@@ -26211,7 +26211,7 @@ async function createPdfDocFromProtectedPdfFile() {
   } finally {
     loadingTask.destroy().then(done);
   }
-}",0.9782608695652174,0.8,0.782608695652174
+}",0.5392656879223985,0.2804279240599627,0.3162056683615415
 183,"      const promises = [
 
       ];
@@ -26252,7 +26252,7 @@ async function createPdfDocFromProtectedPdfFile() {
   } catch (err) {
     done.fail();
   }
-}",0.9705882352941176,0.9411764705882353,0.9117647058823529
+}",0.4159326285030989,0.263259063579897,0.3128085589253995
 184,"      Promise.all([result1, result2, result3])
 
         .then(function () {
@@ -26272,7 +26272,7 @@ async function createPdfDocFromProtectedPdfFile() {
 ","async function run() {
   const [result1, result2, result3] = await Promise.all([result1, result2, result3]);
   done();
-}",0.8333333333333334,0.8709677419354839,0.9
+}",0.3539208441371681,0.20215221598923347,0.5458774748250039
 185,"        Promise.all([result1, result2])
 
           .then(function () {
@@ -26511,7 +26511,7 @@ it(""worker created or destroyed by getDocument"", async function () {
 
   }
 
-}",0.9523809523809523,1.0,0.9523809523809523
+}",0.5398622497936763,0.5014171221776123,0.546893607599043
 186,"      destroyPromise
 
         .then(function () {
@@ -26553,7 +26553,7 @@ it(""worker created or destroyed by getDocument"", async function () {
   } finally {
     done();
   }
-}",0.9411764705882353,0.8571428571428571,0.8
+}",0.5912392266812863,0.5153184752794929,0.4754629152120261
 187,"      destroyPromise
 
         .then(function () {
@@ -26601,7 +26601,7 @@ async () => {
   } catch (error) {
     done.fail(error);
   }
-}",0.9655172413793104,0.7714285714285715,0.7428571428571429
+}",0.39440964774403153,0.38323191931212097,0.5396943525908943
 188,"      const ready = Promise.all([
 
         worker1.promise,
@@ -26700,7 +26700,7 @@ async () => {
 
           }
 
-        }",0.8611111111111112,0.972972972972973,0.8378378378378378
+        }",0.49079112195671615,0.7468737386402217,0.6458757702121449
 189,"    beforeAll(function (done) {
 
       pdfLoadingTask.promise.then(function (data) {
@@ -26786,7 +26786,7 @@ async () => {
     } catch (error) {
       done.fail(error);
     }
-  });",0.9117647058823529,0.9705882352941176,0.9411764705882353
+  });",0.2743389012755184,0.34516934579573544,0.6631787920853754
 190,"      Promise.all([outOfRangePromise, nonIntegerPromise, nonNumberPromise])
 
         .then(function () {
@@ -26817,7 +26817,7 @@ async () => {
   } finally {
     done();
   }
-}",0.9032258064516129,0.9032258064516129,0.8709677419354839
+}",0.5364811178918836,0.3015956316528866,0.45854254553586954
 191,"      Promise.all([page1, page2]).then(function () {
 
         loadingTask.destroy().then(done);
@@ -27153,7 +27153,7 @@ async function getDestination(name) {
   } catch (error) {
     return null;
   }
-}",0.9591836734693877,0.5416666666666666,0.5510204081632653
+}",0.4382352286110503,0.09282841478841242,0.1301534336161754
 192,"      Promise.all([numberPromise, booleanPromise, arrayPromise]).then(
 
         done,
@@ -27199,7 +27199,7 @@ async function getDestination(name) {
       } catch (error) {
         done.fail(error);
       }
-    }",0.9117647058823529,0.8,0.7714285714285715
+    }",0.26757353495405245,0.21084131974287745,0.21667133857644955
 193,"      Promise.all([promise0, promise1, promise2, promise3])
 
         .then(function (pageLabels) {
@@ -27567,7 +27567,7 @@ async function getDestination(name) {
       } catch (error) {
         done.fail(error);
       }
-    }",0.9761904761904762,0.9302325581395349,0.9534883720930233
+    }",0.3644260025241051,0.2788193981941326,0.4578950649018614
 194,"      Promise.all([promise1, promise2]).then(done, done.fail);
 
     it(""gets non-existent attachments"", function (done) {
@@ -27724,7 +27724,7 @@ async function getDestination(name) {
   } catch (error) {
     done.fail(error);
   }
-}",1.0,0.8085106382978723,0.8085106382978723
+}",0.3617515796678768,0.19459032359375195,0.20177354492002422
 195,"    it(""checks that fingerprints are unique"", function (done) {
 
       Promise.all([loadingTask1.promise, loadingTask2.promise])
@@ -27783,7 +27783,7 @@ async function getDestination(name) {
       } catch (error) {
         done.fail(error);
       }
-    });`",0.9545454545454546,0.9555555555555556,0.9555555555555556
+    });`",0.5398431672560648,0.4555384086353593,0.5917139573087253
 196,"      afterEach(function (done) {
 
           loadingTask.destroy().then(done);
@@ -27934,7 +27934,7 @@ async function testCanLoad(url) {
   } catch (error) {
     done();
   }
-}",1.0,0.7941176470588235,0.7941176470588235
+}",0.35136366673077435,0.13882765532325977,0.18472403158661274
 197,"      Promise.all([defaultPromise, displayPromise, printPromise])
 
         .then(function () {
@@ -27958,7 +27958,7 @@ async function testCanLoad(url) {
   } catch (error) {
     done.fail(error);
   }
-}",0.9142857142857143,0.7222222222222222,0.6944444444444444
+}",0.5246228401385384,0.2045062835418437,0.5070659530461719
 198,"      Promise.all([defaultPromise, docBaseUrlPromise, invalidDocBaseUrlPromise])
 
         .then(function (data) {
@@ -28265,7 +28265,7 @@ async function getTextContentWithCorrectProperties() {
   } catch (error) {
     done.fail(error);
   }
-}",0.9803921568627451,0.9215686274509803,0.94
+}",0.5441101984395064,0.4023015251318256,0.45640864754114163
 199,"    it(""gets operator list"", function (done) {
 
       const promise = page.getOperatorList();
@@ -28366,7 +28366,7 @@ it(""gets operatorList with JPEG image (issue 4888)"", async () => {
   const { data } = await pdfPage.objs.get(imgArgs[0]);
   expect(data instanceof Uint8ClampedArray).toEqual(true);
   expect(data.length).toEqual(90000);
-});",0.9761904761904762,1.0,0.9761904761904762
+});",0.4592137706098275,0.45608385343506963,0.673086206291924
 200,"      renderTask.promise
 
         .then(function () {
@@ -28423,7 +28423,7 @@ it(""gets operatorList with JPEG image (issue 4888)"", async () => {
     CanvasFactory.destroy(canvasAndCtx);
     done();
   }
-}",0.9142857142857143,0.9393939393939394,0.9142857142857143
+}",0.4910410764601118,0.49852797787741576,0.47637524862197345
 201,"      renderTask.promise
 
         .then(
@@ -28524,7 +28524,7 @@ it(""gets operatorList with JPEG image (issue 4888)"", async () => {
     CanvasFactory.destroy(canvasAndCtx);
     done();
   }
-});",0.9166666666666666,0.9705882352941176,0.9428571428571428
+});",0.47964175225739913,0.4760506080054343,0.6447719382874121
 202,"      Promise.all([
 
             done.fail(""shall fail rendering"");
@@ -28549,7 +28549,7 @@ it(""gets operatorList with JPEG image (issue 4888)"", async () => {
         console.log(error);
         // handle error here
     }
-}",0.8484848484848485,0.8484848484848485,0.7714285714285715
+}",0.35710197176971775,0.3620741809953208,0.2752463216699612
 203,"    afterEach(function (done) {
 
       Promise.all(destroyPromises).then(done);
@@ -28577,7 +28577,7 @@ async function it() {
     console.error(""Error in it:"", err);
   }
   done();
-}",0.96,0.8,0.8333333333333334
+}",0.5564926583644138,0.28826865153085035,0.5037284519325614
 204,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -28609,7 +28609,7 @@ async function it() {
     } catch (error) {
       done.fail(error);
     }
-  }",0.84375,0.875,0.9666666666666667
+  }",0.3237685168156789,0.2558931335793579,0.3878730892530793
 205,"        Promise.all([annotation1, annotation2]).then(done, done.fail);
 
     it(""should handle missing /Subtype"", function (done) {
@@ -28643,7 +28643,7 @@ async function it() {
       } finally {
         done();
       }
-    })();",0.9444444444444444,0.8648648648648649,0.8648648648648649
+    })();",0.26813455070144165,0.2001672206004379,0.45465878800333287
 206,"    it(""should not parse IRT/RT when not defined"", function (done) {
 
 
@@ -28718,7 +28718,7 @@ async function it() {
 
     }
 
-  });",0.9696969696969697,1.0,0.9696969696969697
+  });",0.5244350629459877,0.54173731393991,0.4983580293803236
 207,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -28753,7 +28753,7 @@ async function it() {
       } catch (error) {
         done.fail(error);
       }
-    });`",0.9354838709677419,0.90625,0.967741935483871
+    });`",0.4901628514341747,0.38004845458928727,0.47986257400411203
 208,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -28811,7 +28811,7 @@ async function it() {
         expect(data.color).toEqual(new Uint8ClampedArray([0, 0, 255]));
         expect(data.hasPopup).toEqual(true);
         done();
-    }, done.fail);",0.9767441860465116,0.9767441860465116,0.9534883720930233
+    }, done.fail);",0.5492974869038905,0.7523578035115139,0.43160324222335644
 209,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -28868,7 +28868,7 @@ async function it() {
   expect(data.modificationDate).toEqual(""D:20190523"");
   expect(data.color).toEqual(new Uint8ClampedArray([102, 102, 102]));
   expect(data.hasPopup).toEqual(false);
-}",0.975609756097561,0.975609756097561,1.0
+}",0.5705821269094482,0.4223453671665826,0.6631141828047169
 210,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -28908,7 +28908,7 @@ it(""should correctly parse state model and state when defined"", async () => {
       done.fail(err);
     }
   });
-}",0.9666666666666667,1.0,0.9666666666666667
+}",0.51390786778038,0.4978223537517108,0.6535693970360877
 211,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -28950,7 +28950,7 @@ it(""should correctly parse state model and state when defined"", async () => {
         done();
       }, done.fail);
     });
-  }",0.96875,1.0,0.96875
+  }",0.46336692404264596,0.7363034840446302,0.5377155259899576
 212,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -28996,7 +28996,7 @@ it(""should correctly parse state model and state when defined"", async () => {
     expect(data.unsafeUrl).toEqual(""http://www.ctan.org/tex-archive/info/lshort"");
     expect(data.dest).toBeUndefined();
     done();
-  }",0.9444444444444444,0.9444444444444444,1.0
+  }",0.4332671168564326,0.3191089673960658,0.46028790217806753
 213,"        AnnotationFactory.create(
 
         ).then(({ data }) => {
@@ -29039,7 +29039,7 @@ it(""should correctly parse state model and state when defined"", async () => {
     } finally {
         done();
     }
-}",0.9444444444444444,0.9444444444444444,1.0
+}",0.37266473321794824,0.35628527805667587,0.6743663430179461
 214,"        AnnotationFactory.create(
 
         ).then(({ data }) => {
@@ -29100,7 +29100,7 @@ it(""should correctly parse state model and state when defined"", async () => {
   expect(annotationData.url).toEqual(new URL(""http://www.example.com/üöä""));
   expect(annotationData.unsafeUrl).toEqual(undefined);
   expect(annotationData.dest).toBeUndefined();
-}",0.975,0.7441860465116279,0.7619047619047619
+}",0.42306544459426576,0.24560119270360503,0.4280661369019324
 215,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -29138,7 +29138,7 @@ it(""should correctly parse state model and state when defined"", async () => {
   expect(data.unsafeUrl).toBeUndefined();
   expect(data.dest).toEqual(""page.157"");
   done();
-}",0.8857142857142857,0.8857142857142857,1.0
+}",0.3713902234140266,0.4129934660613196,0.43273252813227214
 216,"        AnnotationFactory.create(
 
         ).then(({ data }) => {
@@ -29187,7 +29187,7 @@ expect(data.dest).toBeUndefined();
 expect(data.newWindow).toEqual(true);
 
 done();
-}",0.925,0.925,1.0
+}",0.3992278937158737,0.42928007540273977,0.6173475324739489
 217,"        AnnotationFactory.create(
 
         ).then(({ data }) => {
@@ -29236,7 +29236,7 @@ done();
   } catch (error) {
     done.fail(error);
   }
-}",0.9767441860465116,0.9302325581395349,0.9523809523809523
+}",0.5358007404050102,0.2846220634041349,0.48871094724207964
 218,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -29283,7 +29283,7 @@ done();
     } catch (error) {
         done.fail(error);
     }
-}",0.9736842105263158,0.9473684210526315,0.9210526315789473
+}",0.5288300325414452,0.38077643952170326,0.5678883484481982
 219,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -29349,7 +29349,7 @@ done();
     expect(data.unsafeUrl).toEqual();
     expect(data.dest).toBeUndefined();
     expect(data.newWindow).toBeFalsy();
-  }",0.9787234042553191,0.9787234042553191,1.0
+  }",0.36927264703655455,0.2774561598426243,0.45182787690420184
 220,"        AnnotationFactory.create(
 
         ).then(({ data }) => {
@@ -29404,7 +29404,7 @@ done();
   } catch (error) {
     done.fail();
   }
-}",0.9411764705882353,0.9411764705882353,1.0
+}",0.5302093736430207,0.4044361808015039,0.5526242714405667
 221,"        Promise.all([annotation1, annotation2, annotation3]).then(
 
           done,
@@ -29424,7 +29424,7 @@ done();
   } catch (error) {
     done.fail(error);
   }
-}",0.9666666666666667,0.875,0.90625
+}",0.5705449410988184,0.2025585672948313,0.5111567389156301
 222,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -29476,7 +29476,7 @@ done();
     } catch (error) {
       done.fail(error);
     }
-  });",0.9393939393939394,0.9411764705882353,0.9411764705882353
+  });",0.46412357420152717,0.6928022278617784,0.5754886745979524
 223,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -29524,7 +29524,7 @@ done();
     it(""should correctly parse a simple Dest, with explicit destination array"", async function (done) {
       await create();
       done();
-    });",0.9696969696969697,0.9696969696969697,1.0
+    });",0.5235281295041917,0.5842771673452348,0.7801994049784035
 224,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -29595,7 +29595,7 @@ done();
       null,
     ]);
 
-    done();",0.9302325581395349,0.9302325581395349,1.0
+    done();",0.5915265342982521,0.44247278072860297,0.6086676947270293
 225,"        AnnotationFactory.create(
 
         ).then(({ data }) => {
@@ -29636,7 +29636,7 @@ done();
   expect(data.unsafeUrl).toBeUndefined();
 
   expect(data.dest).toEqual('page.157');
-});",0.9428571428571428,0.8461538461538461,0.8461538461538461
+});",0.4824894446947202,0.28086234027391926,0.3142518629127131
 226,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -29670,7 +29670,7 @@ done();
     } catch (error) {
         done.fail();
     }
-};",0.9354838709677419,0.9032258064516129,0.9032258064516129
+};",0.43676799126370947,0.26052417033347963,0.3846008561524381
 227,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -29723,7 +29723,7 @@ done();
   expect(annotation.quadPoints).toEqual([
     [{ x: 10, y: 20 }, { x: 20, y: 20 }, { x: 10, y: 10 }, { x: 20, y: 10 }],
   ]);
-}",0.9142857142857143,0.9142857142857143,1.0
+}",0.7055549264789116,0.6007051992729882,0.7850957571586146
 228,"    it(""should handle unknown field names"", function (done) {
 
       AnnotationFactory.create(
@@ -29790,7 +29790,7 @@ it(""should construct the field name when there are ancestors"", async () => {
   const { data } = await AnnotationFactory.create();
   expect(data.annotationType).toEqual(AnnotationType.WIDGET);
   expect(data.fieldName).toEqual(""foo"");
-});",0.96875,1.0,0.96875
+});",0.5418162450643014,0.5411887563010527,0.7866948622350225
 229,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -29823,7 +29823,7 @@ it(""should construct the field name when there are ancestors"", async () => {
     } finally {
         done();
     }
-}",0.8787878787878788,0.9090909090909091,0.967741935483871
+}",0.3237685168156789,0.31916191982308384,0.46160945854099933
 230,"        AnnotationFactory.create(
 
         ).then(({ data }) => {
@@ -29854,7 +29854,7 @@ it(""should construct the field name when there are ancestors"", async () => {
   } catch (error) {
     done.fail();
   }
-}",0.875,0.90625,0.9666666666666667
+}",0.3221018186827691,0.35064445796670823,0.6958627507337594
 231,"    it(""should handle unknown text alignment, maximum length and flags"", function (done) {
 
       AnnotationFactory.create(
@@ -29933,7 +29933,7 @@ it(""should not set invalid text alignment, maximum length and flags"", async ()
     } catch (error) {
         // handle any errors that may occur
     }
-});",0.9705882352941176,0.9714285714285714,0.9428571428571428
+});",0.6180148835882158,0.5668797809610702,0.7522513468444216
 232,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -29990,7 +29990,7 @@ it(""should not set invalid text alignment, maximum length and flags"", async ()
   } catch (error) {
     done.fail();
   }
-}",0.9696969696969697,0.8787878787878788,0.90625
+}",0.5285271296323442,0.40492633646412557,0.6171059420072642
 233,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -30120,7 +30120,7 @@ done();
 } catch (error) {
 done.fail();
 }
-});",0.972972972972973,1.0,0.972972972972973
+});",0.541284561956463,0.4209790240789169,0.5314294803401873
 234,"      promise.then(done, done.fail);
 
     it(""should render regular text for printing"", function (done) {
@@ -30134,7 +30134,7 @@ done.fail();
     } catch(error){
         throw error;
     }
-}",0.8888888888888888,0.65625,0.6875
+}",0.5220073315191557,0.11458333333333333,0.35926124928889497
 235,"      AnnotationFactory.create(
 
       )
@@ -30222,7 +30222,7 @@ done.fail();
   } catch (err) {
     done.fail(err);
   }
-}",0.9772727272727273,0.9545454545454546,0.9767441860465116
+}",0.6250680095649334,0.4696606608510383,0.6802057311848309
 236,"      AnnotationFactory.create(
 
       )
@@ -30324,7 +30324,7 @@ done.fail();
   } catch(error) {
     done.fail(error);
   }
-});",0.9830508474576272,0.8305084745762712,0.8448275862068966
+});",0.5972643523211358,0.3983610004657203,0.6278162884209759
 237,"      AnnotationFactory.create(
 
       )
@@ -30463,7 +30463,7 @@ done.fail();
 
       })
 
-      .catch(done.fail);",0.9555555555555556,0.9333333333333333,0.8888888888888888
+      .catch(done.fail);",0.4853030851665233,0.8640140597465049,0.45075982659159486
 238,"      AnnotationFactory.create(
 
       )
@@ -30573,7 +30573,7 @@ done.fail();
     } catch (error) {
       done.fail(error);
     }
-  }",0.9782608695652174,0.9148936170212766,0.9347826086956522
+  }",0.6343462488467664,0.5914909223930114,0.6657233841258368
 239,"      AnnotationFactory.create(
 
       )
@@ -30688,7 +30688,7 @@ done.fail();
 
   }
 
-}",0.9833333333333333,0.9833333333333333,1.0
+}",0.5972643523211358,0.4951184826359575,0.7678500490208716
 240,"      AnnotationFactory.create(
 
       )
@@ -30772,7 +30772,7 @@ done.fail();
       console.error(e);
     }
   });
-}",0.9714285714285714,1.0,0.9714285714285714
+}",0.5150832563102203,0.5768851512772117,0.6017438228834973
 241,"      AnnotationFactory.create(
 
       )
@@ -30906,7 +30906,7 @@ done.fail();
       done();
     })
     .catch(done.fail);
-});",0.9777777777777777,1.0,0.9777777777777777
+});",0.7119178542103807,0.704559802306644,0.569732607823735
 242,"      AnnotationFactory.create(
 
       )
@@ -31002,7 +31002,7 @@ done.fail();
   } catch (error) {
     done.fail(error);
   }
-}",0.9827586206896551,0.9655172413793104,0.9824561403508771
+}",0.643695452139319,0.4267098994898496,0.6579421041975845
 243,"      AnnotationFactory.create(
 
       )
@@ -31115,7 +31115,7 @@ async function renderCombForPrinting() {
   } catch (error) {
     done.fail(error);
   }
-}",0.9736842105263158,0.85,0.8717948717948718
+}",0.6990278070838138,0.4593809061968469,0.4349397918710765
 244,"      AnnotationFactory.create(
 
       )
@@ -31222,7 +31222,7 @@ async function renderCombForPrinting() {
   } finally {
     done();
   }
-});",0.9777777777777777,1.0,0.9777777777777777
+});",0.6924966815944877,0.6009639892687675,0.7726990827868752
 245,"      AnnotationFactory.create(
 
       )
@@ -31330,7 +31330,7 @@ const testSaveText = async () => {
     } catch (error) {
         done.fail(error);
     }
-};",0.9827586206896551,0.9827586206896551,0.9655172413793104
+};",0.6867902099463375,0.38954114331439355,0.4691256636807121
 246,"      AnnotationFactory.create(
 
       )
@@ -31509,7 +31509,7 @@ async function verifyData() {
 
 }
 
-verifyData();",1.0,1.0,1.0
+verifyData();",0.7069418965303225,0.7195588426724319,0.756863604032252
 247,"      AnnotationFactory.create(
 
       )
@@ -31587,7 +31587,7 @@ verifyData();",1.0,1.0,1.0
     ""oof()"",
   ]);
   expect(actions[""Mouse Down""]).toEqual([""bar()""]);
-}",0.9444444444444444,0.9444444444444444,0.9428571428571428
+}",0.47777434883115244,0.4859770922258095,0.7536494673521485
 248,"      AnnotationFactory.create(
 
       )
@@ -31732,7 +31732,7 @@ verifyData();",1.0,1.0,1.0
   } catch (error) {
     console.error(error);
   }
-}",1.0,1.0,1.0
+}",0.742752473932609,0.5703845149703701,0.7596824809687233
 249,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -31783,7 +31783,7 @@ verifyData();",1.0,1.0,1.0
   } catch (error) {
     done();
   }
-}",0.9714285714285714,0.9428571428571428,0.9705882352941176
+}",0.4877891560665364,0.3906963056114086,0.6159919532545525
 250,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -31829,7 +31829,7 @@ verifyData();",1.0,1.0,1.0
     } catch (error) {
         done.fail();
     }
-}",0.9722222222222222,0.9166666666666666,0.9428571428571428
+}",0.4755813416400173,0.36500271190599526,0.5923221032020414
 251,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -31885,7 +31885,7 @@ verifyData();",1.0,1.0,1.0
 
 it(""should render checkbox with fallback font for printing"", function () {
     createAnnotation();
-});",0.9714285714285714,0.9714285714285714,1.0
+});",0.5144272048307187,0.5086855343164864,0.6440726520546532
 252,"      AnnotationFactory.create(
 
       )
@@ -32004,7 +32004,7 @@ it(""should render checkbox with fallback font for printing"", function () {
     } catch (error) {
       done.fail(error);
     }
-  });",0.975609756097561,1.0,0.975609756097561
+  });",0.5293620430015352,0.4421051128543997,0.5517279860745182
 253,"      AnnotationFactory.create(
 
       )
@@ -32208,7 +32208,7 @@ it(""should render checkbox with fallback font for printing"", function () {
        expect(opList.argsArray[1]).toEqual(new Uint8ClampedArray([76, 51, 26]));
        done();
      });
-   it(""should render checkboxes for printing two times"", function (done) {",0.9772727272727273,1.0,0.9772727272727273
+   it(""should render checkboxes for printing two times"", function (done) {",0.4707231151993285,0.6694522550410692,0.44806026183137104
 254,"      AnnotationFactory.create(
 
       )
@@ -32387,7 +32387,7 @@ async function renderCheckboxesForPrinting() {
   } catch (error) {
     done.fail(error);
   }
-}",0.9148936170212766,0.9545454545454546,0.9130434782608695
+}",0.36815770658184055,0.3405047287046412,0.43742122143790035
 255,"      AnnotationFactory.create(
 
       )
@@ -32490,7 +32490,7 @@ async function renderCheckboxesForPrinting() {
   } catch (error) {
     done.fail(error);
   }
-}",0.9534883720930233,0.9534883720930233,0.9523809523809523
+}",0.46023670659363297,0.3429431316293487,0.6072035233355867
 256,"      AnnotationFactory.create(
 
       )
@@ -32631,7 +32631,7 @@ async function renderCheckboxesForPrinting() {
   } catch (error) {
     done.fail();
   }
-}",1.0,0.96,0.96
+}",0.5477525622228688,0.40909026744219257,0.5451147616815368
 257,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -32677,7 +32677,7 @@ async function renderCheckboxesForPrinting() {
   } catch (error) {
     done.fail();
   }
-}",0.9444444444444444,0.9428571428571428,0.9428571428571428
+}",0.48052723032688577,0.34371927890853676,0.5634952585498204
 258,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -32722,7 +32722,7 @@ async function renderCheckboxesForPrinting() {
       done();
     }, done.fail);
   } );
-}",0.9743589743589743,1.0,0.9743589743589743
+}",0.5044064789911962,0.5410567971048438,0.2870504155188959
 259,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -32783,7 +32783,7 @@ it(""should render radio buttons for printing"", function (done) {
     }).catch((error) => {
         done.fail(error);
     });
-});",0.9705882352941176,1.0,0.9705882352941176
+});",0.47579509737537284,0.5106411347103024,0.5112716079342114
 260,"      AnnotationFactory.create(
 
       )
@@ -32989,7 +32989,7 @@ it(""should render radio buttons for printing"", function (done) {
   } catch (error) {
     done.fail();
   }
-}",0.9772727272727273,0.9545454545454546,0.9767441860465116
+}",0.48837041974473844,0.3819951899224088,0.4024830935464539
 261,"      AnnotationFactory.create(
 
       )
@@ -33101,7 +33101,7 @@ it(""should render radio buttons for printing"", function (done) {
 
   it(""should save radio buttons"", function () {
     createAnnotation();
-  });",0.9534883720930233,0.9767441860465116,0.9761904761904762
+  });",0.46890631164088636,0.3991566729110554,0.5371381801673422
 262,"      AnnotationFactory.create(
 
       )
@@ -33259,7 +33259,7 @@ it(""should render radio buttons for printing"", function (done) {
       expect(data).toEqual(null);
       done();
     }, done.fail);
-});",1.0,0.6296296296296297,0.6296296296296297
+});",0.6054473543803638,0.21580917102360417,0.16390940211438682
 263,"      AnnotationFactory.create(
 
       )
@@ -33431,7 +33431,7 @@ it(""should render radio buttons for printing"", function (done) {
       done();
     })
     .catch(done.fail);
-});",1.0,0.6226415094339622,0.6226415094339622
+});",0.604661162092396,0.21802403120471595,0.14070104938736494
 264,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -33470,7 +33470,7 @@ it(""should render radio buttons for printing"", function (done) {
 
     done();
 
-}",0.9714285714285714,0.9428571428571428,0.9705882352941176
+}",0.5237481676642801,0.3555224606723191,0.5001896831909075
 265,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -33511,7 +33511,7 @@ it(""should handle URL in A dict in push buttons"", async function (done) {
   } catch (error) {
     done.fail(error);
   }
-});",0.96875,0.96875,1.0
+});",0.5347672285434557,0.5185308668372,0.5712015048575302
 266,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -33557,7 +33557,7 @@ it(""should handle URL in A dict in push buttons"", async function (done) {
     } catch (error) {
         console.log('Error: ' + error);
     }
-});",0.972972972972973,0.9230769230769231,0.9473684210526315
+});",0.45987908093441077,0.5149652499435086,0.5689572887222906
 267,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -33582,7 +33582,7 @@ it(""should handle URL in A dict in push buttons"", async function (done) {
   }
 
   done();
-}",0.9166666666666666,0.9166666666666666,1.0
+}",0.28588192787933964,0.30057378694090203,0.46236007523660605
 268,"    it(""should handle missing option arrays"", function (done) {
 
       AnnotationFactory.create(
@@ -33627,7 +33627,7 @@ it(""should handle option arrays with array elements"", async () => {
 
   expect(data.options).toEqual([[]]);
 
-});",0.9696969696969697,1.0,0.9696969696969697
+});",0.47761408061541055,0.4714102716967733,0.6701227190504336
 269,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -33665,7 +33665,7 @@ it(""should handle option arrays with array elements"", async () => {
       }
 }
 
-it(""should handle option arrays with string elements"", testCase);",0.967741935483871,0.967741935483871,1.0
+it(""should handle option arrays with string elements"", testCase);",0.48321840698973023,0.5238794913955799,0.47696738385952214
 270,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -33696,7 +33696,7 @@ it(""should handle option arrays with string elements"", testCase);",0.967741935
       } catch (error) {
         done.fail(error);
       }
-    });",0.9705882352941176,0.9705882352941176,1.0
+    });",0.4820731241099097,0.4519135316020155,0.7178088492798594
 271,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -33739,7 +33739,7 @@ try {
     done.fail(err);
 } finally {
     done();
-}});",0.96875,0.96875,1.0
+}});",0.403841188645543,0.4521240792930893,0.5907172395096761
 272,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -33789,7 +33789,7 @@ async function createAnnotation() {
   } catch (error) {
     done.fail();
   }
-}",0.9705882352941176,0.9166666666666666,0.9428571428571428
+}",0.6091472054958346,0.28690332320780826,0.4445472858580939
 273,"      promise.then(done, done.fail);
 
     it(""should handle unknown flags"", function (done) {
@@ -33845,7 +33845,7 @@ async function createAnnotation() {
   } finally {
     done();
   }
-}",0.9705882352941176,0.8529411764705882,0.8787878787878788
+}",0.4651605229436032,0.40619408780419025,0.42634397103611954
 274,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -33887,7 +33887,7 @@ async function createAnnotation() {
   expect(data.hidden).toEqual(false);
   expect(data.combo).toEqual(false);
   expect(data.multiSelect).toEqual(false);
-});",0.9696969696969697,1.0,0.9696969696969697
+});",0.43657238158571265,0.42647178177338624,0.6743749569444523
 275,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -33935,7 +33935,7 @@ async function createAnnotation() {
   } finally {
     done();
   }
-}",0.96875,0.90625,0.9354838709677419
+}",0.45760125447783984,0.3630110316920122,0.5782498842303672
 276,"      AnnotationFactory.create(
 
       )
@@ -34024,7 +34024,7 @@ async function createAnnotation() {
   } catch (error) {
     done.fail(error);
   }
-}",0.9767441860465116,0.9534883720930233,0.9761904761904762
+}",0.6162278064555288,0.44855769493609793,0.5377851229762736
 277,"      AnnotationFactory.create(
 
       )
@@ -34174,7 +34174,7 @@ async function createAnnotation() {
       ""endstream\nendobj\n""
   );
   done();
-}",1.0,1.0,1.0
+}",0.707301652064442,0.7077257307143681,0.9381638483989767
 278,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -34201,7 +34201,7 @@ async function createAnnotation() {
   expect(data.annotationType).toEqual(AnnotationType.LINE);
   expect(data.lineCoordinates).toEqual([1, 2, 3, 4]);
   done();
-}, done.fail);",0.9444444444444444,0.9428571428571428,0.8888888888888888
+}, done.fail);",0.5097401974900496,0.664679052353069,0.373632099851688
 279,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -34239,7 +34239,7 @@ async function createAnnotation() {
   } finally {
     done();
   }
-}",0.9375,0.90625,0.967741935483871
+}",0.48183465237456186,0.36926468554721764,0.5517324215338946
 280,"      AnnotationFactory.create(
 
       ).then(({ data, viewable }) => {
@@ -34285,7 +34285,7 @@ async function testHandleMissingParentProperties() {
     } catch (error) {
         done.fail(error);
     }
-}",0.9318181818181818,0.9545454545454546,0.9761904761904762
+}",0.47950908448329654,0.30937908423749483,0.41566928957699123
 281,"      AnnotationFactory.create(
 
       ).then(({ data, viewable }) => {
@@ -34320,7 +34320,7 @@ async function testHandleMissingParentProperties() {
   } catch (error) {
     done();
   }
-}",0.8064516129032258,0.8709677419354839,0.8
+}",0.3166054919554333,0.20559202169235388,0.14596387416002454
 282,"        AnnotationFactory.create(
 
         ).then(({ data, viewable }) => {
@@ -34379,7 +34379,7 @@ async function testHandleMissingParentProperties() {
     expect(result.viewable).toEqual(true);
   } catch (error) {
     done.fail(error);
-  }`",0.9722222222222222,0.9722222222222222,1.0
+  }`",0.6478899745921751,0.4962050237871751,0.5114733595090584
 283,"        AnnotationFactory.create(
 
         ).then(({ data }) => {
@@ -34425,7 +34425,7 @@ async function testHandleMissingParentProperties() {
 
 it(""should handle a single ink list"", async function () {
   await testCreateAnnotationFactory();
-});",0.9767441860465116,0.9767441860465116,1.0
+});",0.5380040841537114,0.5128939504717202,0.6198145127416765
 284,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -34488,7 +34488,7 @@ it(""should handle a single ink list"", async function () {
   } finally {
     done();
   }
-}",0.9487179487179487,0.8974358974358975,0.9473684210526315
+}",0.6681060467388886,0.5237710312861675,0.6922428514509995
 285,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -34561,7 +34561,7 @@ it(""should handle a single ink list"", async function () {
       ]);
 
       done();
-    }",0.95,0.925,0.9743589743589743
+    }",0.6708735051762468,0.5526342269412469,0.7440782943654846
 286,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -34603,7 +34603,7 @@ it(""should handle a single ink list"", async function () {
              done.fail(error);
          }
      });
- });",0.9333333333333333,0.9666666666666667,0.9666666666666667
+ });",0.43676799126370947,0.40909240099590094,0.48652425798647897
 287,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -34675,7 +34675,7 @@ it(""should handle a single ink list"", async function () {
   
   it(""should set quadpoints to null when empty"", async function () {
     await testCreateAnnotation();
-  });",0.972972972972973,0.972972972972973,1.0
+  });",0.7012791020944698,0.6576112713017987,0.6906601769614299
 288,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -34707,7 +34707,7 @@ it(""should handle a single ink list"", async function () {
   } catch (error) {
     done.fail(error);
   }
-}",0.9333333333333333,0.8666666666666667,0.9310344827586207
+}",0.5024073368581534,0.33618343172379056,0.468750214028142
 289,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -34737,7 +34737,7 @@ expect(data.annotationType).toEqual(AnnotationType.UNDERLINE);
 if (data.quadPoints !== null) {
   expect(data.quadPoints).toEqual(null);
 }
-done();",0.9310344827586207,0.8,0.8620689655172413
+done();",0.43676799126370947,0.3175802106074605,0.4560134242936516
 290,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -34799,7 +34799,7 @@ expect(annotation.data.quadPoints).toEqual([
     { x: 10, y: 10 },
     { x: 20, y: 10 },
   ],
-]);",0.9428571428571428,0.8857142857142857,0.9411764705882353
+]);",0.7045579704333143,0.5342612252723782,0.6763573456033461
 291,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -34834,7 +34834,7 @@ async () => {
   } finally {
     done();
   }
-}",0.9333333333333333,0.8709677419354839,0.8709677419354839
+}",0.43676799126370947,0.3414324230947786,0.5690084925106043
 292,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -34901,7 +34901,7 @@ async () => {
   } catch (error) {
     done.fail(error);
   }
-}",0.9444444444444444,0.9166666666666666,0.9714285714285714
+}",0.7045579704333143,0.6396857547419122,0.7802972243474159
 293,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -34932,7 +34932,7 @@ async () => {
     } catch (error) {
       done.fail(error);
     }
-  }",0.9333333333333333,0.8666666666666667,0.9310344827586207
+  }",0.43676799126370947,0.34415989928977475,0.43574566297081324
 294,"      AnnotationFactory.create(
 
       ).then(({ data }) => {
@@ -34998,7 +34998,7 @@ async () => {
   } catch (error) {
     done.fail(error);
   }
-}",0.9142857142857143,0.9428571428571428,0.9705882352941176
+}",0.7055549264789116,0.6789640787898112,0.8344433066862438
 295,"  function runOperatorListCheck(evaluator, stream, resources, callback) {
 
     const result = new OperatorList();
@@ -35056,7 +35056,7 @@ async () => {
   } catch (error) {
     throw error;
   }
-}",0.9,0.9333333333333333,0.9655172413793104
+}",0.19519812420977364,0.27602402397401093,0.4544200779663675
 296,"    it(""table was truncated in the middle of functions"", function (done) {
 
       CMapFactory.create({
@@ -35143,7 +35143,7 @@ async () => {
       expect(
         /(ENDF\[ \]|SVTCA\[0\])\s*<\/assembly>\s*<\/fpgm>/.test(output)
       ).toEqual(true);
-    });`",1.0,0.9782608695652174,0.9782608695652174
+    });`",0.5524416284343939,0.5637956097243076,0.7081411021314452
 297,"      ttx(font.data, function (output) {
 
         verifyTtxOutput(output);
@@ -35243,7 +35243,7 @@ async () => {
 
 it(""has invalid selection attributes presence"", async () => {
   await testTTX();
-});",1.0,1.0,1.0
+});",0.5241874089084534,0.5230749613272215,0.5735541876485225
 298,"    it(""has invalid version number"", function (done) {
 
       CMapFactory.create({
@@ -35346,7 +35346,7 @@ it(""has invalid glyph name indexes"", async function () {
   } catch (error) {
     // Handle error
   }
-});",1.0,1.0,1.0
+});",0.5110943118767409,0.5843944987013168,0.737758536658838
 299,"function ttx(data) {
 
   return new Promise((resolve, reject) => {
@@ -35423,7 +35423,7 @@ it(""has invalid glyph name indexes"", async function () {
     } catch (err) {
         console.error(err);
     }
-}",0.6666666666666666,0.9210526315789473,0.717948717948718
+}",0.1548679870615263,0.5176877081453402,0.425242790571533
 300,"  setPDFNetworkStreamFactory(params => {
 
     return streamsPromise.then(streams => {
@@ -35555,7 +35555,7 @@ it(""has invalid glyph name indexes"", async function () {
       return new PDFNetworkStream(params);
     }
   }
-}",0.7037037037037037,0.6481481481481481,0.875
+}",0.2153662244707244,0.24008513291909905,0.46535815164034855
 301,"      const registry = properties.cidSystemInfo.registry;
 
       const ordering = properties.cidSystemInfo.ordering;
@@ -35698,7 +35698,7 @@ it(""has invalid glyph name indexes"", async function () {
 
     }
 
-  }",0.9591836734693877,0.9791666666666666,0.94
+  }",0.6146159051012097,0.6816552575475965,0.6433304200008191
 302,"    return undefined;
 
   return loadScript(PDFWorker.workerSrc);
@@ -35743,7 +35743,7 @@ async function initPDFBug(enabledTabs) {
 
   // Initialize the PDFBug
   PDFBug.init({ OPS }, appConfig.mainContainer);
-}",0.9666666666666667,0.8484848484848485,0.8787878787878788
+}",0.29353222779973676,0.4093890436485517,0.35426395062894633
 303,"  destroy() {
 
     const transportDestroyed = !this._transport
@@ -35806,7 +35806,7 @@ async function initPDFBug(enabledTabs) {
 
     }
 
-  }",0.84375,0.8857142857142857,0.7941176470588235
+  }",0.42408248458789183,0.768663815411692,0.7226373390354827
 304,"  render(viewport, intent = ""display"") {
 
     return Promise.all([
@@ -36033,7 +36033,7 @@ async function initPDFBug(enabledTabs) {
     
   });
   
-}",0.9767441860465116,1.0,0.9767441860465116
+}",0.771947601958473,0.9809384293000267,0.7431686945733181
 305,"loadingTask.promise
 
   .then(function (pdfDocument) {
@@ -36205,7 +36205,7 @@ async function initPDFBug(enabledTabs) {
     } catch (reason) {
         // handle error
     }
-}",1.0,1.0,1.0
+}",0.6985365261527926,0.6466497458962641,0.8548694007196957
 306,"function pageLoaded() {
 
   loadingTask.promise.then(function (pdfDocument) {
@@ -36258,7 +36258,7 @@ const svg = buildSVG(viewport, textContent);
 
 document.getElementById(""pageContainer"").appendChild(svg);
 
-});",1.0,0.9722222222222222,0.9722222222222222
+});",0.5240647088208825,0.5444559798107153,0.7233488345141722
 307,"// Will be using promises to load document, pages and misc data instead of
 
 // callback.
@@ -36431,7 +36431,7 @@ loadingTask.promise
   } catch (err) {
     console.error(""Error: "" + err);
   }
-}",0.9302325581395349,0.9523809523809523,0.9318181818181818
+}",0.29041648266888276,0.5282497546106546,0.5799585610379543
 308,"loadingTask.promise.then(function (pdfDocument) {
 
 });
@@ -36442,7 +36442,7 @@ loadingTask.promise
 })();
 ","async function loadPDF() {
 const pdfDocument = await loadingTask.promise;
-}",0.8518518518518519,0.8518518518518519,1.0
+}",0.3020500050770357,0.3020500050770357,0.650885271376865
 309,"   * @returns {Promise} Returns a promise containing a {PDFPageProxy} object.
 
    * @private
@@ -36516,7 +36516,7 @@ const pdfDocument = await loadingTask.promise;
     pageView.setPdfPage(pdfPage);
   }
   return pdfPage;
-}",0.8604651162790697,0.725,0.6829268292682927
+}",0.346681732046393,0.1276266007852382,0.25050209871019163
 310,"   * @returns {PDFPage}
 
    * @private
@@ -36617,7 +36617,7 @@ const pdfDocument = await loadingTask.promise;
 
     return pdfPage;
 
-}",0.8333333333333334,0.8536585365853658,0.7954545454545454
+}",0.40729222311262914,0.6450837261852219,0.5505503508883203
 311,"loadingTask.promise.then(function (pdfDocument) {
 
   return pdfDocument.getPage(PAGE_TO_VIEW).then(function (pdfPage) {
@@ -36732,7 +36732,7 @@ const pdfDocument = await loadingTask.promise;
   } catch (error) {
     console.error(""Error while loading PDF document"", error);
   }
-}",1.0,0.9230769230769231,0.9230769230769231
+}",0.7414526842281077,0.5880187706821861,0.6724932680064706
 312,"    return this.xref
 
       .fetchAsync(ref)
@@ -36826,7 +36826,7 @@ const pdfDocument = await loadingTask.promise;
     info(reason);
     return catalog.getPageDict(pageIndex);
   }
-}",0.9545454545454546,0.9090909090909091,0.9523809523809523
+}",0.6881790290735629,0.5368956542436677,0.7274314938433499
 313,"  function rasterizeTextLayer(
 
     return new Promise(function (resolve, reject) {
@@ -36847,7 +36847,7 @@ const pdfDocument = await loadingTask.promise;
     } catch (error) {
       throw new Error(`Error rasterizing text layer: ${error}`);
     }
-  }",0.7083333333333334,0.5897435897435898,0.4473684210526316
+  }",0.2832259300517472,0.2623414633234586,0.2943766967834993
 314,"    function next() {
 
       while (nodesToVisit.length) {
@@ -37296,7 +37296,7 @@ const pdfDocument = await loadingTask.promise;
   }
   next();
   return capability.promise;
-}",1.0,0.8148148148148148,0.8148148148148148
+}",0.6212366016730264,0.4522628611276793,0.37382646937857084
 315,"  close() {
 
     this.overlayManager.close(this.overlayName).then(() => {
@@ -37322,7 +37322,7 @@ const pdfDocument = await loadingTask.promise;
     console.error(""Error closing overlay"", error);
 
   }
-}",0.8888888888888888,0.8928571428571429,0.9259259259259259
+}",0.4563988948532074,0.43568292351141924,0.7518583345620418
 316,"  fontFallback(id, handler) {
 
     const promises = [];
@@ -37439,7 +37439,7 @@ async cleanup(manuallyTriggered = false) {
   } catch (err) {
     console.error(err);
   }
-}",0.875,0.96875,0.90625
+}",0.532203128911242,0.6278754505558691,0.6641297310539377
 317,"    return resourcesPromise.then(resources => {
 
       const opList = new OperatorList();
@@ -37566,7 +37566,7 @@ async cleanup(manuallyTriggered = false) {
     } catch (e) {
       console.log(""Error"", e);
     }
-  }",0.8717948717948718,0.918918918918919,0.8974358974358975
+  }",0.5555558069906974,0.49110117941906867,0.37873176957275345
 318,"    return this._getAppearance(evaluator, task, annotationStorage).then(
 
       content => {
@@ -37816,7 +37816,7 @@ async cleanup(manuallyTriggered = false) {
   } catch (error) {
     throw new Error(`Error during getOperatorList: ${error}`);
   }
-}",0.9361702127659575,0.9574468085106383,0.8979591836734694
+}",0.6859801955939265,0.7179261453404507,0.5513385642284645
 319,"  getAnnotationsData(intent) {
 
     return this._parsedAnnotations.then(function (annotations) {
@@ -37967,7 +37967,7 @@ async cleanup(manuallyTriggered = false) {
   } catch (err) {
     console.error(err);
   }
-}",0.8260869565217391,0.8947368421052632,0.7391304347826086
+}",0.6035641284324664,0.6029205907750177,0.28423067831858423
 320,"    this.textLayerDiv.append(endOfContent);
 
     this.eventBus.dispatch(""textlayerrendered"", {
@@ -38161,7 +38161,7 @@ async cleanup(manuallyTriggered = false) {
     }catch{ 
       // Cancelled or failed to render text layer; skipping errors.
      }
-}",0.8837209302325582,0.975,0.9047619047619048
+}",0.28900067104771476,0.8353673175198973,0.19240560731266554
 321,"      const result = XfaLayer.render(parameters);
 
       return Promise.resolve(result);
@@ -38267,7 +38267,7 @@ async cleanup(manuallyTriggered = false) {
     } catch (error) {
         console.error(error);
     }
-}",0.9743589743589743,0.717948717948718,0.6923076923076923
+}",0.7084401147927545,0.14988420399295152,0.11470906291947772
 322,"gulp.task(""jsdoc"", function (done) {
 
   rimraf(JSDOC_BUILD_DIR, function () {
@@ -38309,7 +38309,7 @@ async cleanup(manuallyTriggered = false) {
   await mkdirp(JSDOC_BUILD_DIR);
   const command = `""node_modules/.bin/jsdoc"" -d ${JSDOC_BUILD_DIR} ${JSDOC_FILES.join("" "")}`;
   exec(command, done);
-});",0.8205128205128205,0.8,0.972972972972973
+});",0.32911969471429436,0.2898197219862167,0.6578186267248003
 323,"   * @param {PDFManager} pdfManager
 
    * @param {boolean} collectFields
@@ -38450,7 +38450,7 @@ async cleanup(manuallyTriggered = false) {
     } catch(error) {
       console.log(error);
     }
-  }",0.8222222222222222,0.8409090909090909,0.875
+  }",0.23636795225865714,0.4075062919135103,0.3652402107254217
 324,"        return Promise.all(annotationPromises).then(function (annotations) {
 
           if (annotations.length === 0) {
@@ -38564,7 +38564,7 @@ async cleanup(manuallyTriggered = false) {
     console.error(""Error occurred while getting parsed annotations"", err);
     throw err;
   }
-}",0.95,0.8095238095238095,0.7619047619047619
+}",0.646395303503899,0.6261485691669315,0.542663670415258
 325,"        return Promise.all(promises).then(refs => {
 
           let newRefs = [];
@@ -39005,7 +39005,7 @@ async cleanup(manuallyTriggered = false) {
 
   });
 
-}",1.0,1.0,1.0
+}",0.7868036748104595,0.8393751241889736,0.8272189911626304
 326,"  addAltTextButton() {
 
     AnnotationEditor._l10nPromise
@@ -39043,7 +39043,7 @@ await AnnotationEditor._l10nPromise
     altText.setAttribute(""aria-label"", msg);
 
   });
-}",0.8529411764705882,0.9411764705882353,0.9117647058823529
+}",0.389306281138713,0.8432742428536208,0.3467960281588246
 327,"    return this.loadFont(
 
     )
@@ -39163,7 +39163,7 @@ await AnnotationEditor._l10nPromise
       evaluatorOptions: this.options,
     });
   }
-}",0.95,0.9,0.8974358974358975
+}",0.44138892202138935,0.3193994308426603,0.4951272459624485
 328,"    function handleSetFont(fontName, fontRef) {
 
       return self
@@ -39262,7 +39262,7 @@ await AnnotationEditor._l10nPromise
       
     }
     
-  }`",0.9736842105263158,1.0,0.9736842105263158
+  }`",0.4761804172664475,0.4948977797416439,0.5792110615085363
 329,"        return this.extractDataStructures(dict, dict, properties).then(
 
           newProperties => {
@@ -39356,7 +39356,7 @@ await AnnotationEditor._l10nPromise
         console.log(`Error: ${error}`);
         throw error;
     }
-}",0.9705882352941176,0.8918918918918919,0.9166666666666666
+}",0.6910256469007994,0.5742654413867745,0.4898418489487121
 330,"    return this.extractDataStructures(dict, baseDict, properties).then(
 
       newProperties => {
@@ -39393,7 +39393,7 @@ await AnnotationEditor._l10nPromise
   } catch (err) {
     console.error(err);
   }
-}",0.8928571428571429,0.9310344827586207,0.8928571428571429
+}",0.509955799998269,0.6372932450022908,0.46097432233989477
 331,"    return this.getOperatorList({
 
     }).then(function () {
@@ -39447,7 +39447,7 @@ await AnnotationEditor._l10nPromise
       operatorList.addOp(OPS.endMarkedContent, []);
 
     }
-}",0.9696969696969697,0.9411764705882353,0.9705882352941176
+}",0.8067426477900133,0.8089110376558348,0.9455349868550634
 332,"    return promise.then(function () {
 
       if (gStateObj.length > 0) {
@@ -39492,7 +39492,7 @@ await AnnotationEditor._l10nPromise
 
   }
 
-};",0.9393939393939394,0.9696969696969697,0.9117647058823529
+};",0.7952661432002321,0.8467556632509745,0.8488877659520155
 333,"    return toUnicodePromise
 
       .then(readToUnicode => {
@@ -39573,7 +39573,7 @@ await AnnotationEditor._l10nPromise
 
      return properties;
 
-   });",0.9310344827586207,0.9655172413793104,0.9655172413793104
+   });",0.5501027766035377,0.8017025663455893,0.6260215572773039
 334,"  readToUnicode(cmapObj) {
 
       return Promise.resolve(null);
@@ -39858,7 +39858,7 @@ await AnnotationEditor._l10nPromise
 
 return cmap;
 
-}",1.0,1.0,1.0
+}",0.6962753326836495,0.6666494457097404,0.6570610729326819
 335,"function waitOnEventOrTimeout({ target, name, delay = 0 }) {
 
   return new Promise(function (resolve, reject) {
@@ -40002,7 +40002,7 @@ return cmap;
   } catch (error) {
     throw new Error(""waitOnEventOrTimeout - error: "" + error.message);
   }
-}",1.0,0.95,0.95
+}",0.7447909744802678,0.5660614532043475,0.5898990891784543
 336,"        this.pdfDocument
 
           .getPageIndex(destRef)
@@ -40067,7 +40067,7 @@ return cmap;
       `PDFLinkService.#goToDestinationHelper: ""${destRef}"" is not a valid page reference, for dest=""${rawDest}"".`
     );
   }
-}",0.8974358974358975,0.9230769230769231,0.9210526315789473
+}",0.3654147820903634,0.37890666368724313,0.360511814640225
 337,"    const dataPromises = Promise.all([contentStreamPromise, resourcesPromise]);
 
     return dataPromises.then(([contentStream]) => {
@@ -40195,7 +40195,7 @@ async function getTextContent() {
   } catch (error) {
     console.log(error);
   }
-}",0.9473684210526315,0.972972972972973,0.972972972972973
+}",0.7018692987323835,0.8039400125885996,0.6317150176333519
 338,"    return new Promise((resolve, reject) => {
 
       fs.readFile(params.path, (error, data) => {
@@ -40224,7 +40224,7 @@ async function getTextContent() {
   } catch (error) {
     reject(error || new Error(`Empty file for: ${params.path}`));
   }
-};",0.6857142857142857,0.9428571428571428,0.7272727272727273
+};",0.1455289161125654,0.3576387240272233,0.48909669828528357
 339,"  _fetchData(url, compressionType) {
 
     return fetchData(
@@ -40266,7 +40266,7 @@ async function getTextContent() {
     } catch (error) {
       console.log(error);
     }
-  }",0.8181818181818182,0.9393939393939394,0.8125
+  }",0.4372473766878384,0.47544441121404846,0.4138852932158795
 340,"  _fetchData(url) {
 
     return fetchData(url, /* type = */ ""arraybuffer"").then(
@@ -40287,7 +40287,7 @@ async function getTextContent() {
     } catch (error) {
       console.log(""Error occurred:"", error);
     }
-  }",0.8709677419354839,0.7352941176470589,0.7878787878787878
+  }",0.43440180637828196,0.3046507768127169,0.6689900324741398
 341,"const fetchData = function (url) {
 
   return fs.promises.readFile(url).then(data => new Uint8Array(data));
@@ -40307,7 +40307,7 @@ async function getTextContent() {
   } catch (err) {
     console.log(err);
   }
-};",0.9629629629629629,0.9285714285714286,0.9629629629629629
+};",0.21648227017071273,0.38713764752403756,0.6580855420420766
 342,"  _fetchData(url, compressionType) {
 
     return fetchData(url).then(data => ({ cMapData: data, compressionType }));
@@ -40321,7 +40321,7 @@ async function getTextContent() {
   } catch (error) {
     throw error;
   }
-}",0.6428571428571429,0.8620689655172413,0.6296296296296297
+}",0.13735952837541376,0.2723891843361253,0.36510513514796056
 343,"    messageHandler.on(""ReaderHeadersReady"", data => {
 
       const headersCapability = Promise.withResolvers();
@@ -40430,7 +40430,7 @@ async function getTextContent() {
     } catch (error) {
         console.log(error);
     }
-}",0.975,0.925,0.9
+}",0.47863101671592445,0.5682515818287257,0.46772193770147763
 344,"        function (pdfDoc) {
 
           return pdfDoc.getPage(1).then(function (pdfPage) {
@@ -40450,7 +40450,7 @@ async function getTextContent() {
     } catch (error) {
         console.error('Error occurred while retrieving PDF annotations', error);
     }
-}",0.7692307692307693,0.7586206896551724,0.7666666666666667
+}",0.30316578334554917,0.3035991281446786,0.6231148481538202
 345,"      pageColors: this.pageColors,
 
     const resultPromise = renderTask.promise.then(
@@ -40558,7 +40558,7 @@ async function getTextContent() {
       pdfPage: this.pdfPage,
     });
   }
-}",0.8918918918918919,0.9428571428571428,0.9444444444444444
+}",0.42892305659841384,0.4654689719960662,0.279389765605898
 346,"  getContentStream() {
 
     return this.pdfManager.ensure(this, ""content"").then(content => {
@@ -40618,7 +40618,7 @@ async function getTextContent() {
   if (content instanceof BaseStream) return content;
   if (Array.isArray(content)) return new StreamsSequenceStream(content, this._onSubStreamError.bind(this));
   return new NullStream();
-}",0.9714285714285714,0.8857142857142857,0.9117647058823529
+}",0.6283304715815562,0.2723791396779717,0.6306168704917363
 347,"    return this._parsedAnnotations.then(function (annotations) {
 
       const promises = [];
@@ -40719,7 +40719,7 @@ async function getTextContent() {
 
     });
 
-}",0.9318181818181818,0.7906976744186046,0.7272727272727273
+}",0.6844977201233894,0.27351842653138214,0.20978524765838624
 348,"      return partialEvaluator
 
         .getOperatorList({
@@ -41065,7 +41065,7 @@ async function getTextContent() {
     } else {
       return null;
     }
-  }();",1.0,0.6078431372549019,0.6078431372549019
+  }();",0.7580061820025974,0.09392733047868246,0.08999563942099739
 349,"  loadResources(keys, appearance) {
 
     return appearance.dict.getAsync(""Resources"").then(resources => {
@@ -41103,7 +41103,7 @@ async function getTextContent() {
   await objectLoader.load();
 
   return resources;
-}",0.9090909090909091,0.9393939393939394,0.967741935483871
+}",0.24678979407267046,0.4353236683225692,0.6001022445375317
 350,"function createIgnorer(ignorePath, withNodeModules) {
 
   return (!ignorePath
@@ -41129,7 +41129,7 @@ async function getTextContent() {
     const ignoreContent = await (await getFileContentOrNull(path.resolve(ignorePath))) || null;
 
     return _createIgnorer(ignoreContent, withNodeModules);
-}",0.90625,0.7941176470588235,0.875
+}",0.4129462611328435,0.37030564439141145,0.6395975767733515
 351,"function getFileInfo(filePath, opts) {
 
     return Promise.reject(
@@ -41210,7 +41210,7 @@ async function getTextContent() {
 
     }
 
-}",0.9473684210526315,0.9,0.9473684210526315
+}",0.7112120020333551,0.6015919543799877,0.732617334573304
 352,"function resolveConfigFile(filePath) {
 
   return load(filePath).then(result => {
@@ -41230,7 +41230,7 @@ async function getTextContent() {
   } catch (err) {
     console.error(err);
   }
-}",0.8620689655172413,0.896551724137931,0.9642857142857143
+}",0.45858863051489906,0.42049567352057415,0.7973720729080287
 353,"const editorconfigAsyncNoCache = (filePath, config) => {
 
   return Promise.resolve(maybeParse(filePath, config, editorconfig.parse)).then(
@@ -41259,7 +41259,7 @@ const editorconfigSyncWithCache = jsonStringifyMem(editorconfigSyncNoCache);
     console.error(""Error parsing editorconfig file:"", error);
     return null;
   }
-}",0.9333333333333333,0.84375,0.84375
+}",0.38665985122920715,0.16265075207047205,0.3024578132578223
 354,"  const { output } = bundleConfig;
 
   return bundler(bundleConfig, cache)
@@ -41341,7 +41341,7 @@ async function migrate() {
     console.log(FAIL + ""\n"");
     handleError(error);
   }
-}",0.6444444444444445,0.8787878787878788,0.7272727272727273
+}",0.35231122599606224,0.3883302256696086,0.2545336563801343
 355,"function logPromise(name, promise) {
 
   return promise
@@ -41437,7 +41437,7 @@ function runGit(args, options) {
     process.stdout.write(`${FAIL}\n`);
     throw err;
   }
-}",0.95,0.7948717948717948,0.7948717948717948
+}",0.3167151395432497,0.2693831391382025,0.17710678368890193
 356,"function formatStdin(context) {
 
   const ignorer = createIgnorerFromContextOrDie(context);
@@ -41539,7 +41539,7 @@ async function formatFiles(context) {
   } catch (error) {
     handleError(context, relativeFilepath || ""stdin"", error);
   }
-}",0.9411764705882353,0.9411764705882353,1.0
+}",0.663319651827651,0.5754716401646003,0.561513155627252
 357,"function getFileContentOrNull(filename) {
 
   return new Promise((resolve, reject) => {
@@ -41583,7 +41583,7 @@ async function getFileContentOrNull(filename) {
       return null;
     }
   }
-}",0.75,0.75,0.9333333333333333
+}",0.208272939409206,0.21660674621380832,0.3826161664522722
 358,"    worker
 
       .format(code, options, { ast, doc, comments, reformat })
@@ -41605,7 +41605,7 @@ async function getFileContentOrNull(filename) {
 ","async function formatWorker() {
   const result = await this.format(code, options, { ast, doc, comments, reformat });
   await this.setState(result);
-}",0.9629629629629629,0.9285714285714286,0.9629629629629629
+}",0.40155045179390003,0.38094661844352257,0.49210604231577165
 359,"  componentDidMount() {
 
     this.worker.getMetadata().then(({ supportInfo, version }) => {
@@ -41643,7 +41643,7 @@ async function getFileContentOrNull(filename) {
   } catch (error) {
     console.error('Error fetching metadata from worker', error);
   }
-}",0.9393939393939394,0.9117647058823529,0.9696969696969697
+}",0.6249976515736497,0.6442321158253295,0.8387464953051684
 360,"    if (sync) {
 
       resolvedConfig = config.resolveConfig.sync(filePath);
@@ -41680,7 +41680,7 @@ async function getFileContentOrNull(filename) {
   } catch (error) {
     // handle potential errors here
   }
-}",0.8214285714285714,0.896551724137931,0.8571428571428571
+}",0.257432026891125,0.29820234382683314,0.5656774295210093
 361," * @template {Options} Opts
 
  * @param {Opts} opts
@@ -41893,7 +41893,7 @@ async function resolveConfig(filePath, opts) {
 
   const resolveConfig = (filePath, opts) => _resolveConfig(filePath, opts, false);
 
-  resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);",0.9767441860465116,0.9333333333333333,0.9111111111111111
+  resolveConfig.sync = (filePath, opts) => _resolveConfig(filePath, opts, true);",0.40712061658310894,0.6580554437360464,0.5954818700686031
 362,"test(""API resolveConfig with no args"", () =>
 
   prettier.resolveConfig().then((result) => {
@@ -42232,7 +42232,7 @@ test(""API resolveConfig.sync with nested file arg and .editorconfig and indent_
     tabWidth: 8,
     printWidth: 100,
   });
-});",0.8636363636363636,0.9772727272727273,0.8409090909090909
+});",0.29384696885569334,0.5293012697879289,0.5020375805104669
 363,"  expect(prettier.resolveConfig.sync(doubleQuote)).toMatchObject({
 
 test(""API resolveConfig removes $schema option"", () => {
@@ -42332,7 +42332,7 @@ test(""API resolveConfig de-references to an external module"", async () => {
         // ...
       });
     });
-  }",0.8809523809523809,1.0,0.8809523809523809
+  }",0.36562667344619987,0.6421073306589008,0.5407715580513401
 364,"var require_async5 = __commonJS({
 
     var stream_1 = require_stream3();
@@ -42380,7 +42380,7 @@ test(""API resolveConfig de-references to an external module"", async () => {
             console.error(`Error reading data from API: ${err.message}`);
         }
     }
-}",0.8292682926829268,0.9069767441860465,0.75
+}",0.3036910047935912,0.5232054756125256,0.2940139511883444
 365,"    launchApp = function(appName, args, callback) {
 
         return new Promise((resolve) => {
@@ -42437,7 +42437,7 @@ test(""API resolveConfig de-references to an external module"", async () => {
   } catch(err) {
     // handle error here
   }
-}",0.8461538461538461,0.9743589743589743,0.868421052631579
+}",0.18143966397022082,0.5466826327203408,0.0953197799544228
 366,"import { svelte } from '../helpers.js';
 
 describe('preprocess', () => {
@@ -43093,7 +43093,7 @@ describe('preprocess', () => {
 		}).then((processed) => {
 			assert.equal(processed.toString(), expected);
 		});
-	});",0.7592592592592593,1.0,0.7592592592592593
+	});",0.12173184481727317,0.9063450556976822,0.28421327666980356
 367,"			})
 
 				.then(bundle => bundle.generate({ format: 'iife', name: 'test' }))
@@ -43204,7 +43204,7 @@ describe('preprocess', () => {
   } catch (err) {
     console.error(err);
   }
-}",1.0,0.975609756097561,0.975609756097561
+}",0.31993845347534533,0.5694810211338058,0.4762704523650555
 368,"fetch(`https://api.github.com/repos/sveltejs/svelte/stats/contributors`)
 
 	.then(r => r.json())
@@ -43298,7 +43298,7 @@ main();
 		const str = `[\n\t${munged.map(c => `{ name: '${c.name}', src: '${c.src}' }`).join(',\n\t')}\n]`;
 
 		fs.writeFileSync(`../src/routes/_contributors.js`, `export default ${str};`);
-	});",0.8076923076923077,1.0,0.8076923076923077
+	});",0.3194333708809658,0.9196480645495575,0.13031560799599617
 369,"let fulfil;
 
 let thePromise = new Promise((f) => {
@@ -43483,7 +43483,7 @@ let deferred;
     console.log('An error occurred:', error);
 
   }
-}",0.9523809523809523,0.975609756097561,0.9761904761904762
+}",0.24210366417577273,0.5644702845978926,0.29544752702415944
 370,"export const requestResolvedSubtree = path => system => {
 
   const {
@@ -43605,7 +43605,7 @@ const debResolveSubtrees = debounce(async () => {
   } catch (err) {
     errActions.throw({ type: ""requestResolvedSubtree"", message: err.message });
   }
-};",0.825,0.9714285714285714,0.8048780487804879
+};",0.41059590409229657,0.49748419096134083,0.28144109435323666
 371,"			session.requestReferenceSpace( referenceSpaceType ).then( onRequestReferenceSpace );
 
 			//
@@ -43628,7 +43628,7 @@ const debResolveSubtrees = debounce(async () => {
 	function onInputSourcesChange( event ) {
 ","async function updateInputSources( event ) {
 	const referenceSpaceType = await session.requestReferenceSpace(referenceSpaceType);
-}",0.7272727272727273,0.7,0.8
+}",0.43786490516371096,0.3467814980142417,0.24611615986559726
 372,"			session.requestReferenceSpace( referenceSpaceType ).then( onRequestReferenceSpace );
 
 			//
@@ -43658,7 +43658,7 @@ const debResolveSubtrees = debounce(async () => {
   } catch (error) {
     console.log(error);
   }
-}",0.7272727272727273,0.7272727272727273,0.875
+}",0.43786490516371096,0.22079440718121887,0.2440876373603906
 373,"    return createLiveImage(base, info, name);
 
   const whiteLineMaterial = new THREE.LineBasicMaterial({
@@ -43873,7 +43873,7 @@ const debResolveSubtrees = debounce(async () => {
       lineMesh.position.copy(new THREE.Vector3());
       root.add(lineMesh);
     }
-  };",0.9772727272727273,0.8222222222222222,0.8
+  };",0.6603249587289225,0.3478666546545297,0.3741833883405419
 374,"    addGeometry(root, info).then(() => {
 
       threejsLessonUtils.addDiagram(elem, {create: () => root});
@@ -43889,7 +43889,7 @@ const debResolveSubtrees = debounce(async () => {
   } catch (err) {
     console.error(err);
   }
-}",0.9655172413793104,0.9655172413793104,1.0
+}",0.6109100057142229,0.4229686042511725,0.6155782250949708
 375,"		const writer = this;
 
 
@@ -44216,7 +44216,7 @@ async function createGLB(json) {
 	} catch (error) {
 		console.log('Error creating GLB:', error);
 	}
-}",1.0,0.98,0.98
+}",0.9699922199086828,0.4401401768034862,0.44511614462745364
 376,"			Promise.all( this.pending ).then( function () {
 
 
@@ -44543,7 +44543,7 @@ async function createGLB(json) {
 
 		}
 
-	} );`",1.0,0.9803921568627451,0.9803921568627451
+	} );`",0.9723068508018435,0.7474293212743606,0.7357960218274467
 377,"			resultBuffer.mapAsync( GPUMapMode.READ ).then( () => {
 
 
@@ -44598,7 +44598,7 @@ async function createGLB(json) {
 		}
 
 
-		}",0.918918918918919,0.9736842105263158,0.8947368421052632
+		}",0.8387479863024316,0.7265161946233276,0.7681300373829474
 378,"			resultBuffer.mapAsync( GPUMapMode.READ ).then( () => {
 
 				const times = new BigUint64Array( resultBuffer.getMappedRange() );
@@ -44632,7 +44632,7 @@ async function createGLB(json) {
   } catch (error) {
     console.log('Error:', error);
   }
-})();",0.918918918918919,0.8974358974358975,0.8205128205128205
+})();",0.8387479863024316,0.36002291147045373,0.3535762754111206
 379,"			resultBuffer.mapAsync( GPUMapMode.READ ).then( () => {
 
 				const times = new BigUint64Array( resultBuffer.getMappedRange() );
@@ -44667,7 +44667,7 @@ async function createGLB(json) {
     } catch (error) {
         console.log(""Error: "", error)
     }
-}",0.918918918918919,0.9230769230769231,0.8947368421052632
+}",0.8387479863024316,0.5181566261319042,0.5439602139287749
 380,"function loadNoteToEditor(noteId) {
 
     $.get(baseApiUrl + 'notes/' + noteId).then(note => {
@@ -44838,7 +44838,7 @@ async function loadNote(noteId) {
     } catch (error) {
       console.log(""Error:"", error);
     }
-  }",1.0,0.9333333333333333,0.9333333333333333
+  }",0.7033680776106401,0.6430347140851407,0.7468504597114901
 381,"    encryptionPasswordFormEl.submit(() => {
 
         getDataKey(password).then(key => {
@@ -44914,7 +44914,7 @@ async function loadNote(noteId) {
             error(reason);
         }
         return false;
-    });",0.9375,1.0,0.9375
+    });",0.49188360107227075,0.5304814093240046,0.6890681010182194
 382,"    server.get('recent-notes').then(result => {
 
     });
@@ -44935,7 +44935,7 @@ async function getRecentNotes() {
   } finally {
     // Logic to execute regardless of whether the promise was fulfilled or rejected goes here
   }
-}",0.7142857142857143,0.6363636363636364,0.8125
+}",0.36518131820834887,0.3834192591933151,0.6287944060474615
 383,"            server.get('notes?search=' + searchText).then(resp => {
 
                 // Pass a string to perform case insensitive matching
@@ -44972,7 +44972,7 @@ async function getRecentNotes() {
     } catch (err) {
         console.error(err);
     }
-}",0.9166666666666666,0.8857142857142857,0.8648648648648649
+}",0.43476377574223307,0.4872527400449056,0.28517427705032306
 384,"    function loadTree() {
 
         return server.get('tree').then(resp => {
@@ -45024,7 +45024,7 @@ async function getRecentNotes() {
         console.log(error);
         return;
     }
-}",0.9,0.9,1.0
+}",0.580305428649789,0.6082140854998178,0.5611752522851836
 385,"$form.submit(() => {
 
     server.put('tree/' + branchId + '/set-prefix', {
@@ -45054,7 +45054,7 @@ $form.submit(() => {
   } catch (error) {
     console.log(error);
   }
-});",0.9428571428571428,0.8918918918918919,0.9459459459459459
+});",0.6700422228689443,0.6381140258122221,0.6725114424767329
 386,"$(document).ready(() => {
 
     server.get('migration').then(result => {
@@ -45114,7 +45114,7 @@ $form.submit(() => {
       $(""#app-db-version"").html(appDbVersion);
       $(""#db-version"").html(dbVersion);
     }
-  });",0.9444444444444444,1.0,0.9444444444444444
+  });",0.5888788616855632,0.7501134353057922,0.6897028170874688
 387,"            $.post('/api/setup/sync-from-server', {
 
             }).then(() => {
@@ -45171,7 +45171,7 @@ async function checkOutstandingSyncs() {
         alert(""Error, see dev console for details."");
         console.error(err);
     }
-}",0.8,0.9393939393939394,0.7948717948717948
+}",0.22443134669885062,0.6355852473269621,0.09085336173741565
 388,"    exportService.importIntoNote(currentNode.data.noteId).then(() => {
 
         $dialog.modal('hide');
@@ -45250,7 +45250,7 @@ const result = await exportService.importIntoNote(currentNode.data.noteId);
 $dialog.modal('hide');
 } catch (error) {
 console.log(error);
-}}",0.6222222222222222,0.8709677419354839,0.6666666666666666
+}}",0.4489922558842638,0.42196290281562654,0.14966709784467658
 389,"function showDialog() {
 
     server.get('sql/schema').then(tables => {
@@ -45323,7 +45323,7 @@ console.log(error);
   } catch (error) {
     console.log(error);
   }
-}",0.4772727272727273,0.9555555555555556,0.4772727272727273
+}",0.26465711815635695,0.5272061278179295,0.4541044880243996
 390,"        libraryLoader.requireLibrary(libraryLoader.SORTABLE).then(() => {
 
             new Sortable(this.$widgetsEnabled[0], {
@@ -45410,7 +45410,7 @@ console.log(error);
         handle: '.handle',
         animation: 150
     });
-}",0.782608695652174,0.8947368421052632,0.782608695652174
+}",0.6677316165526006,0.8622230153856522,0.24685387135014422
 391,"    // code below shouldn't be necessary normally, however there's some problem with interaction with context menu plugin
 
     // after opening context menu, standard shortcuts don't work, but they are detected here
@@ -45508,7 +45508,7 @@ export default {
         default:
             return false;
     }
-}",0.8095238095238095,0.7631578947368421,0.717948717948718
+}",0.18933645670545074,0.3818941174601377,0.09929455023805533
 392,"        server.put('options', opts).then(() => {
 
             toastService.showPersistent({
@@ -45590,7 +45590,7 @@ export default {
   } catch (err) {
     console.error(err);
   }
-}",0.825,0.8888888888888888,0.8717948717948718
+}",0.6808388964661379,0.7527800246103986,0.3225213292261473
 393,"import froca from ""../../services/froca.js"";
 
 
@@ -45706,7 +45706,7 @@ async function targetNote(noteId) {
   }
 }
 this.onClick(() => appContext.tabManager.openTabWithNoteWithHoisting(noteId, true));
-return this;",0.782608695652174,1.0,0.782608695652174
+return this;",0.29854761291089793,0.8375012580985449,0.23017704178425386
 394,"var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
 
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -45771,7 +45771,7 @@ return function (html) {
     const title = ((_a = manifestJson.h5) === null || _a === void 0 ? void 0 : _a.title) || manifestJson.name || """";
     return html.replace(/<title>(.*?)<\/title>/, `<title>${title}</title>`);
   });
-};",0.8571428571428571,0.9795918367346939,0.8367346938775511
+};",0.20856879833323025,0.8562502104885623,0.6866656069444901
 395,"var __async = (__this, __arguments, generator) => {
 
   return new Promise((resolve, reject) => {
@@ -45840,7 +45840,7 @@ return function (html) {
 
 async function _1(_0, _1) {
   await navigator.clipboard.writeText(data);
-}",0.7073170731707317,0.7560975609756098,0.8181818181818182
+}",0.10709889775285249,0.08638733475015596,0.4857121884043757
 396,"exports.mssqlQuery = function (connectionString, query) {
 
     return new Promise((resolve, reject) => {
@@ -45901,7 +45901,7 @@ async function _1(_0, _1) {
     } finally {
       mssql.close();
     }
-  };",0.9032258064516129,0.9354838709677419,0.9655172413793104
+  };",0.2643759182908306,0.29053105252937905,0.31338081756330344
 397,"const { warn, error } = require('./util/log')
 
 program
@@ -46105,7 +46105,7 @@ async function main() {
     error(`Error occurred while creating the project`, error)
 
   }
-}",0.9387755102040817,0.9565217391304348,0.8979591836734694
+}",0.6841815931706909,0.6582868472275198,0.4484346937539338
 398,"  const chalk = require('chalk')
 
 
@@ -46372,7 +46372,7 @@ api.registerCommand('e2e:open', {
     chalk.yellow(`https://docs.cypress.io/guides/guides/command-line.html#cypress-open`)
 }, async (args, rawArgs) => {
   return await run('open', args, rawArgs);
-});",0.8979591836734694,0.96,0.86
+});",0.525514207145086,0.6850854541593708,0.5469417080871658
 399,"function list (base, context) {
 
   return new Promise((resolve, reject) => {
@@ -46429,7 +46429,7 @@ api.registerCommand('e2e:open', {
     } catch (err) {
         throw err;
     }
-}",0.9393939393939394,0.9411764705882353,0.9393939393939394
+}",0.4005072887844834,0.372238202816402,0.6262276171786891
 400,"function deleteFolder (file) {
 
   return new Promise((resolve, reject) => {
@@ -46464,4 +46464,4 @@ api.registerCommand('e2e:open', {
 
   }
 
-}",0.7037037037037037,0.6785714285714286,0.7916666666666666
+}",0.1061317341529644,0.19767621671415997,0.5329863968398892
