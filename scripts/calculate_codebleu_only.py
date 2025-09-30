@@ -65,10 +65,28 @@ df_combined = df_combined.reset_index(drop=True)
 
 print(f"✅ DataFrames combinados. {len(df_combined)} entradas prontas para análise.")
 
-# 4. Prepare as listas para armazenar as métricas CodeBLEU apenas
-codebleu_llm_vs_dev = []  # CodeBLEU entre LLM vs Desenvolvedor
-codebleu_original_vs_llm = []  # CodeBLEU entre Original vs LLM
-codebleu_original_vs_dev = []  # CodeBLEU entre Original vs Desenvolvedor
+# 4. Prepare as listas para armazenar todas as métricas CodeBLEU
+# LLM vs Desenvolvedor
+codebleu_llm_vs_dev = []
+ngram_match_llm_vs_dev = []
+weighted_ngram_match_llm_vs_dev = []
+syntax_match_llm_vs_dev = []
+dataflow_match_llm_vs_dev = []
+
+# Original vs LLM
+codebleu_original_vs_llm = []
+ngram_match_original_vs_llm = []
+weighted_ngram_match_original_vs_llm = []
+syntax_match_original_vs_llm = []
+dataflow_match_original_vs_llm = []
+
+# Original vs Desenvolvedor
+codebleu_original_vs_dev = []
+ngram_match_original_vs_dev = []
+weighted_ngram_match_original_vs_dev = []
+syntax_match_original_vs_dev = []
+dataflow_match_original_vs_dev = []
+
 erros_processamento = []
 
 # 5. Itere sobre cada linha para calcular as métricas CodeBLEU
@@ -83,9 +101,24 @@ for index, row in df_combined.iterrows():
         # Verificar se algum código está vazio
         if not migrated_code_dev.strip() or not migrated_code_llm.strip() or not codigo_original.strip():
             print(f"⚠️ Ignorando linha {index} do commit {commit_hash} devido a código vazio.")
+            # LLM vs Dev
             codebleu_llm_vs_dev.append(None)
+            ngram_match_llm_vs_dev.append(None)
+            weighted_ngram_match_llm_vs_dev.append(None)
+            syntax_match_llm_vs_dev.append(None)
+            dataflow_match_llm_vs_dev.append(None)
+            # Original vs LLM
             codebleu_original_vs_llm.append(None)
+            ngram_match_original_vs_llm.append(None)
+            weighted_ngram_match_original_vs_llm.append(None)
+            syntax_match_original_vs_llm.append(None)
+            dataflow_match_original_vs_llm.append(None)
+            # Original vs Dev
             codebleu_original_vs_dev.append(None)
+            ngram_match_original_vs_dev.append(None)
+            weighted_ngram_match_original_vs_dev.append(None)
+            syntax_match_original_vs_dev.append(None)
+            dataflow_match_original_vs_dev.append(None)
         else:
             # === SIMILARIDADE DE CÓDIGO ===
             # Limpar e preparar os códigos
@@ -96,69 +129,152 @@ for index, row in df_combined.iterrows():
             # Verificar se os códigos não estão vazios após limpeza
             if not clean_migrated_dev or not clean_migrated_llm or not clean_original:
                 print(f"⚠️ Código vazio após limpeza para commit {commit_hash}")
+                # LLM vs Dev
                 codebleu_llm_vs_dev.append(None)
+                ngram_match_llm_vs_dev.append(None)
+                weighted_ngram_match_llm_vs_dev.append(None)
+                syntax_match_llm_vs_dev.append(None)
+                dataflow_match_llm_vs_dev.append(None)
+                # Original vs LLM
                 codebleu_original_vs_llm.append(None)
+                ngram_match_original_vs_llm.append(None)
+                weighted_ngram_match_original_vs_llm.append(None)
+                syntax_match_original_vs_llm.append(None)
+                dataflow_match_original_vs_llm.append(None)
+                # Original vs Dev
                 codebleu_original_vs_dev.append(None)
+                ngram_match_original_vs_dev.append(None)
+                weighted_ngram_match_original_vs_dev.append(None)
+                syntax_match_original_vs_dev.append(None)
+                dataflow_match_original_vs_dev.append(None)
                 continue
             
             # 1. Similaridade entre código migrado pela LLM e pelo desenvolvedor
             try:
                 codebleu_result_llm_vs_dev = calc_codebleu([clean_migrated_dev], [clean_migrated_llm], lang="javascript")
-                score_llm_vs_dev = codebleu_result_llm_vs_dev['codebleu']
-                codebleu_llm_vs_dev.append(score_llm_vs_dev)
+                codebleu_llm_vs_dev.append(codebleu_result_llm_vs_dev['codebleu'])
+                ngram_match_llm_vs_dev.append(codebleu_result_llm_vs_dev['ngram_match_score'])
+                weighted_ngram_match_llm_vs_dev.append(codebleu_result_llm_vs_dev['weighted_ngram_match_score'])
+                syntax_match_llm_vs_dev.append(codebleu_result_llm_vs_dev['syntax_match_score'])
+                dataflow_match_llm_vs_dev.append(codebleu_result_llm_vs_dev['dataflow_match_score'])
             except Exception as e:
                 print(f"❌ Erro no CodeBLEU (LLM vs Dev) para o commit {commit_hash}: {e}")
                 codebleu_llm_vs_dev.append(None)
+                ngram_match_llm_vs_dev.append(None)
+                weighted_ngram_match_llm_vs_dev.append(None)
+                syntax_match_llm_vs_dev.append(None)
+                dataflow_match_llm_vs_dev.append(None)
             
             # 2. Similaridade entre código original e código migrado pela LLM
             try:
                 codebleu_result_original_vs_llm = calc_codebleu([clean_original], [clean_migrated_llm], lang="javascript")
-                score_original_vs_llm = codebleu_result_original_vs_llm['codebleu']
-                codebleu_original_vs_llm.append(score_original_vs_llm)
+                codebleu_original_vs_llm.append(codebleu_result_original_vs_llm['codebleu'])
+                ngram_match_original_vs_llm.append(codebleu_result_original_vs_llm['ngram_match_score'])
+                weighted_ngram_match_original_vs_llm.append(codebleu_result_original_vs_llm['weighted_ngram_match_score'])
+                syntax_match_original_vs_llm.append(codebleu_result_original_vs_llm['syntax_match_score'])
+                dataflow_match_original_vs_llm.append(codebleu_result_original_vs_llm['dataflow_match_score'])
             except Exception as e:
                 print(f"❌ Erro no CodeBLEU (Original vs LLM) para o commit {commit_hash}: {e}")
                 codebleu_original_vs_llm.append(None)
+                ngram_match_original_vs_llm.append(None)
+                weighted_ngram_match_original_vs_llm.append(None)
+                syntax_match_original_vs_llm.append(None)
+                dataflow_match_original_vs_llm.append(None)
             
             # 3. Similaridade entre código original e código migrado pelo desenvolvedor
             try:
                 codebleu_result_original_vs_dev = calc_codebleu([clean_original], [clean_migrated_dev], lang="javascript")
-                score_original_vs_dev = codebleu_result_original_vs_dev['codebleu']
-                codebleu_original_vs_dev.append(score_original_vs_dev)
+                codebleu_original_vs_dev.append(codebleu_result_original_vs_dev['codebleu'])
+                ngram_match_original_vs_dev.append(codebleu_result_original_vs_dev['ngram_match_score'])
+                weighted_ngram_match_original_vs_dev.append(codebleu_result_original_vs_dev['weighted_ngram_match_score'])
+                syntax_match_original_vs_dev.append(codebleu_result_original_vs_dev['syntax_match_score'])
+                dataflow_match_original_vs_dev.append(codebleu_result_original_vs_dev['dataflow_match_score'])
             except Exception as e:
                 print(f"❌ Erro no CodeBLEU (Original vs Dev) para o commit {commit_hash}: {e}")
                 codebleu_original_vs_dev.append(None)
+                ngram_match_original_vs_dev.append(None)
+                weighted_ngram_match_original_vs_dev.append(None)
+                syntax_match_original_vs_dev.append(None)
+                dataflow_match_original_vs_dev.append(None)
 
             # Log de sucesso para os primeiros itens processados
             if index < 3:
-                print(f"✅ Similaridade calculada para commit {commit_hash[:8]}: LLM vs Dev = {score_llm_vs_dev:.4f}")
+                print(f"✅ Similaridade calculada para commit {commit_hash[:8]}: LLM vs Dev = {codebleu_llm_vs_dev[-1]:.4f}")
             elif index == 3:
                 print("✅ Processamento em andamento...")
             
     except Exception as e:
         print(f"❌ Erro inesperado no processamento para o commit {commit_hash}: {e}")
+        # LLM vs Dev
         codebleu_llm_vs_dev.append(None)
+        ngram_match_llm_vs_dev.append(None)
+        weighted_ngram_match_llm_vs_dev.append(None)
+        syntax_match_llm_vs_dev.append(None)
+        dataflow_match_llm_vs_dev.append(None)
+        # Original vs LLM
         codebleu_original_vs_llm.append(None)
+        ngram_match_original_vs_llm.append(None)
+        weighted_ngram_match_original_vs_llm.append(None)
+        syntax_match_original_vs_llm.append(None)
+        dataflow_match_original_vs_llm.append(None)
+        # Original vs Dev
         codebleu_original_vs_dev.append(None)
+        ngram_match_original_vs_dev.append(None)
+        weighted_ngram_match_original_vs_dev.append(None)
+        syntax_match_original_vs_dev.append(None)
+        dataflow_match_original_vs_dev.append(None)
         erros_processamento.append(commit_hash)
 
-# 6. Adicione as colunas CodeBLEU ao DataFrame combinado
+# 6. Adicione todas as colunas CodeBLEU ao DataFrame combinado
+# LLM vs Dev
 df_combined['codebleu_llm_vs_dev'] = codebleu_llm_vs_dev
+df_combined['ngram_match_llm_vs_dev'] = ngram_match_llm_vs_dev
+df_combined['weighted_ngram_match_llm_vs_dev'] = weighted_ngram_match_llm_vs_dev
+df_combined['syntax_match_llm_vs_dev'] = syntax_match_llm_vs_dev
+df_combined['dataflow_match_llm_vs_dev'] = dataflow_match_llm_vs_dev
+
+# Original vs LLM
 df_combined['codebleu_original_vs_llm'] = codebleu_original_vs_llm
+df_combined['ngram_match_original_vs_llm'] = ngram_match_original_vs_llm
+df_combined['weighted_ngram_match_original_vs_llm'] = weighted_ngram_match_original_vs_llm
+df_combined['syntax_match_original_vs_llm'] = syntax_match_original_vs_llm
+df_combined['dataflow_match_original_vs_llm'] = dataflow_match_original_vs_llm
+
+# Original vs Dev
 df_combined['codebleu_original_vs_dev'] = codebleu_original_vs_dev
+df_combined['ngram_match_original_vs_dev'] = ngram_match_original_vs_dev
+df_combined['weighted_ngram_match_original_vs_dev'] = weighted_ngram_match_original_vs_dev
+df_combined['syntax_match_original_vs_dev'] = syntax_match_original_vs_dev
+df_combined['dataflow_match_original_vs_dev'] = dataflow_match_original_vs_dev
 
 # 6.1. Reorganize as colunas na ordem solicitada
 df_combined = df_combined.reset_index()
 df_combined = df_combined.rename(columns={'index': 'identificador'})
 
-# Definir a ordem das colunas (apenas CodeBLEU)
+# Definir a ordem das colunas (todas as métricas CodeBLEU)
 colunas_ordenadas = [
     'identificador',
     'codigo_original', 
     'codigo_desenvolvedor',
     'codigo_llm',
+    # Original vs Dev - todas as métricas
     'codebleu_original_vs_dev',
+    'ngram_match_original_vs_dev',
+    'weighted_ngram_match_original_vs_dev',
+    'syntax_match_original_vs_dev',
+    'dataflow_match_original_vs_dev',
+    # Original vs LLM - todas as métricas
     'codebleu_original_vs_llm',
-    'codebleu_llm_vs_dev'
+    'ngram_match_original_vs_llm',
+    'weighted_ngram_match_original_vs_llm',
+    'syntax_match_original_vs_llm',
+    'dataflow_match_original_vs_llm',
+    # LLM vs Dev - todas as métricas
+    'codebleu_llm_vs_dev',
+    'ngram_match_llm_vs_dev',
+    'weighted_ngram_match_llm_vs_dev',
+    'syntax_match_llm_vs_dev',
+    'dataflow_match_llm_vs_dev'
 ]
 
 # Reorganizar o DataFrame com as colunas na ordem especificada
@@ -167,20 +283,41 @@ df_final = df_combined[colunas_ordenadas]
 # 7. Salve o DataFrame final em um novo CSV
 try:
     df_final.to_csv(CAMINHO_RESULTADO, index=False)
-    print(f"\n✅ Análise de métricas CodeBLEU concluída! Resultados salvos em: {CAMINHO_RESULTADO}")
-    print("\n📊 Métricas CodeBLEU calculadas:")
-    print("   • codebleu_original_vs_dev: Similaridade entre código original vs código migrado pelo desenvolvedor")
-    print("   • codebleu_original_vs_llm: Similaridade entre código original vs código migrado pela LLM")
-    print("   • codebleu_llm_vs_dev: Similaridade entre código migrado pela LLM vs pelo desenvolvedor")
+    print(f"\n✅ Análise completa de métricas CodeBLEU concluída! Resultados salvos em: {CAMINHO_RESULTADO}")
+    print("\n📊 Todas as métricas CodeBLEU calculadas:")
+    print("   • codebleu: Score principal do CodeBLEU (0-1)")
+    print("   • ngram_match_score: Score de correspondência de n-gramas")
+    print("   • weighted_ngram_match_score: Score ponderado de n-gramas")
+    print("   • syntax_match_score: Score de correspondência sintática")
+    print("   • dataflow_match_score: Score de correspondência de fluxo de dados")
+    print("\n   Para cada comparação:")
+    print("   • original_vs_dev: Código original vs migrado pelo desenvolvedor")
+    print("   • original_vs_llm: Código original vs migrado pela LLM")
+    print("   • llm_vs_dev: Código migrado pela LLM vs pelo desenvolvedor")
     
     # Estatísticas básicas
     valid_rows = df_final.dropna()
     if len(valid_rows) > 0:
-        print(f"\n📈 Estatísticas CodeBLEU ({len(valid_rows)} entradas válidas):")
+        print(f"\n📈 Estatísticas das métricas principais ({len(valid_rows)} entradas válidas):")
         print("   === CODEBLEU (maior = mais similar, escala 0-1) ===")
         print(f"   • Média Original vs Dev: {valid_rows['codebleu_original_vs_dev'].mean():.4f}")
         print(f"   • Média Original vs LLM: {valid_rows['codebleu_original_vs_llm'].mean():.4f}")
         print(f"   • Média LLM vs Dev: {valid_rows['codebleu_llm_vs_dev'].mean():.4f}")
+        
+        print("\n   === N-GRAM MATCH SCORE ===")
+        print(f"   • Média Original vs Dev: {valid_rows['ngram_match_original_vs_dev'].mean():.4f}")
+        print(f"   • Média Original vs LLM: {valid_rows['ngram_match_original_vs_llm'].mean():.4f}")
+        print(f"   • Média LLM vs Dev: {valid_rows['ngram_match_llm_vs_dev'].mean():.4f}")
+        
+        print("\n   === SYNTAX MATCH SCORE ===")
+        print(f"   • Média Original vs Dev: {valid_rows['syntax_match_original_vs_dev'].mean():.4f}")
+        print(f"   • Média Original vs LLM: {valid_rows['syntax_match_original_vs_llm'].mean():.4f}")
+        print(f"   • Média LLM vs Dev: {valid_rows['syntax_match_llm_vs_dev'].mean():.4f}")
+        
+        print("\n   === DATAFLOW MATCH SCORE ===")
+        print(f"   • Média Original vs Dev: {valid_rows['dataflow_match_original_vs_dev'].mean():.4f}")
+        print(f"   • Média Original vs LLM: {valid_rows['dataflow_match_original_vs_llm'].mean():.4f}")
+        print(f"   • Média LLM vs Dev: {valid_rows['dataflow_match_llm_vs_dev'].mean():.4f}")
     
     if erros_processamento:
         print(f"\n⚠️ Houve erros ao processar os seguintes commits: {list(set(erros_processamento))}")
